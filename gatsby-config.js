@@ -30,6 +30,10 @@ module.exports = {
                 name: "Unity",
                 link: "/tags/unity",
             },
+            {
+                name: "About Me",
+                link: "/about",
+            },
         ],
     },
     plugins: [
