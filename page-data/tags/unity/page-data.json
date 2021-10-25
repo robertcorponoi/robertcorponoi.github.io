@@ -1,0 +1,5 @@
+{
+    "componentChunkName": "component---src-templates-tags-tsx",
+    "path": "/tags/unity/",
+    "result": {"data":{"allMarkdownRemark":{"totalCount":1,"edges":[{"node":{"excerpt":"What is a PID controller? A PID controller is a type of control system that uses past values, current values, and estimated future values to…","fields":{"slug":"/unity/2020-07-08-rotating-rigidbodies-with-pid-controllers/"},"frontmatter":{"title":"Rotating Rigidbodies with PID Controllers","date":"2020-07-08","description":"Rotating your Rigidbodies can be a breeze with PID controllers","tags":["unity","game-development"]}}}]}},"pageContext":{"tag":"unity"}},
+    "staticQueryHashes": ["1569735999","2841359383"]}
