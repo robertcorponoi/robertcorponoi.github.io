@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #444;
+}
+
+/** Customizes the scroll bar to make it thin. */
+html::-webkit-scrollbar {
+    width: 8px;
+}
+
+html::-webkit-scrollbar-track {
+    background: #fafafa;
+    border: 1px #e8e8e8;
+}
+
+html::-webkit-scrollbar-thumb {
+    background: #999999;
+    border-radius: 2px;
+}
+
+h2 {
+    @apply text-3xl font-bold mt-8 text-gray-800 dark:text-gray-100;
+}
+
+h4 {
+    @apply text-2xl font-bold mt-8 text-gray-800 dark:text-gray-100;
+}
+
+section p {
+    @apply my-4 leading-7 text-gray-800 dark:text-gray-100;
+}
