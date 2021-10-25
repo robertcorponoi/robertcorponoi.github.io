@@ -50,9 +50,10 @@
         "@typescript-eslint/parser": "^4.31.2",
         "eslint": "^7.32.0",
         "eslint-plugin-react": "^7.26.0",
+        "gh-pages": "^3.2.3",
         "prettier": "2.3.2"
     },
-    "homepage": "https://github.com/robertcorponoi/website#readme",
+    "homepage": "https://github.com/robertcorponoi/robertcorponoi.github.io#readme",
     "keywords": [
         "robertcorponoi",
         "website"
@@ -61,7 +62,7 @@
     "main": "n/a",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/robertcorponoi/website.git"
+        "url": "git+https://github.com/robertcorponoi/robertcorponoi.github.io.git"
     },
     "scripts": {
         "build": "gatsby build",
@@ -70,6 +71,7 @@
         "start": "gatsby develop",
         "serve": "gatsby serve",
         "clean": "gatsby clean",
+        "deploy": "gatsby build && gh-pages -d public -b main",
         "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
     }
 }

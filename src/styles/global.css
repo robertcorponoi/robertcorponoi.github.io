@@ -30,6 +30,6 @@ h4 {
     @apply text-2xl font-bold mt-8 text-gray-800 dark:text-gray-100;
 }
 
-section p {
+section p, section li {
     @apply my-4 leading-7 text-gray-800 dark:text-gray-100;
 }
