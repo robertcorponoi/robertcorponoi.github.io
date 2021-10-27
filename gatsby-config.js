@@ -19,6 +19,10 @@ module.exports = {
         /** The links that should appear in the navbar. */
         menuLinks: [
             {
+                name: "Bevy",
+                link: "/tags/bevy",
+            },
+            {
                 name: "Unreal",
                 link: "/tags/unreal",
             },
