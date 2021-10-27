@@ -1,0 +1,864 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><style data-href="/styles.53c8d48bdac6689079e7.css" data-identity="gatsby-global-css">@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:100;src:local("Montserrat Thin "),local("Montserrat-Thin"),url(/static/montserrat-latin-100-8d7d79679b70dbe27172b6460e7a7910.woff2) format("woff2"),url(/static/montserrat-latin-100-ec38980a9e0119a379e2a9b3dbb1901a.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:100;src:local("Montserrat Thin italic"),local("Montserrat-Thinitalic"),url(/static/montserrat-latin-100italic-e279051046ba1286706adc886cf1c96b.woff2) format("woff2"),url(/static/montserrat-latin-100italic-3b325a3173c8207435cd1b76e19bf501.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:200;src:local("Montserrat Extra Light "),local("Montserrat-Extra Light"),url(/static/montserrat-latin-200-9d266fbbfa6cab7009bd56003b1eeb67.woff2) format("woff2"),url(/static/montserrat-latin-200-2d8ba08717110d27122e54c34b8a5798.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:200;src:local("Montserrat Extra Light italic"),local("Montserrat-Extra Lightitalic"),url(/static/montserrat-latin-200italic-6e5b3756583bb2263eb062eae992735e.woff2) format("woff2"),url(/static/montserrat-latin-200italic-a0d6f343e4b536c582926255367a57da.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:300;src:local("Montserrat Light "),local("Montserrat-Light"),url(/static/montserrat-latin-300-00b3e893aab5a8fd632d6342eb72551a.woff2) format("woff2"),url(/static/montserrat-latin-300-ea303695ceab35f17e7d062f30e0173b.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:300;src:local("Montserrat Light italic"),local("Montserrat-Lightitalic"),url(/static/montserrat-latin-300italic-56f34ea368f6aedf89583d444bbcb227.woff2) format("woff2"),url(/static/montserrat-latin-300italic-54b0bf2c8c4c12ffafd803be2466a790.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:400;src:local("Montserrat Regular "),local("Montserrat-Regular"),url(/static/montserrat-latin-400-b71748ae4f80ec8c014def4c5fa8688b.woff2) format("woff2"),url(/static/montserrat-latin-400-0659a9f4e90db5cf51b50d005bff1e41.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:400;src:local("Montserrat Regular italic"),local("Montserrat-Regularitalic"),url(/static/montserrat-latin-400italic-6eed6b4cbb809c6efc7aa7ddad6dbe3e.woff2) format("woff2"),url(/static/montserrat-latin-400italic-7583622cfde30ae49086d18447ab28e7.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:500;src:local("Montserrat Medium "),local("Montserrat-Medium"),url(/static/montserrat-latin-500-091b209546e16313fd4f4fc36090c757.woff2) format("woff2"),url(/static/montserrat-latin-500-edd311588712a96bbf435fad264fff62.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:500;src:local("Montserrat Medium italic"),local("Montserrat-Mediumitalic"),url(/static/montserrat-latin-500italic-c90ced68b46050061d1a41842d6dfb43.woff2) format("woff2"),url(/static/montserrat-latin-500italic-5146cbfe02b1deea5dffea27a5f2f998.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:600;src:local("Montserrat SemiBold "),local("Montserrat-SemiBold"),url(/static/montserrat-latin-600-0480d2f8a71f38db8633b84d8722e0c2.woff2) format("woff2"),url(/static/montserrat-latin-600-b77863a375260a05dd13f86a1cee598f.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:600;src:local("Montserrat SemiBold italic"),local("Montserrat-SemiBolditalic"),url(/static/montserrat-latin-600italic-cf46ffb11f3a60d7df0567f8851a1d00.woff2) format("woff2"),url(/static/montserrat-latin-600italic-c4fcfeeb057724724097167e57bd7801.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:700;src:local("Montserrat Bold "),local("Montserrat-Bold"),url(/static/montserrat-latin-700-7dbcc8a5ea2289d83f657c25b4be6193.woff2) format("woff2"),url(/static/montserrat-latin-700-99271a835e1cae8c76ef8bba99a8cc4e.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:700;src:local("Montserrat Bold italic"),local("Montserrat-Bolditalic"),url(/static/montserrat-latin-700italic-c41ad6bdb4bd504a843d546d0a47958d.woff2) format("woff2"),url(/static/montserrat-latin-700italic-6779372f04095051c62ed36bc1dcc142.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:800;src:local("Montserrat ExtraBold "),local("Montserrat-ExtraBold"),url(/static/montserrat-latin-800-db9a3e0ba7eaea32e5f55328ace6cf23.woff2) format("woff2"),url(/static/montserrat-latin-800-4e3c615967a2360f5db87d2f0fd2456f.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:800;src:local("Montserrat ExtraBold italic"),local("Montserrat-ExtraBolditalic"),url(/static/montserrat-latin-800italic-bf45bfa14805969eda318973947bc42b.woff2) format("woff2"),url(/static/montserrat-latin-800italic-fe82abb0bcede51bf724254878e0c374.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:normal;font-weight:900;src:local("Montserrat Black "),local("Montserrat-Black"),url(/static/montserrat-latin-900-e66c7edc609e24bacbb705175669d814.woff2) format("woff2"),url(/static/montserrat-latin-900-8211f418baeb8ec880b80ba3c682f957.woff) format("woff")}@font-face{font-display:swap;font-family:Montserrat;font-style:italic;font-weight:900;src:local("Montserrat Black italic"),local("Montserrat-Blackitalic"),url(/static/montserrat-latin-900italic-4454c775e48152c1a72510ceed3603e2.woff2) format("woff2"),url(/static/montserrat-latin-900italic-efcaa0f6a82ee0640b83a0916e6e8d68.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:300;src:local("Merriweather Light "),local("Merriweather-Light"),url(/static/merriweather-latin-300-fc117160c69a8ea0851b26dd14748ee4.woff2) format("woff2"),url(/static/merriweather-latin-300-58b18067ebbd21fda77b67e73c241d3b.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:300;src:local("Merriweather Light italic"),local("Merriweather-Lightitalic"),url(/static/merriweather-latin-300italic-fe29961474f8dbf77c0aa7b9a629e4bc.woff2) format("woff2"),url(/static/merriweather-latin-300italic-23c3f1f88683618a4fb8d265d33d383a.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:400;src:local("Merriweather Regular "),local("Merriweather-Regular"),url(/static/merriweather-latin-400-d9479e8023bef9cbd9bf8d6eabd6bf36.woff2) format("woff2"),url(/static/merriweather-latin-400-040426f99ff6e00b86506452e0d1f10b.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:400;src:local("Merriweather Regular italic"),local("Merriweather-Regularitalic"),url(/static/merriweather-latin-400italic-2de7bfeaf08fb03d4315d49947f062f7.woff2) format("woff2"),url(/static/merriweather-latin-400italic-79db67aca65f5285964ab332bd65f451.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:700;src:local("Merriweather Bold "),local("Merriweather-Bold"),url(/static/merriweather-latin-700-4b08e01d805fa35d7bf777f1b24314ae.woff2) format("woff2"),url(/static/merriweather-latin-700-22fb8afba4ab1f093b6ef9e28a9b6e92.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:700;src:local("Merriweather Bold italic"),local("Merriweather-Bolditalic"),url(/static/merriweather-latin-700italic-cd92541b177652fffb6e3b952f1c33f1.woff2) format("woff2"),url(/static/merriweather-latin-700italic-f87f3d87cea0dd0979bfc8ac9ea90243.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:normal;font-weight:900;src:local("Merriweather Black "),local("Merriweather-Black"),url(/static/merriweather-latin-900-f813fc6a4bee46eda5224ac7ebf1b7be.woff2) format("woff2"),url(/static/merriweather-latin-900-5d4e42cb44410674acd99153d57df032.woff) format("woff")}@font-face{font-display:swap;font-family:Merriweather;font-style:italic;font-weight:900;src:local("Merriweather Black italic"),local("Merriweather-Blackitalic"),url(/static/merriweather-latin-900italic-b7901d85486871c1779c0e93ddd85656.woff2) format("woff2"),url(/static/merriweather-latin-900italic-9647f9fdab98756989a8a5550eb205c3.woff) format("woff")}code[class*=language-],pre[class*=language-]{word-wrap:normal;background:none;color:#ccc;font-family:Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;font-size:1em;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;text-align:left;white-space:pre;word-break:normal;word-spacing:normal}pre[class*=language-]{margin:.5em 0;overflow:auto;padding:1em}:not(pre)>code[class*=language-],pre[class*=language-]{background:#2d2d2d}:not(pre)>code[class*=language-]{border-radius:.3em;padding:.1em;white-space:normal}.token.block-comment,.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#999}.token.punctuation{color:#ccc}.token.attr-name,.token.deleted,.token.namespace,.token.tag{color:#e2777a}.token.function-name{color:#6196cc}.token.boolean,.token.function,.token.number{color:#f08d49}.token.class-name,.token.constant,.token.property,.token.symbol{color:#f8c555}.token.atrule,.token.builtin,.token.important,.token.keyword,.token.selector{color:#cc99cd}.token.attr-value,.token.char,.token.regex,.token.string,.token.variable{color:#7ec699}.token.entity,.token.operator,.token.url{color:#67cdcc}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}.token.inserted{color:green}
+
+/*! tailwindcss v2.2.17 | MIT License | https://tailwindcss.com */
+
+/*! modern-normalize v1.1.0 | MIT License | https://github.com/sindresorhus/modern-normalize */html{-webkit-text-size-adjust:100%;line-height:1.15;-moz-tab-size:4;-o-tab-size:4;tab-size:4}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;margin:0}hr{color:inherit;height:0}abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{border-color:inherit;text-indent:0}button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0}button,select{text-transform:none}button{-webkit-appearance:button}legend{padding:0}progress{vertical-align:baseline}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}button{background-color:transparent;background-image:none}fieldset,ol,ul{margin:0;padding:0}ol,ul{list-style:none}html{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;line-height:1.5}body{font-family:inherit;line-height:inherit}*,:after,:before{border:0 solid;box-sizing:border-box}hr{border-top-width:1px}img{border-style:solid}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{color:#9ca3af;opacity:1}input:-ms-input-placeholder,textarea:-ms-input-placeholder{color:#9ca3af;opacity:1}input::placeholder,textarea::placeholder{color:#9ca3af;opacity:1}button{cursor:pointer}table{border-collapse:collapse}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}button,input,optgroup,select,textarea{color:inherit;line-height:inherit;padding:0}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{height:auto;max-width:100%}[hidden]{display:none}*,:after,:before{--tw-border-opacity:1;border-color:rgba(229,231,235,var(--tw-border-opacity))}.container{width:100%}@media (min-width:640px){.container{max-width:640px}}@media (min-width:768px){.container{max-width:768px}}@media (min-width:1024px){.container{max-width:1024px}}@media (min-width:1280px){.container{max-width:1280px}}@media (min-width:1536px){.container{max-width:1536px}}.sr-only{clip:rect(0,0,0,0);border-width:0;height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}.pointer-events-none{pointer-events:none}.absolute{position:absolute}.relative{position:relative}.inset-0{bottom:0;top:0}.inset-0,.inset-x-0{left:0;right:0}.top-0{top:0}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.-my-2{margin-bottom:-.5rem;margin-top:-.5rem}.mt-2{margin-top:.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.-mr-2{margin-right:-.5rem}.mb-4{margin-bottom:1rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.contents{display:contents}.hidden{display:none}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-full{height:100%}.min-h-screen{min-height:100vh}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-11{width:2.75rem}.w-11\/12{width:91.666667%}.w-full{width:100%}.max-w-7xl{max-width:80rem}.flex-1{flex:1 1 0%}.flex-shrink-0{flex-shrink:0}.origin-top-right{transform-origin:top right}.transform{--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;transform:translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-x-0{--tw-translate-x:0px}.translate-x-5{--tw-translate-x:1.25rem}.scale-95{--tw-scale-x:.95;--tw-scale-y:.95}.scale-100{--tw-scale-x:1;--tw-scale-y:1}@-webkit-keyframes spin{to{transform:rotate(1turn)}}@keyframes spin{to{transform:rotate(1turn)}}@-webkit-keyframes ping{75%,to{opacity:0;transform:scale(2)}}@keyframes ping{75%,to{opacity:0;transform:scale(2)}}@-webkit-keyframes pulse{50%{opacity:.5}}@keyframes pulse{50%{opacity:.5}}@-webkit-keyframes bounce{0%,to{-webkit-animation-timing-function:cubic-bezier(.8,0,1,1);animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{-webkit-animation-timing-function:cubic-bezier(0,0,.2,1);animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}@keyframes bounce{0%,to{-webkit-animation-timing-function:cubic-bezier(.8,0,1,1);animation-timing-function:cubic-bezier(.8,0,1,1);transform:translateY(-25%)}50%{-webkit-animation-timing-function:cubic-bezier(0,0,.2,1);animation-timing-function:cubic-bezier(0,0,.2,1);transform:none}}.cursor-pointer{cursor:pointer}.list-inside{list-style-position:inside}.list-disc{list-style-type:disc}.flex-col{flex-direction:column}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-x-2{-moz-column-gap:.5rem;column-gap:.5rem}.gap-x-4{-moz-column-gap:1rem;column-gap:1rem}.gap-x-2\.5{-moz-column-gap:.625rem;column-gap:.625rem}.gap-y-1{row-gap:.25rem}.gap-y-2{row-gap:.5rem}.gap-y-6{row-gap:1.5rem}.divide-y-2>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-bottom-width:calc(2px*var(--tw-divide-y-reverse));border-top-width:calc(2px*(1 - var(--tw-divide-y-reverse)))}.divide-dotted>:not([hidden])~:not([hidden]){border-style:dotted}.divide-gray-100>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgba(243,244,246,var(--tw-divide-opacity))}.divide-gray-400>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgba(156,163,175,var(--tw-divide-opacity))}.dark .dark\:divide-gray-700>:not([hidden])~:not([hidden]){--tw-divide-opacity:1;border-color:rgba(55,65,81,var(--tw-divide-opacity))}.overflow-hidden{overflow:hidden}.rounded-lg{border-radius:.5rem}.rounded-full{border-radius:9999px}.border-2{border-width:2px}.border-t{border-top-width:1px}.border-transparent{border-color:transparent}.border-gray-300{--tw-border-opacity:1;border-color:rgba(209,213,219,var(--tw-border-opacity))}.bg-white{--tw-bg-opacity:1;background-color:rgba(255,255,255,var(--tw-bg-opacity))}.bg-gray-50{--tw-bg-opacity:1;background-color:rgba(249,250,251,var(--tw-bg-opacity))}.bg-gray-300{--tw-bg-opacity:1;background-color:rgba(209,213,219,var(--tw-bg-opacity))}.bg-gray-600{--tw-bg-opacity:1;background-color:rgba(75,85,99,var(--tw-bg-opacity))}.hover\:bg-gray-100:hover{--tw-bg-opacity:1;background-color:rgba(243,244,246,var(--tw-bg-opacity))}.dark .dark\:bg-dark-100{--tw-bg-opacity:1;background-color:rgba(22,27,34,var(--tw-bg-opacity))}.dark .dark\:bg-dark-900{--tw-bg-opacity:1;background-color:rgba(1,4,9,var(--tw-bg-opacity))}.dark .dark\:hover\:bg-gray-800:hover{--tw-bg-opacity:1;background-color:rgba(31,41,55,var(--tw-bg-opacity))}.p-0{padding:0}.p-2{padding:.5rem}.p-0\.5{padding:.125rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-bottom:.25rem;padding-top:.25rem}.py-2{padding-bottom:.5rem;padding-top:.5rem}.py-4{padding-bottom:1rem;padding-top:1rem}.py-5{padding-bottom:1.25rem;padding-top:1.25rem}.py-6{padding-bottom:1.5rem;padding-top:1.5rem}.py-8{padding-top:2rem}.pb-8,.py-8{padding-bottom:2rem}.text-center{text-align:center}.text-sm{font-size:.875rem;line-height:1.25rem}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem}.text-lg,.text-xl{line-height:1.75rem}.text-xl{font-size:1.25rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.font-medium{font-weight:500}.font-semibold{font-weight:600}.font-bold{font-weight:700}.leading-7{line-height:1.75rem}.text-gray-600{--tw-text-opacity:1;color:rgba(75,85,99,var(--tw-text-opacity))}.text-gray-700{--tw-text-opacity:1;color:rgba(55,65,81,var(--tw-text-opacity))}.text-gray-800{--tw-text-opacity:1;color:rgba(31,41,55,var(--tw-text-opacity))}.text-gray-900{--tw-text-opacity:1;color:rgba(17,24,39,var(--tw-text-opacity))}.text-blue-700{--tw-text-opacity:1;color:rgba(29,78,216,var(--tw-text-opacity))}.text-indigo-900{--tw-text-opacity:1;color:rgba(49,46,129,var(--tw-text-opacity))}.hover\:text-gray-700:hover{--tw-text-opacity:1;color:rgba(55,65,81,var(--tw-text-opacity))}.dark .dark\:text-white{--tw-text-opacity:1;color:rgba(255,255,255,var(--tw-text-opacity))}.dark .dark\:text-gray-50{--tw-text-opacity:1;color:rgba(249,250,251,var(--tw-text-opacity))}.dark .dark\:text-gray-100{--tw-text-opacity:1;color:rgba(243,244,246,var(--tw-text-opacity))}.dark .dark\:text-gray-200{--tw-text-opacity:1;color:rgba(229,231,235,var(--tw-text-opacity))}.dark .dark\:text-gray-300{--tw-text-opacity:1;color:rgba(209,213,219,var(--tw-text-opacity))}.dark .dark\:hover\:text-white:hover{--tw-text-opacity:1;color:rgba(255,255,255,var(--tw-text-opacity))}.underline{text-decoration:underline}.opacity-0{opacity:0}.opacity-100{opacity:1}*,:after,:before{--tw-shadow:0 0 #0000}.shadow{--tw-shadow:0 1px 3px 0 rgba(0,0,0,0.1),0 1px 2px 0 rgba(0,0,0,0.06)}.shadow,.shadow-lg{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.05)}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}*,:after,:before{--tw-ring-inset:var(--tw-empty,/*!*/ /*!*/);--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000}.ring-0{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-0,.ring-1{box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow,0 0 #0000)}.ring-1{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color)}.ring-black{--tw-ring-opacity:1;--tw-ring-color:rgba(0,0,0,var(--tw-ring-opacity))}.ring-opacity-5{--tw-ring-opacity:0.05}.filter{--tw-blur:var(--tw-empty,/*!*/ /*!*/);--tw-brightness:var(--tw-empty,/*!*/ /*!*/);--tw-contrast:var(--tw-empty,/*!*/ /*!*/);--tw-grayscale:var(--tw-empty,/*!*/ /*!*/);--tw-hue-rotate:var(--tw-empty,/*!*/ /*!*/);--tw-invert:var(--tw-empty,/*!*/ /*!*/);--tw-saturate:var(--tw-empty,/*!*/ /*!*/);--tw-sepia:var(--tw-empty,/*!*/ /*!*/);--tw-drop-shadow:var(--tw-empty,/*!*/ /*!*/);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-duration:.15s;transition-property:background-color,border-color,color,fill,stroke,opacity,box-shadow,transform,filter,-webkit-backdrop-filter;transition-property:background-color,border-color,color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter;transition-property:background-color,border-color,color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter,-webkit-backdrop-filter;transition-timing-function:cubic-bezier(.4,0,.2,1)}.transition-colors{transition-duration:.15s;transition-property:background-color,border-color,color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1)}.transition-opacity{transition-duration:.15s;transition-property:opacity;transition-timing-function:cubic-bezier(.4,0,.2,1)}.duration-100{transition-duration:.1s}.duration-200{transition-duration:.2s}.ease-in{transition-timing-function:cubic-bezier(.4,0,1,1)}.ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)}.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}html{scrollbar-color:#ccc #444;scrollbar-width:thin}html::-webkit-scrollbar{width:8px}html::-webkit-scrollbar-track{background:#fafafa;border:1px #e8e8e8}html::-webkit-scrollbar-thumb{background:#999;border-radius:2px}h2{color:rgba(31,41,55,var(--tw-text-opacity));font-size:1.875rem;font-weight:700;line-height:2.25rem;margin-top:2rem}.dark h2,h2{--tw-text-opacity:1}.dark h2{color:rgba(243,244,246,var(--tw-text-opacity))}h4{color:rgba(31,41,55,var(--tw-text-opacity));font-size:1.5rem;font-weight:700;line-height:2rem;margin-top:2rem}.dark h4,h4{--tw-text-opacity:1}.dark h4{color:rgba(243,244,246,var(--tw-text-opacity))}section li,section p{--tw-text-opacity:1;color:rgba(31,41,55,var(--tw-text-opacity));line-height:1.75rem;margin-bottom:1rem;margin-top:1rem}.dark section li,.dark section p{--tw-text-opacity:1;color:rgba(243,244,246,var(--tw-text-opacity))}@media (min-width:640px){.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}}@media (min-width:768px){.md\:ml-12{margin-left:3rem}.md\:flex{display:flex}.md\:hidden{display:none}.md\:w-10\/12{width:83.333333%}.md\:flex-1{flex:1 1 0%}.md\:items-center{align-items:center}.md\:justify-between{justify-content:space-between}}@media (min-width:1024px){.lg\:w-8\/12{width:66.666667%}.lg\:w-9\/12{width:75%}}@media (min-width:1280px){.xl\:w-5\/12{width:41.666667%}}@font-face{font-display:swap;font-family:Aclonica;font-style:normal;font-weight:400;src:url(/static/aclonica-latin-400-normal-fe878d5c90b06aafb8826a30cf7654d5.woff2) format("woff2"),url(/static/aclonica-all-400-normal-bf6516bf02a80d366da531f4d617ff49.woff) format("woff");unicode-range:U+00??,U+0131,U+0152-0153,U+02bb-02bc,U+02c6,U+02da,U+02dc,U+2000-206f,U+2074,U+20ac,U+2122,U+2191,U+2193,U+2212,U+2215,U+feff,U+fffd}</style><meta name="generator" content="Gatsby 4.0.0"/><style>.gatsby-image-wrapper{position:relative;overflow:hidden}.gatsby-image-wrapper img{bottom:0;height:100%;left:0;margin:0;max-width:none;padding:0;position:absolute;right:0;top:0;width:100%;object-fit:cover}.gatsby-image-wrapper [data-main-image]{opacity:0;transform:translateZ(0);transition:opacity .25s linear;will-change:opacity}.gatsby-image-wrapper-constrained{display:inline-block;vertical-align:top}</style><noscript><style>.gatsby-image-wrapper noscript [data-main-image]{opacity:1!important}.gatsby-image-wrapper [data-placeholder-image]{opacity:0!important}</style></noscript><script type="module">const e="undefined"!=typeof HTMLImageElement&&"loading"in HTMLImageElement.prototype;e&&document.body.addEventListener("load",(function(e){if(void 0===e.target.dataset.mainImage)return;if(void 0===e.target.dataset.gatsbyImageSsr)return;const t=e.target;let a=null,n=t;for(;null===a&&n;)void 0!==n.parentNode.dataset.gatsbyImageWrapper&&(a=n.parentNode),n=n.parentNode;const o=a.querySelector("[data-placeholder-image]"),r=new Image;r.src=t.currentSrc,r.decode().catch((()=>{})).then((()=>{t.style.opacity=1,o&&(o.style.opacity=0,o.style.transition="opacity 500ms linear")}))}),!0);</script><title data-react-helmet="true">Unreal C++ Creating Interactive Actors | Robert Corponoi</title><meta data-react-helmet="true" name="description" content="This is a custom description for SEO and Open Graph purposes, rather than the default generated excerpt. Simply add a description field to the frontmatter."/><meta data-react-helmet="true" property="og:title" content="Unreal C++ Creating Interactive Actors"/><meta data-react-helmet="true" property="og:description" content="This is a custom description for SEO and Open Graph purposes, rather than the default generated excerpt. Simply add a description field to the frontmatter."/><meta data-react-helmet="true" property="og:type" content="website"/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" name="twitter:creator" content="robertcorponoi"/><meta data-react-helmet="true" name="twitter:title" content="Unreal C++ Creating Interactive Actors"/><meta data-react-helmet="true" name="twitter:description" content="This is a custom description for SEO and Open Graph purposes, rather than the default generated excerpt. Simply add a description field to the frontmatter."/><link rel="canonical" href="https://www.robertcorponoi.com/unreal/creating-interactive-actors/" data-baseprotocol="https:" data-basehost="www.robertcorponoi.com"/><link as="script" rel="preload" href="/webpack-runtime-92f30b27339df92a4f81.js"/><link as="script" rel="preload" href="/framework-a88913fc7a565e205647.js"/><link as="script" rel="preload" href="/app-0294f24f2ce86009db16.js"/><link as="script" rel="preload" href="/commons-f15c0c170d4931b0b393.js"/><link as="script" rel="preload" href="/component---src-templates-blog-post-tsx-d6a7694ad46bf9c80d6d.js"/><link as="fetch" rel="preload" href="/page-data/unreal/creating-interactive-actors/page-data.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/1569735999.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/2841359383.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/app-data.json" crossorigin="anonymous"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="h-full flex flex-col min-h-screen"><div class="relative shadow bg-white dark:bg-dark-100"><div class="flex justify-between items-center py-5 w-11/12 md:w-10/12 lg:w-8/12 xl:w-5/12 mx-auto"><div class="-mr-2 -my-2 md:hidden"><button class="rounded-full p-2 inline-flex items-center justify-center text-gray-800 hover:bg-gray-100 dark:text-gray-50 dark:hover:text-white dark:hover:bg-gray-800" id="headlessui-popover-button-undefined" type="button" aria-expanded="false"><span class="sr-only">Open menu</span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg></button></div><div class="hidden md:flex-1 md:flex md:items-center md:justify-between"><nav class="flex items-center"><a class="text-gray-800 hover:text-gray-700 dark:text-gray-50 dark:hover:text-white py-2 px-4" href="/">Home</a></nav><div class="flex items-center gap-x-4 md:ml-12"><a class="text-gray-800 hover:text-gray-700 dark:text-gray-50 dark:hover:text-white py-2 px-4" href="/tags/bevy">Bevy</a><a class="text-gray-800 hover:text-gray-700 dark:text-gray-50 dark:hover:text-white py-2 px-4" href="/tags/unreal">Unreal</a><a class="text-gray-800 hover:text-gray-700 dark:text-gray-50 dark:hover:text-white py-2 px-4" href="/tags/godot">Godot</a><a class="text-gray-800 hover:text-gray-700 dark:text-gray-50 dark:hover:text-white py-2 px-4" href="/tags/unity">Unity</a><a class="text-gray-800 hover:text-gray-700 dark:text-gray-50 dark:hover:text-white py-2 px-4" href="/about">About Me</a><a href="https://github.com/robertcorponoi" target="_blank" rel="noopener noreferrer" class="py-2 px-4"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6 text-gray-700 dark:text-gray-50"><title>github</title><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"></path></svg></a><button class="
+                bg-gray-300
+                &quot;relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none&quot;
+            " id="headlessui-switch-undefined" role="switch" type="button" tabindex="0" aria-checked="false"><span class="sr-only">Toggle theme</span><span class="
+                    translate-x-0 bg-white
+                    &quot;pointer-events-none relative inline-block h-5 w-5 rounded-full shadow transform ring-0 transition ease-in-out duration-200&quot;
+                "><span class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity p-0.5" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></span></span></button></div></div></div></div><main class="h-full flex-1 sm:px-6 bg-white dark:bg-dark-900"><div class="container w-11/12 md:w-10/12 lg:w-8/12 xl:w-5/12 mx-auto pb-8"><article itemscope="" itemType="http://schema.org/Article" class="mt-8"><div class="flex flex-col gap-y-2"><h1 itemProp="headline" class="text-5xl font-bold text-gray-900 dark:text-white">Unreal C++ Creating Interactive Actors</h1><p class="text-gray-600 text-sm font-medium dark:text-gray-200">August 12, 2020</p></div><div class="flex items-center gap-x-2.5"><a class="text-sm text-indigo-900 dark:text-gray-100 rounded-full py-1" href="/tags/unreal">#<!-- -->unreal</a><a class="text-sm text-indigo-900 dark:text-gray-100 rounded-full py-1" href="/tags/game-development">#<!-- -->game-development</a></div><section itemProp="articleBody"><p>In this tutorial we’re going to go over ways that you can create system for making objects that the player can interact with. We’re going to go over a pure C++ way and then we’ll also go over how to migrate some of the functionality to Blueprints so that you still get the power of C++ in the complex parts but ability to easily iterate or pass off work for the interaction parts.</p>
+<p>If at any point you get stuck or want to see the example you can clone or download the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> and launch it in Unreal.</p>
+<h2><strong>Getting Started</strong></h2>
+<p>To get started, let’s see what we’re going to need:</p>
+<ul>
+<li>
+<p><strong>Player Character</strong> - The PlayerCharacter is going to be the main player of the game is going to be what interacts with the interactive objects. This is mainly going to be a standard third person controller but we’re going to add some methods to help it interact with the objects.</p>
+</li>
+<li>
+<p><strong>Interactive Actor</strong> - This is going to be the main controller for our interactive objects. All of the interactive pieces will be components of this Actor and this will handle the majority of the functionality.</p>
+</li>
+</ul>
+<p>And that’s it. Other than the above you’ll need the meshes that you want to be interactive and what I’m using in the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> is the <a href="https://www.kenney.nl/assets/furniture-kit">Kenney Furniture Kit</a>. You can also use the material I used to give static meshes an outline to highlight when the player is looking at them. You can find this mesh in the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> under the Materials folder or you follow the tutorial I used to create it <a href="">here</a>.</p>
+<p>Also if you’re using the highlight material make sure that you add a Post Process Volume Actor in the scene and set it to have the highlight as a post process material and also make the bounds infinite. You can see an example of it in the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> if you’ve never done it before.</p>
+<h2><strong>Player Character</strong></h2>
+<p>As explained in the section above, the PlayerCharacter is just the third person character script from the third person character demo project so if you want to see the script for it either check out the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> or just copy Unreal’s third person character. When we add the bit to interact with objects we’ll add a few lines to it but character movement is out of scope for this tutorial.</p>
+<h2><strong>Interactive Actor</strong></h2>
+<p>Before we get into the code let’s see what we’ll need the InteractiveActor to do:</p>
+<ul>
+<li>We need to know all of the meshes that can be interacted with.</li>
+<li>We need a box collider so that we only run repetitive functions when we know the player is in range to interact with the object.</li>
+<li>We need some text to let the player know that they can interact with the object they’re looking at.</li>
+<li>We need a timer and a function that will be run by that timer whenever the player is in interaction range.</li>
+</ul>
+<p>So create a new C++ class with a base of Actor and name it <code class="language-text">InteractiveActor</code>. Let’s get into the code and we’ll go over it in detail afterwards:</p>
+<p><strong>InteractiveActor.h</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">pragma</span> <span class="token expression">once</span></span>
+
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"CoreMinimal.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"GameFramework/Actor.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"InteractiveActor.generated.h"</span></span>
+
+<span class="token keyword">class</span> <span class="token class-name">UStaticMeshComponent</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ * Represents a series of interactive objects that the PlayerCharacter can
+ * interact with.
+ */</span>
+<span class="token function">UCLASS</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">INTERACTIVEOBJECTS_API</span> AInteractiveActor <span class="token operator">:</span> <span class="token keyword">public</span> AActor
+<span class="token punctuation">{</span>
+	<span class="token function">GENERATED_BODY</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	
+<span class="token keyword">public</span><span class="token operator">:</span>	
+	<span class="token comment">// Sets default values for this actor's properties.</span>
+	<span class="token function">AInteractiveActor</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// The RootComponent of this Actor.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadOnly<span class="token punctuation">)</span>
+	<span class="token keyword">class</span> <span class="token class-name">USceneComponent</span><span class="token operator">*</span> Root<span class="token punctuation">;</span>
+
+	<span class="token comment">// The BoxComponent used as a collision trigger that lets us know when the</span>
+	<span class="token comment">// PlayerCharacter is close enough to interact with objects in this Actor.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadOnly<span class="token punctuation">)</span>
+	<span class="token keyword">class</span> <span class="token class-name">UBoxComponent</span><span class="token operator">*</span> BoxCollider<span class="token punctuation">;</span>
+
+	<span class="token comment">// The TextRenderComponent that appears above this Actor when the PlayerCharacter</span>
+	<span class="token comment">// is able to interact with a part of it.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+	<span class="token keyword">class</span> <span class="token class-name">UTextRenderComponent</span><span class="token operator">*</span> NoticeText<span class="token punctuation">;</span>
+
+	<span class="token comment">// The StaticMeshComponents that the PlayerCharacter can interact with.</span>
+	<span class="token comment">// If you're only using one interactive object and you don't need the</span>
+	<span class="token comment">// array then you can omit this as we'll add the interactive objects later.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>EditAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+	TArray<span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">*</span><span class="token operator">></span> InteractiveObjects<span class="token punctuation">;</span>
+
+	<span class="token comment">// The interactive StaticMeshComponent currently being looked at.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadOnly<span class="token punctuation">)</span>
+	UStaticMeshComponent<span class="token operator">*</span> ObjectCurrentlyBeingLookedAt<span class="token punctuation">;</span>
+
+	<span class="token comment">// Used to create a timer that runs a function every so often to check if</span>
+	<span class="token comment">// PlayerCharacter is looking at an object that can be interacted with or not.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	FTimerHandle PlayerLookTimer<span class="token punctuation">;</span>
+
+<span class="token keyword">protected</span><span class="token operator">:</span>
+	<span class="token comment">// Called when the game starts or when spawned.</span>
+	<span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">override</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span><span class="token operator">:</span>	
+	<span class="token comment">// Called every frame.</span>
+	<span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">Tick</span><span class="token punctuation">(</span><span class="token keyword">float</span> DeltaTime<span class="token punctuation">)</span> <span class="token keyword">override</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Called when the PlayerCharacter enters the BoxCollider's trigger area.</span>
+	<span class="token function">UFUNCTION</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">void</span> <span class="token function">OnComponentEnterInteractionArea</span><span class="token punctuation">(</span>UPrimitiveComponent<span class="token operator">*</span> OverlappedComp<span class="token punctuation">,</span> AActor<span class="token operator">*</span> OtherActor<span class="token punctuation">,</span> UPrimitiveComponent<span class="token operator">*</span> OtherComp<span class="token punctuation">,</span> int32 OtherBodyIndex<span class="token punctuation">,</span> <span class="token keyword">bool</span> bFromSweep<span class="token punctuation">,</span> <span class="token keyword">const</span> FHitResult<span class="token operator">&amp;</span> SweepResult<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Called when the PlayerCharacter leaves the BoxCollider's trigger area.</span>
+	<span class="token function">UFUNCTION</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">void</span> <span class="token function">OnComponentLeaveInteractionArea</span><span class="token punctuation">(</span><span class="token keyword">class</span> <span class="token class-name">UPrimitiveComponent</span><span class="token operator">*</span> OverlappedComp<span class="token punctuation">,</span> <span class="token keyword">class</span> <span class="token class-name">AActor</span><span class="token operator">*</span> OtherActor<span class="token punctuation">,</span> <span class="token keyword">class</span> <span class="token class-name">UPrimitiveComponent</span><span class="token operator">*</span> OtherComp<span class="token punctuation">,</span> int32 OtherBodyIndex<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Called when the PlayerCharacter interacts with an object in this Actor.</span>
+	<span class="token function">UFUNCTION</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">void</span> <span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Called when the PlayerCharacter has entered the BoxCollider's trigger</span>
+	<span class="token comment">// area and is looking around for objects to interact with.</span>
+	<span class="token function">UFUNCTION</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">void</span> <span class="token function">LookForInteractions</span><span class="token punctuation">(</span>APlayerCharacter<span class="token operator">*</span> PlayerCharacter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
+<p>So in the header file we:</p>
+<ul>
+<li>
+<p>Declare the base components we’ll need. These include a <code class="language-text">USceneComponent</code> as the Root Component (without this scaling and transforms of other components is tricky) and a <code class="language-text">UBoxComponent</code> to use as a trigger collision box.</p>
+</li>
+<li>
+<p>Define an array to hold all of the objects that can be interact with. This array can be omitted if you only want a single interactive object as we’ll add the interactive objects later.</p>
+</li>
+<li>
+<p>Define a variable to hold the interactive object the PlayerCharacter is currently looking at, if any.</p>
+</li>
+<li>
+<p>Define the timer that manages running the <code class="language-text">LookForInteractions</code> method on a loop.</p>
+</li>
+<li>
+<p>Define two functions <code class="language-text">OnComponentEnterInteractionArea</code> and <code class="language-text">OnComponentLeaveInteractionArea</code> that are called when the PlayerCharacter enters and leaves the BoxCollider’s trigger area.</p>
+</li>
+<li>
+<p>Define the <code class="language-text">Interact</code> function that handles what happens when the PlayerCharacter presses the action to interact with an interactive object.</p>
+</li>
+<li>
+<p>Define the <code class="language-text">LookForInteractions</code> function that is run on a loop when the PlayerCharacter is inside of the BoxCollider’s trigger area.</p>
+</li>
+</ul>
+<p>That was mostly just definitions so lets get into the cpp file:</p>
+<p>*<strong>InteractiveActor.cpp</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"InteractiveActor.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"PlayerCharacter.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/BoxComponent.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/SceneComponent.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/StaticMeshComponent.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Components/TextRenderComponent.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"Camera/CameraComponent.h"</span></span>
+
+<span class="token comment">// To help us see what the PlayerCharacter is looking at.</span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"DrawDebugHelpers.h"</span></span>
+
+<span class="token comment">/**
+ * Sets default values.
+ */</span>
+<span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">AInteractiveActor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+ 	<span class="token comment">// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.</span>
+	PrimaryActorTick<span class="token punctuation">.</span>bCanEverTick <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the Root and set it as the RootComponent.</span>
+	Root <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>USceneComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Root"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">SetRootComponent</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the BoxComponent and set it to be a collision trigger and then</span>
+	<span class="token comment">// attach it to the RootComponent.</span>
+	BoxCollider <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UBoxComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"BoxCollider"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetGenerateOverlapEvents</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetCollisionProfileName</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Trigger"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the TextRenderComponent and add a generic "Press E to Interact"</span>
+	<span class="token comment">// message and set it to be invisible so the PlayerCharacter can't see it</span>
+	<span class="token comment">// and lastly attach it to the RootComponent.</span>
+	NoticeText <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UTextRenderComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"NoticeText"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">90.f</span><span class="token punctuation">,</span> <span class="token number">80.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetText</span><span class="token punctuation">(</span><span class="token class-name">FText</span><span class="token double-colon punctuation">::</span><span class="token function">FromString</span><span class="token punctuation">(</span><span class="token string">"Press E to Interact"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetTextRenderColor</span><span class="token punctuation">(</span>FColor<span class="token double-colon punctuation">::</span>Blue<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetVisibility</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Called when the game starts or when spawned.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	
+	<span class="token comment">// Set the methods that are used to respond to when the player enters or</span>
+	<span class="token comment">// leaves the BoxCollider's trigger area.</span>
+	BoxCollider<span class="token operator">-></span>OnComponentBeginOverlap<span class="token punctuation">.</span><span class="token function">AddDynamic</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>AInteractiveActor<span class="token double-colon punctuation">::</span>OnComponentEnterInteractionArea<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span>OnComponentEndOverlap<span class="token punctuation">.</span><span class="token function">AddDynamic</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>AInteractiveActor<span class="token double-colon punctuation">::</span>OnComponentLeaveInteractionArea<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Called every frame.
+ *
+ * @param DeltaTime The difference in time between the last frame and this one.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">Tick</span><span class="token punctuation">(</span><span class="token keyword">float</span> DeltaTime<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">Tick</span><span class="token punctuation">(</span>DeltaTime<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * When a component enters this Actor's BoxCollider trigger area we check to
+ * see if that component belonged to the PlayerCharacter and if so we start
+ * the timer that runs the method that checks to see what the PlayerCharacter
+ * is looking at.
+ *
+ * @param OverlappedComp
+ * @param OtherActor
+ * @param OtherComp
+ * @param OtherBodyIndex
+ * @param bFromSweep
+ * @param SweepResult
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">OnComponentEnterInteractionArea</span><span class="token punctuation">(</span>UPrimitiveComponent<span class="token operator">*</span> OverlappedComp<span class="token punctuation">,</span> AActor<span class="token operator">*</span> OtherActor<span class="token punctuation">,</span> UPrimitiveComponent<span class="token operator">*</span> OtherComp<span class="token punctuation">,</span> int32 OtherBodyIndex<span class="token punctuation">,</span> <span class="token keyword">bool</span> bFromSweep<span class="token punctuation">,</span> <span class="token keyword">const</span> FHitResult<span class="token operator">&amp;</span> SweepResult<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token comment">// Return early if anything is null so we can avoid a potential crash.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">this</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherComp <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Try to cast to `PlayerCharacter` to see if it was the PlayerCharacter</span>
+	<span class="token comment">// that entered the interaction area. If not we can return early.</span>
+	APlayerCharacter<span class="token operator">*</span> PlayerCharacter <span class="token operator">=</span> <span class="token generic-function"><span class="token function">Cast</span><span class="token generic class-name"><span class="token operator">&lt;</span>APlayerCharacter<span class="token operator">></span></span></span><span class="token punctuation">(</span>OtherActor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>PlayerCharacter <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create a FTimerDelegate so that we can pass the PlayerCharacter object to</span>
+	<span class="token comment">// our `LookForInteractions` method.</span>
+	FTimerDelegate PlayerLookTimerDel<span class="token punctuation">;</span>
+	PlayerLookTimerDel<span class="token punctuation">.</span><span class="token function">BindUFunction</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token function">FName</span><span class="token punctuation">(</span><span class="token string">"LookForInteractions"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> PlayerCharacter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Set a timer that runs the `LookForInteractions` method every 0.1s which</span>
+	<span class="token comment">// checks to see if a Player is looking at an object that can be interacted with.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">GetTimerManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">SetTimer</span><span class="token punctuation">(</span>PlayerLookTimer<span class="token punctuation">,</span> PlayerLookTimerDel<span class="token punctuation">,</span> <span class="token number">0.1f</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * When a component leaves this Actor's BoxCollider trigger area we check to see
+ * if it was the PlayerCharacter and if so we stop the timer and hide the notice text.
+ *
+ * @param OverlappedComp
+ * @param OtherActor
+ * @param OtherComp
+ * @param OtherBodyIndex
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">OnComponentLeaveInteractionArea</span><span class="token punctuation">(</span><span class="token keyword">class</span> <span class="token class-name">UPrimitiveComponent</span><span class="token operator">*</span> OverlappedComp<span class="token punctuation">,</span> <span class="token keyword">class</span> <span class="token class-name">AActor</span><span class="token operator">*</span> OtherActor<span class="token punctuation">,</span> <span class="token keyword">class</span> <span class="token class-name">UPrimitiveComponent</span><span class="token operator">*</span> OtherComp<span class="token punctuation">,</span> int32 OtherBodyIndex<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token comment">// Return early if anything is null so we can avoid a potential crash.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">this</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherComp <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Try to cast to `PlayerCharacter` to see if it was the PlayerCharacter</span>
+	<span class="token comment">// that left the interaction area. If not we can return early.</span>
+	APlayerCharacter<span class="token operator">*</span> PlayerCharacter <span class="token operator">=</span> <span class="token generic-function"><span class="token function">Cast</span><span class="token generic class-name"><span class="token operator">&lt;</span>APlayerCharacter<span class="token operator">></span></span></span><span class="token punctuation">(</span>OtherActor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>PlayerCharacter <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Stop the timer that checks for the player interacting with objects as</span>
+	<span class="token comment">// the player is no longer in range to do so.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">GetTimerManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ClearTimer</span><span class="token punctuation">(</span>PlayerLookTimer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Run on a timer when the PlayerCharacter enters the BoxCollider's trigger area
+* and it checks to see if the PlayerCharacter is looking at any objects that can
+* be interacted with by sending a trace from the PlayerCharacter's camera and
+* checking for blocking collisions.
+* 
+* @param PlayerCharacter The PlayerCharacter that entered the BoxCollider's bounds.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">LookForInteractions</span><span class="token punctuation">(</span>APlayerCharacter<span class="token operator">*</span> PlayerCharacter<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	FHitResult OutHit<span class="token punctuation">;</span>
+	FCollisionQueryParams CollisionParams<span class="token punctuation">;</span>
+
+	<span class="token comment">// Set the start of the trace to be the player's camera.</span>
+	FVector Start <span class="token operator">=</span> PlayerCharacter<span class="token operator">-></span>PlayerCamera<span class="token operator">-></span><span class="token function">GetComponentLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	FVector ForwardVector <span class="token operator">=</span> PlayerCharacter<span class="token operator">-></span>PlayerCamera<span class="token operator">-></span><span class="token function">GetForwardVector</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Set the end of the trace to be 1000.f units from the start in the direction</span>
+	<span class="token comment">// the player is facing.</span>
+	FVector End <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>ForwardVector <span class="token operator">*</span> <span class="token number">1000.f</span><span class="token punctuation">)</span> <span class="token operator">+</span> Start<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// DEBUG</span>
+	<span class="token function">DrawDebugLine</span><span class="token punctuation">(</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> Start<span class="token punctuation">,</span> End<span class="token punctuation">,</span> FColor<span class="token double-colon punctuation">::</span>Green<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// If there's no collision or the collision wasn't a blocking collision then</span>
+	<span class="token comment">// we can return early.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">LineTraceSingleByChannel</span><span class="token punctuation">(</span>OutHit<span class="token punctuation">,</span> Start<span class="token punctuation">,</span> End<span class="token punctuation">,</span> ECC_Visibility<span class="token punctuation">,</span> CollisionParams<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>OutHit<span class="token punctuation">.</span>bBlockingHit<span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// If there's no component then we also return early because we only deal</span>
+	<span class="token comment">// with the components of the InteractiveObjects.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>OutHit<span class="token punctuation">.</span><span class="token function">GetComponent</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Attempt to cast the component to a UStaticMeshComponent and return early</span>
+	<span class="token comment">// if we can't.</span>
+	UStaticMeshComponent<span class="token operator">*</span> InteractiveComponentHit <span class="token operator">=</span> <span class="token generic-function"><span class="token function">Cast</span><span class="token generic class-name"><span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span>OutHit<span class="token punctuation">.</span><span class="token function">GetComponent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>InteractiveComponentHit <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// ...</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * When this Actor is interacted with we...
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token comment">// Nothing here yet.</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>Alright that was quite a bit so lets break it down:</p>
+<ul>
+<li>
+<p>We have to make sure we include all of the header files of the components we forward declared in the header file. We also include <code class="language-text">DrawDebugHelpers.h</code> so we can see the trace we perform.</p>
+</li>
+<li>
+<p>In the constructor we set up the components we defined in the header. This includes the Root Component, the BoxCollider, and the NoticeText and all of their default values.</p>
+</li>
+<li>
+<p>In <code class="language-text">BeginPlay</code> we assign the methods that are meant to respond to a component entering/exiting the BoxCollider’s trigger area which are <code class="language-text">OnComponentEnterInteractionArea</code> and <code class="language-text">OnComponentLeaveInteractionArea</code>.</p>
+</li>
+<li>
+<p>Now in <code class="language-text">OnComponentEnterInteractionArea</code>, which again is called when a component enters the trigger area, we check to see if it is the PlayerCharacter and if so we bind the <code class="language-text">LookForInteractions</code> method to run on a timer every 0.1 seconds. We need to use <code class="language-text">FTimerDelegate</code> since we want to pass a parameter to <code class="language-text">LookForInteractions</code> which is the PlayerCharacter. The <code class="language-text">true</code> at the end of <code class="language-text">SetTimer</code> means that this timer will loop every 0.1 seconds and keep calling <code class="language-text">LookForInteractions</code> until it is stopped. We also set the NoticeText to be visible.</p>
+</li>
+<li>
+<p>In <code class="language-text">OnComponentLeaveInteractionArea</code>, which is called when a component exits the trigger area, we check again check to see if it is the PlayerCharacter and if so we cancel the timer we set in <code class="language-text">OnComponentEnterInteractionArea</code> so that <code class="language-text">LookForInteractions</code> is no longer being called as the PlayerCharacter is no longer in range of any objects they can interact with. We also set the NoticeText to not be visible again.</p>
+</li>
+<li>
+<p>In <code class="language-text">LookForInteractions</code>, which is set to be run on a loop every X seconds once the PlayerCharacter has entered the BoxCollider’s trigger area, we send out a trace from the PlayerCharacter’s camera and see if it collides with anything. If there’s a collision we check to see if that collision is one of the interactive objects in the <code class="language-text">InteractiveObjects</code> array and if so we don’t do anything yet. We’ll be adding that functionality in soon.</p>
+</li>
+<li>
+<p>Lastly, <code class="language-text">Interact</code> is going to be called when the PlayerCharacter presses the button to interact with an object but we’re not ready to do that yet.</p>
+</li>
+</ul>
+<p>So that was a bit much but just make sure you get a good understanding of it before moving on. Also make sure that the above compiles for you and lets get to adding interactive objects to our Actor.</p>
+<h2><strong>Adding Interactive Objects</strong></h2>
+<p>If you drag out the <code class="language-text">InteractiveActor</code> onto the scene you’ll see…nothing. This is because we haven’t added any meshes or anything we can see yet. In this section we’re going to add a simple block and smaller block to act as a makeshift lever that our PlayerCharacter is going to interact with to move.</p>
+<p>So back in the <code class="language-text">InteractiveActor.h</code> script add the following below the definition for the <code class="language-text">Root</code> component:</p>
+<p><strong>InteractiveActor.h</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// The RootComponent of this Actor.</span>
+<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadOnly<span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">USceneComponent</span><span class="token operator">*</span> Root<span class="token punctuation">;</span>
+
+<span class="token comment">// A non-interactive desk.</span>
+<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+UStaticMeshComponent<span class="token operator">*</span> Desk<span class="token punctuation">;</span>
+
+<span class="token comment">// An interactive drawer in the desk that the PlayerCharacter can interact with.</span>
+<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+UStaticMeshComponent<span class="token operator">*</span> DeskDrawer<span class="token punctuation">;</span></code></pre></div>
+<p>Now lets setup the meshes in the cpp file and position them so that the drawer is positioned in the correct place in the desk.</p>
+<p><strong>InteractiveActor.cpp</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// Load the meshes used for the Desk and Drawer.</span>
+<span class="token keyword">static</span> ConstructorHelpers<span class="token double-colon punctuation">::</span>FObjectFinder<span class="token operator">&lt;</span>UStaticMesh<span class="token operator">></span><span class="token function">DeskMeshAsset</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"StaticMesh'/Game/Models/Furniture/Desk/desk_desk.desk_desk'"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">static</span> ConstructorHelpers<span class="token double-colon punctuation">::</span>FObjectFinder<span class="token operator">&lt;</span>UStaticMesh<span class="token operator">></span><span class="token function">DeskDrawerMeshAsset</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"StaticMesh'/Game/Models/Furniture/Desk/desk_drawer.desk_drawer'"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create the Root and set it as the RootComponent.</span>
+Root <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>USceneComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Root"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token function">SetRootComponent</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create the BoxComponent and set it to be a collision trigger and then</span>
+<span class="token comment">// attach it to the RootComponent.</span>
+BoxCollider <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UBoxComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"BoxCollider"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+BoxCollider<span class="token operator">-></span><span class="token function">SetGenerateOverlapEvents</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+BoxCollider<span class="token operator">-></span><span class="token function">SetCollisionProfileName</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Trigger"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// Update: Change the box extent and the position so that it extends mostly</span>
+<span class="token comment">// in front of the lever.</span>
+BoxCollider<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">20.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+BoxCollider<span class="token operator">-></span><span class="token function">SetBoxExtent</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">150.f</span><span class="token punctuation">,</span> <span class="token number">100.f</span><span class="token punctuation">,</span> <span class="token number">80.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+BoxCollider<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create the component for the Desk, set its mesh and position and then</span>
+<span class="token comment">// attach it to the Root.</span>
+Desk <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Desk"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Desk<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">110.f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">40.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Desk<span class="token operator">-></span><span class="token function">SetRelativeRotation</span><span class="token punctuation">(</span><span class="token function">FRotator</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">90.f</span><span class="token punctuation">,</span> <span class="token number">0.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Desk<span class="token operator">-></span><span class="token function">SetRelativeScale3D</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">2.f</span><span class="token punctuation">,</span> <span class="token number">2.f</span><span class="token punctuation">,</span> <span class="token number">2.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+Desk<span class="token operator">-></span><span class="token function">SetStaticMesh</span><span class="token punctuation">(</span>DeskMeshAsset<span class="token punctuation">.</span>Object<span class="token punctuation">)</span><span class="token punctuation">;</span>
+Desk<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// Create the component for the Drawer, set its mesh and position and</span>
+<span class="token comment">// attach it to the Desk.</span>
+DeskDrawer <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"DeskDrawer"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+DeskDrawer<span class="token operator">-></span><span class="token function">SetStaticMesh</span><span class="token punctuation">(</span>DeskDrawerMeshAsset<span class="token punctuation">.</span>Object<span class="token punctuation">)</span><span class="token punctuation">;</span>
+DeskDrawer<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Desk<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
+<p><strong>Note:</strong> As mentioned earlier, these assets are from the <a href="https://www.kenney.nl/assets/furniture-kit">Kenney Furniture Kit</a>. I just copied over the desk fbx into a Models folder and it imports both the desk and the desk drawer. These are the same assets used in the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a>.</p>
+<p>The component tree will look something like this (mine looks a bit different as it’s a copy from the repo and it has extra elements):</p>
+<p><img src="../../images/aug/unreal-an-in-depth-guide-to-creating-interactive-actors/component-overview.png" alt="Component Overview"></p>
+<p>Alright so a bit more than in the header but it’s pretty simple. Since we’re actually adding things we want to change the extents of the box collider so that we have a decent area in front of the desk where the PlayerCharacter can see that it’s interactive. Then we just create the Desk and DeskDrawer meshes and setup their location/position so that the drawer is a part of the desk.</p>
+<p>Now we have to add the DeskDrawer to the <code class="language-text">InteractiveObjects</code> array. We can do this in the constructor but I prefer do it in <code class="language-text">BeginPlay</code>:</p>
+<p><strong>InteractiveActor.cpp</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">/**
+ * Called when the game starts or when spawned.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	
+	<span class="token comment">// Set the methods that are used to respond to when the player enters or</span>
+	<span class="token comment">// leaves the BoxCollider's trigger area.</span>
+	BoxCollider<span class="token operator">-></span>OnComponentBeginOverlap<span class="token punctuation">.</span><span class="token function">AddDynamic</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>AInteractiveActor<span class="token double-colon punctuation">::</span>OnComponentEnterInteractionArea<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span>OnComponentEndOverlap<span class="token punctuation">.</span><span class="token function">AddDynamic</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>AInteractiveActor<span class="token double-colon punctuation">::</span>OnComponentLeaveInteractionArea<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Add the DeskDrawer to the `InteractiveObjects` array.</span>
+	<span class="token comment">// If you just have a single interactive object and therefore don't have</span>
+	<span class="token comment">// an `InteractiveObjects` array you can omit this.</span>
+	InteractiveObjects<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>DeskDrawer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>At this point you might be wondering why <code class="language-text">InteractiveObjects</code> is an array if we only add one thing. If you only plan to have 1 item be interactive then you don’t need an array and you can just check for that single item as I’ll show below. This tutorial shows how to use multiple interactive pieces as that’s more complex and is useful in situations like a control panel where you might have multiple buttons and levers and you can check out the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> for a more complex example.</p>
+<p>Now let’s add the functionality that loops through the <code class="language-text">InteractiveObjects</code> array and looks to see if the Player is looking at any of them. So in the <code class="language-text">LookForInteractions</code> method, which again runs while the PlayerCharacter is near the <code class="language-text">InteractiveActor</code>, we can do:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">/**
+ * Run on a timer when the PlayerCharacter enters the BoxCollider's trigger area
+ * and it checks to see if the PlayerCharacter is looking at any objects that can
+ * be interacted with by sending a trace from the PlayerCharacter's camera and
+ * checking for blocking collisions.
+ * 
+ * @param PlayerCharacter The PlayerCharacter that entered the BoxCollider's bounds.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">LookForInteractions</span><span class="token punctuation">(</span>APlayerCharacter<span class="token operator">*</span> PlayerCharacter<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	FHitResult OutHit<span class="token punctuation">;</span>
+	FCollisionQueryParams CollisionParams<span class="token punctuation">;</span>
+
+	<span class="token comment">// Set the start of the trace to be the player's camera.</span>
+	FVector Start <span class="token operator">=</span> PlayerCharacter<span class="token operator">-></span>PlayerCamera<span class="token operator">-></span><span class="token function">GetComponentLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	FVector ForwardVector <span class="token operator">=</span> PlayerCharacter<span class="token operator">-></span>PlayerCamera<span class="token operator">-></span><span class="token function">GetForwardVector</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Set the end of the trace to be 1000.f units from the start in the direction</span>
+	<span class="token comment">// the player is facing.</span>
+	FVector End <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>ForwardVector <span class="token operator">*</span> <span class="token number">1000.f</span><span class="token punctuation">)</span> <span class="token operator">+</span> Start<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// DEBUG</span>
+	<span class="token function">DrawDebugLine</span><span class="token punctuation">(</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> Start<span class="token punctuation">,</span> End<span class="token punctuation">,</span> FColor<span class="token double-colon punctuation">::</span>Green<span class="token punctuation">,</span> <span class="token boolean">false</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// If there's no collision or the collision wasn't a blocking collision then</span>
+	<span class="token comment">// we can return early.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">LineTraceSingleByChannel</span><span class="token punctuation">(</span>OutHit<span class="token punctuation">,</span> Start<span class="token punctuation">,</span> End<span class="token punctuation">,</span> ECC_Visibility<span class="token punctuation">,</span> CollisionParams<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>OutHit<span class="token punctuation">.</span>bBlockingHit<span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// If there's no component then we also return early because we only deal</span>
+	<span class="token comment">// with the components of the InteractiveObjects.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>OutHit<span class="token punctuation">.</span><span class="token function">GetComponent</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Attempt to cast the component to a UStaticMeshComponent and return early</span>
+	<span class="token comment">// if we can't.</span>
+	UStaticMeshComponent<span class="token operator">*</span> InteractiveComponentHit <span class="token operator">=</span> <span class="token generic-function"><span class="token function">Cast</span><span class="token generic class-name"><span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span>OutHit<span class="token punctuation">.</span><span class="token function">GetComponent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>InteractiveComponentHit <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// If the component that the PlayerCharacter is looking at is not part of the</span>
+	<span class="token comment">// array of interactive objects then we can return early.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>InteractiveObjects<span class="token punctuation">.</span><span class="token function">Contains</span><span class="token punctuation">(</span>InteractiveComponentHit<span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>ObjectCurrentlyBeingLookedAt <span class="token operator">!=</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span>
+		<span class="token punctuation">{</span>
+			<span class="token comment">// Set `RenderCustomDepth` to be false so that the object isn't highlighted anymore.</span>
+			ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">SetRenderCustomDepth</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+			<span class="token comment">// Set the NoticeText to be invisible since the player can no longer interact with</span>
+			<span class="token comment">// with this object anymore.</span>
+			NoticeText<span class="token operator">-></span><span class="token function">SetVisibility</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		<span class="token punctuation">}</span>
+
+		<span class="token comment">// Lastly since the PlayerCharacter is no longer looking at a valid interactive object</span>
+		<span class="token comment">// then we set `ObjectCurrentlyBeingLookedAt` to a nullptr and return.</span>
+		ObjectCurrentlyBeingLookedAt <span class="token operator">=</span> <span class="token keyword">nullptr</span><span class="token punctuation">;</span>
+		<span class="token keyword">return</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+
+	<span class="token comment">// Loop through all of the objects marked as interactive and if the player</span>
+	<span class="token comment">// is currently looking at one of them then highlight it and set it as the</span>
+	<span class="token comment">// new value for `ObjectCurrentlyBeingLookedAt`.</span>
+	<span class="token keyword">for</span> <span class="token punctuation">(</span>UStaticMeshComponent<span class="token operator">*</span> InteractiveObject <span class="token operator">:</span> InteractiveObjects<span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token keyword">if</span> <span class="token punctuation">(</span>InteractiveObject <span class="token operator">==</span> InteractiveComponentHit<span class="token punctuation">)</span>
+		<span class="token punctuation">{</span>
+			<span class="token comment">// Set the `InteractiveComponentHit` to be the new value of `ObjectCurrentlyBeingLookedAt`</span>
+			<span class="token comment">// since that's what the PlayerCharacter is currently looking at.</span>
+			ObjectCurrentlyBeingLookedAt <span class="token operator">=</span> InteractiveComponentHit<span class="token punctuation">;</span>
+
+			<span class="token comment">// Set `RenderCustomDepth` to be true so that the highlight is</span>
+			<span class="token comment">// added to the object.</span>
+			ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">SetRenderCustomDepth</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+			<span class="token comment">// Set the NoticeText to be visible so the player knows that they can interact with it.</span>
+			NoticeText<span class="token operator">-></span><span class="token function">SetVisibility</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+			<span class="token comment">// Break out of the loop early since we only want to deal with one</span>
+			<span class="token comment">// interactive object at a time.</span>
+			<span class="token keyword">break</span><span class="token punctuation">;</span>
+		<span class="token punctuation">}</span>
+	<span class="token punctuation">}</span>
+
+	<span class="token comment">// For a single interactive object you could do:</span>
+	<span class="token comment">// if (InteractiveObject != InteractiveComponentHit)</span>
+	<span class="token comment">// {</span>
+	<span class="token comment">//   DeskDrawer->SetRenderCustomDepth(false);</span>
+	<span class="token comment">//   NoticeText->SetVisibility(false);</span>
+	<span class="token comment">//   return;</span>
+	<span class="token comment">// }</span>
+	<span class="token comment">//</span>
+	<span class="token comment">// DeskDrawer->SetRenderCustomDepth(true);</span>
+	<span class="token comment">// NoticeText->SetVisibility(true)</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>Now here we added a bit more. The first check is to check if what the PlayerCharacter is currently looking at is in the array of interactive objects and if not we turn off the notice text and highlight for the previous value of <code class="language-text">ObjectCurrentlyBeingLookedAt</code> if there was one and return early.</p>
+<p>After that we loop through all of the interactive objects to see if the PlayerCharacter is currently looking at one of them and if they are then we set that as the new <code class="language-text">ObjectCurrentlyBeingLookedAt</code> and we set it to be highlighted.</p>
+<p>If you compile this and drag out the <code class="language-text">InteractiveActor</code> onto the scene and hit play you’ll notice two things. When you get in range of the InteractiveActor’s BoxCollider trigger area you’ll see the traces being run from the PlayerCharacter’s camera to check what the PlayerCharacter is looking at. Now use those traces to help you guide the camera towards the DeskDrawer and when you look at it you should see it highlighted. You should also see the NoticeText pop up and let the PlayerCharacter know they can interact with the DeskDrawer but that doesn’t do anything yet until we add it in the next section.</p>
+<h2><strong>Implementing Interaction</strong></h2>
+<p>So as of right now our PlayerCharacter can get in range of the InteractiveActor we’ll see the traces and if they look at an interactive object, like the DeskDrawer, they’ll see a highlight around the item letting them know that they can interact with it but now we have to implement the actual interaction. This is going to involve changes to the PlayerCharacter and the InteractiveActor.</p>
+<p><img src="../../images/aug/unreal-an-in-depth-guide-to-creating-interactive-actors/highlighted-object.png" alt="Highlighted Object"></p>
+<p>First lets get into what we have to add to the PlayerCharacter as it’s pretty minimal.</p>
+<ul>
+<li>
+<p>We need to add a variable that is populated by the InteractiveActor the PlayerCharacter is looking at.</p>
+</li>
+<li>
+<p>We need to add an <code class="language-text">Interact</code> method that is called when the interact action key is pressed.</p>
+</li>
+</ul>
+<p><strong>PlayerCharacter.h</strong></p>
+<p>Where your other properties are declared:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// The InteractiveActor that the PlayerCharacter is nearby.</span>
+<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadOnly<span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">AInteractiveActor</span><span class="token operator">*</span> InteractionArea<span class="token punctuation">;</span></code></pre></div>
+<p>and then later down where you declare the methods:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// Called when the "Interact" action is used.</span>
+<span class="token keyword">void</span> <span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
+<p>Now in the cpp file we have to bind the action to the method and declare it like so:</p>
+<p><strong>PlayerCharacter.cpp</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">/**
+ * Called to bind functionality to input.
+ *
+ * @param PlayerInputComponent An Actor component that enables us to bind axis events and action inputs to methods.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">APlayerCharacter</span><span class="token double-colon punctuation">::</span><span class="token function">SetupPlayerInputComponent</span><span class="token punctuation">(</span>UInputComponent<span class="token operator">*</span> PlayerInputComponent<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">SetupPlayerInputComponent</span><span class="token punctuation">(</span>PlayerInputComponent<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// When the mouse is moved we turn the player.</span>
+	PlayerInputComponent<span class="token operator">-></span><span class="token function">BindAxis</span><span class="token punctuation">(</span><span class="token string">"Turn"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>APlayerCharacter<span class="token double-colon punctuation">::</span>AddControllerYawInput<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	PlayerInputComponent<span class="token operator">-></span><span class="token function">BindAxis</span><span class="token punctuation">(</span><span class="token string">"LookUpDown"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>APlayerCharacter<span class="token double-colon punctuation">::</span>AddControllerPitchInput<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// When the "Move_ForwardBack" or "Move_LeftRight" axis is used we call the methods to make</span>
+	<span class="token comment">// that happen.</span>
+	PlayerInputComponent<span class="token operator">-></span><span class="token function">BindAxis</span><span class="token punctuation">(</span><span class="token string">"Move_ForwardBack"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>APlayerCharacter<span class="token double-colon punctuation">::</span>MoveForwardBack<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	PlayerInputComponent<span class="token operator">-></span><span class="token function">BindAxis</span><span class="token punctuation">(</span><span class="token string">"Move_LeftRight"</span><span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>APlayerCharacter<span class="token double-colon punctuation">::</span>MoveLeftRight<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// When the "Interact" action is used we call the `Interact` method.</span>
+	PlayerInputComponent<span class="token operator">-></span><span class="token function">BindAction</span><span class="token punctuation">(</span><span class="token string">"Interact"</span><span class="token punctuation">,</span> IE_Pressed<span class="token punctuation">,</span> <span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>APlayerCharacter<span class="token double-colon punctuation">::</span>Interact<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * When the player presses the interact action button we check to see
+ * if `InteractionArea` is populated. If it's not populated then we return
+ * as there's nothing to interact with otherwise we call that InteractiveActor's
+ * `Interact` method.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">APlayerCharacter</span><span class="token double-colon punctuation">::</span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>InteractionArea <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+	InteractionArea<span class="token operator">-></span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>So all we did above was use <code class="language-text">BindAction</code> to bind the interact button being pressed with the <code class="language-text">Interact</code> method being run. Note that mine also contains the bindings for turning and moving and if you used a different Character script yours might look slightly different but it doesn’t matter as long as the interaction action is bound.</p>
+<p>Below that we declare the <code class="language-text">Interact</code> method which checks to make sure we’re near an <code class="language-text">InteractiveActor</code> and if so we run that <code class="language-text">InteractiveActor</code>s <code class="language-text">Interact</code> method.</p>
+<p>So now we head on over to InteractiveActor where we have to do the following:</p>
+<ul>
+<li>
+<p>Set the <code class="language-text">InteractionArea</code> property of the PlayerCharacter when they are in the BoxCollider’s trigger area.</p>
+</li>
+<li>
+<p>Define what should happen when the PlayerCharacter calls this InteractiveActor’s <code class="language-text">Interact</code> method.</p>
+</li>
+</ul>
+<p>All of this takes place in the InteractiveActor.cpp file.</p>
+<p><strong>InteractiveActor.cpp</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">/**
+ * When a component enters this Actor's BoxCollider trigger area we check to
+ * see if that component belonged to the PlayerCharacter and if so we start
+ * the timer that runs the method that checks to see what the PlayerCharacter
+ * is looking at.
+ *
+ * @param OverlappedComp
+ * @param OtherActor
+ * @param OtherComp
+ * @param OtherBodyIndex
+ * @param bFromSweep
+ * @param SweepResult
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">OnComponentEnterInteractionArea</span><span class="token punctuation">(</span>UPrimitiveComponent<span class="token operator">*</span> OverlappedComp<span class="token punctuation">,</span> AActor<span class="token operator">*</span> OtherActor<span class="token punctuation">,</span> UPrimitiveComponent<span class="token operator">*</span> OtherComp<span class="token punctuation">,</span> int32 OtherBodyIndex<span class="token punctuation">,</span> <span class="token keyword">bool</span> bFromSweep<span class="token punctuation">,</span> <span class="token keyword">const</span> FHitResult<span class="token operator">&amp;</span> SweepResult<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token comment">// Return early if anything is null so we can avoid a potential crash.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">this</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherComp <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Try to cast to `PlayerCharacter` to see if it was the PlayerCharacter</span>
+	<span class="token comment">// that entered the interaction area. If not we can return early.</span>
+	APlayerCharacter<span class="token operator">*</span> PlayerCharacter <span class="token operator">=</span> <span class="token generic-function"><span class="token function">Cast</span><span class="token generic class-name"><span class="token operator">&lt;</span>APlayerCharacter<span class="token operator">></span></span></span><span class="token punctuation">(</span>OtherActor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>PlayerCharacter <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Set this InteractiveActor to be the value of the PlayerCharacter's</span>
+	<span class="token comment">// `InteractionArea` so if they press the interact button we know they want</span>
+	<span class="token comment">// to interact with an interactive object in this InteractiveActor.</span>
+	PlayerCharacter<span class="token operator">-></span>InteractionArea <span class="token operator">=</span> <span class="token keyword">this</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create a FTimerDelegate so that we can pass the PlayerCharacter object to</span>
+	<span class="token comment">// our `LookForInteractions` method.</span>
+	FTimerDelegate PlayerLookTimerDel<span class="token punctuation">;</span>
+	PlayerLookTimerDel<span class="token punctuation">.</span><span class="token function">BindUFunction</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token function">FName</span><span class="token punctuation">(</span><span class="token string">"LookForInteractions"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> PlayerCharacter<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Set a timer that runs the `LookForInteractions` method every 0.1s which</span>
+	<span class="token comment">// checks to see if a Player is looking at an object that can be interacted with.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">GetTimerManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">SetTimer</span><span class="token punctuation">(</span>PlayerLookTimer<span class="token punctuation">,</span> PlayerLookTimerDel<span class="token punctuation">,</span> <span class="token number">0.1f</span><span class="token punctuation">,</span> <span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * When a component leaves this Actor's BoxCollider trigger area we check to see
+ * if it was the PlayerCharacter and if so we stop the timer and hide the notice text.
+ *
+ * @param OverlappedComp
+ * @param OtherActor
+ * @param OtherComp
+ * @param OtherBodyIndex
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">OnComponentLeaveInteractionArea</span><span class="token punctuation">(</span><span class="token keyword">class</span> <span class="token class-name">UPrimitiveComponent</span><span class="token operator">*</span> OverlappedComp<span class="token punctuation">,</span> <span class="token keyword">class</span> <span class="token class-name">AActor</span><span class="token operator">*</span> OtherActor<span class="token punctuation">,</span> <span class="token keyword">class</span> <span class="token class-name">UPrimitiveComponent</span><span class="token operator">*</span> OtherComp<span class="token punctuation">,</span> int32 OtherBodyIndex<span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token comment">// Return early if anything is null so we can avoid a potential crash.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherActor <span class="token operator">==</span> <span class="token keyword">this</span><span class="token punctuation">)</span> <span class="token operator">||</span> <span class="token punctuation">(</span>OtherComp <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Try to cast to `PlayerCharacter` to see if it was the PlayerCharacter</span>
+	<span class="token comment">// that left the interaction area. If not we can return early.</span>
+	APlayerCharacter<span class="token operator">*</span> PlayerCharacter <span class="token operator">=</span> <span class="token generic-function"><span class="token function">Cast</span><span class="token generic class-name"><span class="token operator">&lt;</span>APlayerCharacter<span class="token operator">></span></span></span><span class="token punctuation">(</span>OtherActor<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>PlayerCharacter <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Set the InteractionArea of the PlayerCharacter to be a nullptr so that</span>
+	<span class="token comment">// they can't interact with this InteractiveActor when not in range.</span>
+	PlayerCharacter<span class="token operator">-></span>InteractionArea <span class="token operator">=</span> <span class="token keyword">nullptr</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Stop the timer that checks for the player interacting with objects as</span>
+	<span class="token comment">// the player is no longer in range to do so.</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token function">GetWorld</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator">-></span><span class="token function">GetTimerManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">ClearTimer</span><span class="token punctuation">(</span>PlayerLookTimer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>So what we did above was just set and remove the <code class="language-text">InteractionArea</code> for the PlayerCharacter when they enter and leave the BoxCollider trigger area of this InteractiveActor.</p>
+<p>Now finally to the <code class="language-text">Interact</code> method. This part is highly customizable and we’ll go about a couple different ways to do this. Since we’re having the PlayerCharacter interact with a drawer we’ll just have its Y position change to simulate it being opened.</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">/**
+ * When this Actor is interacted with we check to see what object it is and
+ * perform the interaction for that object.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>ObjectCurrentlyBeingLookedAt <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// If you only want 1 interactive object per InteractiveActor or you want to do the</span>
+	<span class="token comment">// same thing for every interactive object you can you can just check to see if</span>
+	<span class="token comment">// `ObjectCurrentlyBeingLookedAt` is null or not and if not you can do the interaction</span>
+	<span class="token comment">// logic like so:</span>
+	<span class="token comment">// FVector CurrentLocation = ObjectCurrentlyBeingLookedAt->GetRelativeLocation();</span>
+	<span class="token comment">// ObjectCurrentlyBeingLookedAt->SetRelativeLocation(FVector(CurrentLocation.X, -20.0f, CurrentLocation.Z));</span>
+
+	<span class="token comment">// Otherwise if you have multiple interactive objects you can check their name</span>
+	<span class="token comment">// and perform a different action for each one.</span>
+	FString InteractiveComponentName <span class="token operator">=</span> ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">GetName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>InteractiveComponentName <span class="token operator">==</span> <span class="token function">FString</span><span class="token punctuation">(</span><span class="token string">"DeskDrawer"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token comment">// If the PlayerCharacter is interacting with the desk drawer then we want to</span>
+		<span class="token comment">// move the desk drawer to that it looks like it was opened.</span>
+		FVector CurrentLocation <span class="token operator">=</span> ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">GetRelativeLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span>CurrentLocation<span class="token punctuation">.</span>X<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">20.0f</span><span class="token punctuation">,</span> CurrentLocation<span class="token punctuation">.</span>Z<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>In the example above I included a snippet that shows how to implement this if you only plan on having 1 interactive object per <code class="language-text">InteractiveActor</code> or if you want to do the same thing for every interactive object. If you’re using an array of interactive objects then you want to take the second approach and check to see what the name of it is if you want to do a different action for each object.</p>
+<p><strong>Note:</strong> Make sure you set an action in the Input map marked as “Interact”</p>
+<p>So now if you compile this and hit play and you go to desk and look at the drawer it will be highlighted like before but now if you press the button you set for interact you’ll see the desk drawer being opened.</p>
+<p><img src="../../images/aug/unreal-an-in-depth-guide-to-creating-interactive-actors/desk-drawer-open.png" alt="Desk Drawer Open"></p>
+<h2><strong>Multiple InteractiveActors</strong></h2>
+<p>This current setup works great if you just have a specialized InteractiveActor but what if you want more? Like if you want an interactive desk and a dresser and a control panel? This can be solved by script or Blueprints and we’ll go over how to do that next.</p>
+<p>If you want to keep a pure C++ solution then we can achieve multiple InteractiveActors by making InteractiveActor generic like so:</p>
+<ul>
+<li>
+<p>Remove the Desk and DeskDrawer meshes from the header and cpp file as they are unique to each InteractiveActor.</p>
+</li>
+<li>
+<p>Changing the definition of the <code class="language-text">Interact</code> method to be virtual.</p>
+</li>
+<li>
+<p>Removing most of the functionality of the <code class="language-text">Interact</code> method.</p>
+</li>
+</ul>
+<p><strong>InteractiveActor.h</strong></p>
+<p>Removing the following lines:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// A non-interactive desk.</span>
+<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+UStaticMeshComponent<span class="token operator">*</span> Desk<span class="token punctuation">;</span>
+
+<span class="token comment">// An interactive drawer in the desk that the PlayerCharacter can interact with.</span>
+<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+UStaticMeshComponent<span class="token operator">*</span> DeskDrawer<span class="token punctuation">;</span></code></pre></div>
+<p>Change the following lines:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// Change this:</span>
+<span class="token function">UFUNCTION</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">void</span> <span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token comment">// To this:</span>
+<span class="token function">UFUNCTION</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre></div>
+<p><strong>InteractiveActor.cpp</strong></p>
+<p>Remove anything about Desk and DeskDrawer from the constructor:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">AInteractiveActor</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+ 	<span class="token comment">// Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.</span>
+	PrimaryActorTick<span class="token punctuation">.</span>bCanEverTick <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the Root and set it as the RootComponent.</span>
+	Root <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>USceneComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Root"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token function">SetRootComponent</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the BoxComponent and set it to be a collision trigger and then</span>
+	<span class="token comment">// attach it to the RootComponent.</span>
+	BoxCollider <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UBoxComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"BoxCollider"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetGenerateOverlapEvents</span><span class="token punctuation">(</span><span class="token boolean">true</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetCollisionProfileName</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Trigger"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">20.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetBoxExtent</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">150.f</span><span class="token punctuation">,</span> <span class="token number">100.f</span><span class="token punctuation">,</span> <span class="token number">80.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the TextRenderComponent and add a generic "Press E to Interact"</span>
+	<span class="token comment">// message and set it to be invisible so the PlayerCharacter can't see it</span>
+	<span class="token comment">// and lastly attach it to the RootComponent.</span>
+	NoticeText <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UTextRenderComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"NoticeText"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">90.f</span><span class="token punctuation">,</span> <span class="token number">80.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetText</span><span class="token punctuation">(</span><span class="token class-name">FText</span><span class="token double-colon punctuation">::</span><span class="token function">FromString</span><span class="token punctuation">(</span><span class="token string">"Press E to Interact"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetTextRenderColor</span><span class="token punctuation">(</span>FColor<span class="token double-colon punctuation">::</span>Blue<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetVisibility</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	NoticeText<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>Remove any items added to the array in <code class="language-text">BeginPlay</code>:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token comment">// Remove any items being added to the array in `BeginPlay` so it looks like this.</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	
+	<span class="token comment">// Set the methods that are used to respond to when the player enters or</span>
+	<span class="token comment">// leaves the BoxCollider's trigger area.</span>
+	BoxCollider<span class="token operator">-></span>OnComponentBeginOverlap<span class="token punctuation">.</span><span class="token function">AddDynamic</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>AInteractiveActor<span class="token double-colon punctuation">::</span>OnComponentEnterInteractionArea<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	BoxCollider<span class="token operator">-></span>OnComponentEndOverlap<span class="token punctuation">.</span><span class="token function">AddDynamic</span><span class="token punctuation">(</span><span class="token keyword">this</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>AInteractiveActor<span class="token double-colon punctuation">::</span>OnComponentLeaveInteractionArea<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>Remove everything in <code class="language-text">Interact</code>:</p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp">
+<span class="token comment">// Modify this method to remove everything.</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor</span><span class="token double-colon punctuation">::</span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>By making the <code class="language-text">Interact</code> method virtual we can override it in the next script we create.</p>
+<p>Now go back to Unreal and right click the <code class="language-text">InteractiveActor</code> script and choose “Create C++ Class Derived from InteractiveActor” and name it “InteractiveActor_Desk”.</p>
+<p>In the header file for this we’re going to add the Desk and DeskDrawer mesh definitions and also the <code class="language-text">BeginPlay</code> and <code class="language-text">Interact</code> overrides so we can add the Drawer to the <code class="language-text">InteractiveObjects</code> array and then respond to what happens when it’s interacted with.</p>
+<p><strong>InteractiveActor_Desk.h</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">pragma</span> <span class="token expression">once</span></span>
+
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"CoreMinimal.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"InteractiveActor.h"</span></span>
+<span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"InteractiveActor_Desk.generated.h"</span></span>
+
+<span class="token comment">/**
+ * Creates an interactive desk with a drawer.
+ */</span>
+<span class="token function">UCLASS</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">INTERACTIVEOBJECTS_API</span> AInteractiveActor_Desk <span class="token operator">:</span> <span class="token keyword">public</span> AInteractiveActor
+<span class="token punctuation">{</span>
+	<span class="token function">GENERATED_BODY</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	
+<span class="token keyword">public</span><span class="token operator">:</span>
+	<span class="token comment">// Sets up the default values.</span>
+	<span class="token function">AInteractiveActor_Desk</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// A non-interactive desk.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+	UStaticMeshComponent<span class="token operator">*</span> Desk<span class="token punctuation">;</span>
+
+	<span class="token comment">// An interactive drawer in the desk that the PlayerCharacter can interact with.</span>
+	<span class="token function">UPROPERTY</span><span class="token punctuation">(</span>VisibleAnywhere<span class="token punctuation">,</span> BlueprintReadWrite<span class="token punctuation">)</span>
+	UStaticMeshComponent<span class="token operator">*</span> DeskDrawer<span class="token punctuation">;</span>
+
+<span class="token keyword">protected</span><span class="token operator">:</span>
+	<span class="token comment">// Called when the game starts or when spawned.</span>
+	<span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">override</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span><span class="token operator">:</span>
+	<span class="token comment">// Called when the PlayerCharacter interacts with an object in this Actor.</span>
+	<span class="token keyword">virtual</span> <span class="token keyword">void</span> <span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">override</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre></div>
+<p>The above should look familiar as it’s mostly what we had in the <code class="language-text">InteractiveActor</code> base script and this is just specialized for the desk.</p>
+<p><strong>InteractiveActor_Desk.cpp</strong></p>
+<div class="gatsby-highlight" data-language="cpp"><pre class="language-cpp"><code class="language-cpp"><span class="token macro property"><span class="token directive-hash">#</span><span class="token directive keyword">include</span> <span class="token string">"InteractiveActor_Desk.h"</span></span>
+
+<span class="token comment">/**
+ * Sets default values.
+ */</span>
+<span class="token class-name">AInteractiveActor_Desk</span><span class="token double-colon punctuation">::</span><span class="token function">AInteractiveActor_Desk</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token comment">// Load the meshes used for the Desk and Drawer.</span>
+	<span class="token keyword">static</span> ConstructorHelpers<span class="token double-colon punctuation">::</span>FObjectFinder<span class="token operator">&lt;</span>UStaticMesh<span class="token operator">></span><span class="token function">DeskMeshAsset</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"StaticMesh'/Game/Models/Furniture/Desk/desk_desk.desk_desk'"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token keyword">static</span> ConstructorHelpers<span class="token double-colon punctuation">::</span>FObjectFinder<span class="token operator">&lt;</span>UStaticMesh<span class="token operator">></span><span class="token function">DeskDrawerMeshAsset</span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"StaticMesh'/Game/Models/Furniture/Desk/desk_drawer.desk_drawer'"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the component for the Desk, set its mesh and position and then</span>
+	<span class="token comment">// attach it to the Root.</span>
+	Desk <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"Desk"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	Desk<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">110.f</span><span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">40.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	Desk<span class="token operator">-></span><span class="token function">SetRelativeRotation</span><span class="token punctuation">(</span><span class="token function">FRotator</span><span class="token punctuation">(</span><span class="token number">0.f</span><span class="token punctuation">,</span> <span class="token number">90.f</span><span class="token punctuation">,</span> <span class="token number">0.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	Desk<span class="token operator">-></span><span class="token function">SetRelativeScale3D</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span><span class="token number">2.f</span><span class="token punctuation">,</span> <span class="token number">2.f</span><span class="token punctuation">,</span> <span class="token number">2.f</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	Desk<span class="token operator">-></span><span class="token function">SetStaticMesh</span><span class="token punctuation">(</span>DeskMeshAsset<span class="token punctuation">.</span>Object<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	Desk<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Root<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Create the component for the Drawer, set its mesh and position and</span>
+	<span class="token comment">// attach it to the Desk.</span>
+	DeskDrawer <span class="token operator">=</span> <span class="token generic-function"><span class="token function">CreateDefaultSubobject</span><span class="token generic class-name"><span class="token operator">&lt;</span>UStaticMeshComponent<span class="token operator">></span></span></span><span class="token punctuation">(</span><span class="token function">TEXT</span><span class="token punctuation">(</span><span class="token string">"DeskDrawer"</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	DeskDrawer<span class="token operator">-></span><span class="token function">SetStaticMesh</span><span class="token punctuation">(</span>DeskDrawerMeshAsset<span class="token punctuation">.</span>Object<span class="token punctuation">)</span><span class="token punctuation">;</span>
+	DeskDrawer<span class="token operator">-></span><span class="token function">SetupAttachment</span><span class="token punctuation">(</span>Desk<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * Called when the game starts or when spawned.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor_Desk</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">BeginPlay</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Add the DeskDrawer to the `InteractiveObjects` array.</span>
+	InteractiveObjects<span class="token punctuation">.</span><span class="token function">Add</span><span class="token punctuation">(</span>DeskDrawer<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/**
+ * When this Actor is interacted with we check to see what object it is and
+ * perform the interaction for that object.
+ */</span>
+<span class="token keyword">void</span> <span class="token class-name">AInteractiveActor_Desk</span><span class="token double-colon punctuation">::</span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">{</span>
+	<span class="token class-name">Super</span><span class="token double-colon punctuation">::</span><span class="token function">Interact</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>ObjectCurrentlyBeingLookedAt <span class="token operator">==</span> <span class="token keyword">nullptr</span><span class="token punctuation">)</span> <span class="token keyword">return</span><span class="token punctuation">;</span>
+
+	<span class="token comment">// Otherwise if you have multiple interactive objects you can check their name</span>
+	<span class="token comment">// and perform a different action for each one.</span>
+	FString InteractiveComponentName <span class="token operator">=</span> ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">GetName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+	<span class="token keyword">if</span> <span class="token punctuation">(</span>InteractiveComponentName <span class="token operator">==</span> <span class="token function">FString</span><span class="token punctuation">(</span><span class="token string">"DeskDrawer"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+	<span class="token punctuation">{</span>
+		<span class="token comment">// If the PlayerCharacter is interacting with the desk drawer then we want to</span>
+		<span class="token comment">// move the desk drawer to that it looks like it was opened.</span>
+		FVector CurrentLocation <span class="token operator">=</span> ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">GetRelativeLocation</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+		ObjectCurrentlyBeingLookedAt<span class="token operator">-></span><span class="token function">SetRelativeLocation</span><span class="token punctuation">(</span><span class="token function">FVector</span><span class="token punctuation">(</span>CurrentLocation<span class="token punctuation">.</span>X<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">20.0f</span><span class="token punctuation">,</span> CurrentLocation<span class="token punctuation">.</span>Z<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	<span class="token punctuation">}</span>
+<span class="token punctuation">}</span></code></pre></div>
+<p>This should also look familiar, we just moved the Desk and Drawer mesh stuff from <code class="language-text">InteractiveActor</code> to here. In the <code class="language-text">BeginPlay</code> we we add the DeskDrawer to the <code class="language-text">InteractiveObjects</code> array like we did in the other script. The contents of <code class="language-text">Interact</code> are also the same as before but moved here.</p>
+<p>If you compile and drag out an instance of this script onto the scene and hit play it’ll behave the same as before but now you can create as many InteractiveActors as you wish and they can all behave differently.</p>
+<p>You can also override the <code class="language-text">OnComponentLookedAt</code> and <code class="language-text">OnComponentLookedAwayFrom</code> if you would like to have different behaviors for those.</p>
+<p>You can also choose to create Blueprints off the base class or even add delegates to know when the PlayerCharacter is looking at or away from the interactive items.</p>
+<h2><strong>Conclusion</strong></h2>
+<p>Now that you have a working interactive object sample try to expand on it maybe by adding delegates or creating Blueprints based off of the InteractiveActor script. Don’t forget to check out the <a href="https://github.com/robertcorponoi/unreal-cpp-an-in-depth-guide-to-creating-interactive-actors">repo</a> at any point if you get lost or need to see a working example at any time.</p></section></article></div></main><footer class="bg-white border-t border-gray-300 py-4 dark:bg-dark-100 dark:border-t-0"><div class="container lg:w-9/12 mx-auto"><p class="text-sm text-gray-800 text-center py-4 dark:text-gray-50">© <!-- -->2021<!-- -->, Robert Corponoi. All rights reserved.</p></div></footer></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/unreal/creating-interactive-actors/";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-e8ab74e4253d6654f0a7.js"],"app":["/app-0294f24f2ce86009db16.js"],"component---src-pages-404-tsx":["/component---src-pages-404-tsx-c19434c05240ccff8d3a.js"],"component---src-pages-about-tsx":["/component---src-pages-about-tsx-e2dc12a446cb5f3980d9.js"],"component---src-pages-index-tsx":["/component---src-pages-index-tsx-1720ad26985fc66481b6.js"],"component---src-pages-tags-tsx":["/component---src-pages-tags-tsx-ed630c4d893f7e40914a.js"],"component---src-templates-blog-post-tsx":["/component---src-templates-blog-post-tsx-d6a7694ad46bf9c80d6d.js"],"component---src-templates-tags-tsx":["/component---src-templates-tags-tsx-ffd55a10e2cd64b3ee42.js"]};/*]]>*/</script><script src="/polyfill-e8ab74e4253d6654f0a7.js" nomodule=""></script><script src="/component---src-templates-blog-post-tsx-d6a7694ad46bf9c80d6d.js" async=""></script><script src="/commons-f15c0c170d4931b0b393.js" async=""></script><script src="/app-0294f24f2ce86009db16.js" async=""></script><script src="/framework-a88913fc7a565e205647.js" async=""></script><script src="/webpack-runtime-92f30b27339df92a4f81.js" async=""></script></body></html>

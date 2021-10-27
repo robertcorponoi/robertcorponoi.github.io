@@ -1,5 +1,5 @@
 {
     "componentChunkName": "component---src-templates-tags-tsx",
     "path": "/tags/shaders/",
-    "result": {"data":{"allMarkdownRemark":{"totalCount":1,"edges":[{"node":{"excerpt":"In this guide we’re going to take some interesting night vision shaders from Shadertoy and port them over to Godot to use as screen shaders…","fields":{"slug":"/godot/2020-07-08-night-vision-screen-shaders/"},"frontmatter":{"title":"Shadertoy to Godot - Night Vision Screen Shaders","date":"2020-07-08","description":"Converting night vision shaders from Shadertoy to Godot to be used as screen shaders","tags":["godot","shaders","game-development"]}}}]}},"pageContext":{"tag":"shaders"}},
+    "result": {"data":{"allMarkdownRemark":{"totalCount":1,"edges":[{"node":{"excerpt":"In this guide we’re going to take some interesting night vision shaders from Shadertoy and port them over to Godot to use as screen shaders…","fields":{"slug":"/godot/night-vision-screen-shaders/"},"frontmatter":{"title":"Shadertoy to Godot - Night Vision Screen Shaders","date":"2020-07-08","description":"Converting night vision shaders from Shadertoy to Godot to be used as screen shaders","tags":["godot","shaders","game-development"]}}}]}},"pageContext":{"tag":"shaders"}},
     "staticQueryHashes": ["1569735999","2841359383"]}
