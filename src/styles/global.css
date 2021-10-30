@@ -38,6 +38,6 @@ ol {
     @apply list-decimal list-inside;
 }
 
-a {
+section a {
     @apply underline text-blue-500 dark:text-blue-200;
 }

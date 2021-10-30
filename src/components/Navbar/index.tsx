@@ -48,7 +48,7 @@ const Navbar = () => {
                         <a href="https://github.com/robertcorponoi" target="_blank" rel="noopener noreferrer" className="py-2 px-4">
                             <Github className="w-6 h-6 text-gray-700 dark:text-gray-50" />
                         </a>
-                        <ThemeToggle />
+                        {/* <ThemeToggle /> */}
                     </div>
                 </div>
             </div>
