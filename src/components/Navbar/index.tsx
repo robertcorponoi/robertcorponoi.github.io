@@ -29,7 +29,7 @@ const Navbar = () => {
 
     return (
         <Popover className="relative shadow bg-white dark:bg-dark-100">
-            <div className="flex justify-between items-center py-5 w-11/12 md:w-10/12 lg:w-8/12 xl:w-5/12 mx-auto">
+            <div className="flex justify-between items-center py-5 w-11/12 md:w-10/12 lg:w-8/12 xl:w-6/12 mx-auto">
                 {/** Logo goes here. */}
                 <div className="-mr-2 -my-2 md:hidden">
                     <Popover.Button className="rounded-full p-2 inline-flex items-center justify-center text-gray-800 hover:bg-gray-100 dark:text-gray-50 dark:hover:text-white dark:hover:bg-gray-800">

@@ -19,20 +19,12 @@ module.exports = {
         /** The links that should appear in the navbar. */
         menuLinks: [
             {
-                name: "Bevy",
-                link: "/tags/bevy",
+                name: "Game Development",
+                link: "/tags/game-development",
             },
             {
-                name: "Unreal",
-                link: "/tags/unreal",
-            },
-            {
-                name: "Godot",
-                link: "/tags/godot",
-            },
-            {
-                name: "Unity",
-                link: "/tags/unity",
+                name: "Blog",
+                link: "/tags/blog",
             },
             {
                 name: "About Me",
@@ -62,6 +54,13 @@ module.exports = {
             resolve: "gatsby-source-filesystem",
             options: {
                 path: `${__dirname}/content/blog`,
+                name: `blog`,
+            },
+        },
+        {
+            resolve: "gatsby-source-filesystem",
+            options: {
+                path: `${__dirname}/content/tutorials`,
                 name: `blog`,
             },
         },
