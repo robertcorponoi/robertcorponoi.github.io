@@ -1,4 +1,95 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Robert Corponoi RSS Feed]]></title><description><![CDATA[My personal blog]]></description><link>https://robertcorponoi.com</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 27 Oct 2021 05:14:18 GMT</lastBuildDate><item><title><![CDATA[Creating a Simple Menu]]></title><description><![CDATA[Recently I’ve gotten into Bevy and it’s been a pretty fun journey. As with anything else I learn, I find the best way to do it is to attempt…]]></description><link>https://robertcorponoi.com/bevy/creating-a-simple-menu/</link><guid isPermaLink="false">https://robertcorponoi.com/bevy/creating-a-simple-menu/</guid><pubDate>Mon, 25 Oct 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Recently I’ve gotten into &lt;a href=&quot;https://github.com/bevyengine/bevy&quot;&gt;Bevy&lt;/a&gt; and it’s been a pretty fun journey. As with anything else I learn, I find the best way to do it is to attempt it and then write about it. What this means though is that this might not be the best solution but it’s the solution I used. As I find better ways to do things, I’ll update this tutorial.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Robert Corponoi RSS Feed]]></title><description><![CDATA[My personal blog]]></description><link>https://robertcorponoi.com</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 30 Oct 2021 05:06:51 GMT</lastBuildDate><item><title><![CDATA[Why Use Tailwind?]]></title><description><![CDATA[TailwindCSS has become one of my favorite
+frameworks to work with in the past couple of years. I’ve used it in every and
+all personal web…]]></description><link>https://robertcorponoi.com/why-use-tailwind/</link><guid isPermaLink="false">https://robertcorponoi.com/why-use-tailwind/</guid><pubDate>Thu, 28 Oct 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://tailwindcss.com/&quot;&gt;TailwindCSS&lt;/a&gt; has become one of my favorite
+frameworks to work with in the past couple of years. I’ve used it in every and
+all personal web apps and even recommended and implemented it at work wherever
+I can. This is quite the change for me too, as when I was first introduced to
+Tailwind I hated the idea of it. Now, I can’t imagine starting a new application
+without using Tailwind.&lt;/p&gt;
+&lt;h2&gt;What is Tailwind?&lt;/h2&gt;
+&lt;p&gt;Tailwind is, as they describe it, a utility-first CSS framework. Let’s go over
+an example.&lt;/p&gt;
+&lt;p&gt;Let’s say that you have this structure:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;html&quot;&gt;&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;div&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;h1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;Hello, world!&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;h1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;I am centered horizontally and vertically&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;div&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;As the paragraph tag says, we want to center this. With traditional CSS we
+would assign it a class name and then target that class name in a CSS file.
+It would look something like:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;css&quot;&gt;&lt;pre class=&quot;language-css&quot;&gt;&lt;code class=&quot;language-css&quot;&gt;&lt;span class=&quot;token selector&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;token property&quot;&gt;display&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; flex&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token property&quot;&gt;align-items&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; center&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;token property&quot;&gt;justify-content&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; center&lt;span class=&quot;token punctuation&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;With Tailwind, you never have to leave the HTML and can just use the class
+names from Tailwind:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;html&quot;&gt;&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;div&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;flex items-center justify-center&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;h1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;Hello, world!&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;h1&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;I am centered horizontally and vertically&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;div&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2&gt;What I Like&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;You don’t have to leave the HTML.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is one of the most important pros of Tailwind for me. There’s no need to
+leave the markup because I can apply every style I need within there. This
+leads to faster development time and less context switching as everything is
+in one spot. A counter-argument to this is that you can use styles inline but
+this leads into point 2.&lt;/p&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;You can easily apply responsive styling. Responsive queries in CSS add more&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;complexity than necessary to a CSS file. An example of changing a container’s
+width for different screen sizes in Tailwind can look like:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;html&quot;&gt;&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;div&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;w-full md:w-8-12 lg:w-6/12 xl:w-4/12&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;div&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;Similar to the point above is pseudo styles. Hover, active, focus, and&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;other similar styles can be applied just as easily. An example of gray text
+that turns blue on hover can look like:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;html&quot;&gt;&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;p&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;text-gray-800 hover:text-blue-800&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;Hello, world!&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;There’s also the same utilities but for groups so for example if you have a
+div with multiple elements but you want every element to turn blue when the
+div is hovered over, you could do:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;html&quot;&gt;&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;div&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;group&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;p&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;text-gray-800 group-hover:text-blue-800&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;Hello&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+    &lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;p&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;text-gray-800 group-hover:text-blue-800&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;world&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;div&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;This also goes for dark mode. Tailwind can be configured to either detect the
+user’s dark mode preference or you can make it so that the &lt;code class=&quot;language-text&quot;&gt;dark&lt;/code&gt; class name
+has to be present for dark mode to be used. To style for dark mode, you just
+prefix any class name with &lt;code class=&quot;language-text&quot;&gt;dark&lt;/code&gt; like so:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;html&quot;&gt;&lt;pre class=&quot;language-html&quot;&gt;&lt;code class=&quot;language-html&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;&lt;/span&gt;p&lt;/span&gt; &lt;span class=&quot;token attr-name&quot;&gt;className&lt;/span&gt;&lt;span class=&quot;token attr-value&quot;&gt;&lt;span class=&quot;token punctuation attr-equals&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;text-gray-800 dark:text-gray-50&lt;span class=&quot;token punctuation&quot;&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;I&apos;m dark on light mode and light on dark mode!&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token tag&quot;&gt;&lt;span class=&quot;token punctuation&quot;&gt;&amp;lt;/&lt;/span&gt;p&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;ol start=&quot;4&quot;&gt;
+&lt;li&gt;It’s highly customizable. You might be thinking that Tailwind sounds great&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;but you don’t want to be limited by the colors, spacing, or other utilities.
+The great new is that you don’t have to be. Tailwind takes a configuration file
+that lets you modify existing properties and also add new ones.&lt;/p&gt;
+&lt;p&gt;If you don’t like the color of &lt;code class=&quot;language-text&quot;&gt;text-indigo-500&lt;/code&gt;, you can change it. Have your
+own branding? Create a set of new colors that work for you. Almost everything
+about the framework can be changed and you can add in any other styles that are
+missing. Extending the configuration works really well with tools like Figma
+where designers can set up complex palettes that can be implemented in the
+Tailwind config.&lt;/p&gt;
+&lt;p&gt;There’s also a wide array of &lt;a href=&quot;https://github.com/aniftyco/awesome-tailwindcss&quot;&gt;plugins&lt;/a&gt;
+that can be used to add more styles and functionality to your Tailwind
+instance. Who knows, maybe you could have an idea for the next great Tailwind
+plugin.&lt;/p&gt;
+&lt;ol start=&quot;5&quot;&gt;
+&lt;li&gt;No bloat in production. The Tailwind configuration can be set to purge&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;unused classes in any files or globs that you provide when run in production.
+This means that even if you don’t ever use 90% of Tailwind’s (or your own from
+a custom configuration), they won’t ever slow down your site because they won’t
+exist in the production build of your app.&lt;/p&gt;
+&lt;h2&gt;Final Thoughts&lt;/h2&gt;
+&lt;p&gt;While there’s many more reasons I could go over, I highly encourage you to
+check out their &lt;a href=&quot;https://tailwindcss.com/&quot;&gt;documentation&lt;/a&gt; and see it for
+yourself. Be prepared that you might need to consult the documentation for
+bit as you familiarize yourself with the syntax but I guarantee that the more
+you use it, the more you’ll like it.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Creating a Simple Menu]]></title><description><![CDATA[Recently I’ve gotten into Bevy and it’s been a pretty fun journey. As with anything else I learn, I find the best way to do it is to attempt…]]></description><link>https://robertcorponoi.com/bevy/creating-a-simple-menu/</link><guid isPermaLink="false">https://robertcorponoi.com/bevy/creating-a-simple-menu/</guid><pubDate>Mon, 25 Oct 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Recently I’ve gotten into &lt;a href=&quot;https://github.com/bevyengine/bevy&quot;&gt;Bevy&lt;/a&gt; and it’s been a pretty fun journey. As with anything else I learn, I find the best way to do it is to attempt it and then write about it. What this means though is that this might not be the best solution but it’s the solution I used. As I find better ways to do things, I’ll update this tutorial.&lt;/p&gt;
 &lt;p&gt;This tutorial was inspired by the open source game &lt;a href=&quot;https://github.com/TheRealTeamFReSh/MurderUserDungeon&quot;&gt;MurderUserDungeon&lt;/a&gt; which is the game that got me started with Bevy.&lt;/p&gt;
 &lt;h2&gt;Getting Started&lt;/h2&gt;
 &lt;p&gt;To get started, we need to create a new project:&lt;/p&gt;
