@@ -9,17 +9,15 @@ html {
 
 /** Customizes the scroll bar to make it thin. */
 html::-webkit-scrollbar {
-    width: 8px;
+    @apply w-2;
 }
 
 html::-webkit-scrollbar-track {
-    background: #fafafa;
-    border: 1px #e8e8e8;
+    @apply bg-gray-200 border border-gray-300;
 }
 
 html::-webkit-scrollbar-thumb {
-    background: #999999;
-    border-radius: 2px;
+    @apply bg-gray-400 rounded-sm; 
 }
 
 h2 {
@@ -40,4 +38,8 @@ ol {
 
 section a {
     @apply underline text-blue-500 dark:text-blue-200;
+}
+
+.utterances {
+    @apply mt-8;
 }
