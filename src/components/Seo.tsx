@@ -7,8 +7,6 @@ interface SeoProps {
     title?: string,
     /** An optional description for the page. */
     description?: string,
-    /** An optional lang attribute for the page. */
-    lang?: string,
     /** Optional meta tags for the page. */
     meta?: any,
 }
@@ -19,7 +17,7 @@ interface SeoProps {
  * 
  * @param {SeoProps} props
  */
-const Seo = ({ title, description, lang, meta }: SeoProps) => {
+const Seo = ({ title, description, meta }: SeoProps) => {
     /** The site data from the config. */
     const { site } = useStaticQuery(
         graphql`
@@ -46,7 +44,7 @@ const Seo = ({ title, description, lang, meta }: SeoProps) => {
     return (
         <Helmet
             htmlAttributes={{
-                lang: lang,
+                lang: "en",
             }}
             title={title}
             titleTemplate={defaultTitle ? `%s | ${defaultTitle}` : null}
