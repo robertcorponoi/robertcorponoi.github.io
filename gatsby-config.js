@@ -19,6 +19,10 @@ module.exports = {
         /** The links that should appear in the navbar. */
         menuLinks: [
             {
+                name: "React",
+                link: "/tags/react",
+            },
+            {
                 name: "Game Development",
                 link: "/tags/game-development",
             },
