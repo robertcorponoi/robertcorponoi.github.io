@@ -2,7 +2,7 @@
 title: Click Away Listener
 slug: click-away-listener
 date: "2021-11-02"
-description: 
+description: Often times for some components, you'll want to know when the user clicks away from the component. For this, a click away listener component can be handy.
 tags: ["react", "click", "events"]
 ---
 
