@@ -6,6 +6,8 @@ description: Learn how to build a simple menu with a few buttons.
 tags: ["bevy", "game-development"]
 ---
 
+## **Note:** This tutorial is for Bevy v0.5.0, It will be updated for v0.6.0 soon.
+
 Recently I've gotten into [Bevy](https://github.com/bevyengine/bevy) and it's been a pretty fun journey. As with anything else I learn, I find the best way to do it is to attempt it and then write about it. What this means though is that this might not be the best solution but it's the solution I used. As I find better ways to do things, I'll update this tutorial.
 
 This tutorial was inspired by the open source game [MurderUserDungeon](https://github.com/TheRealTeamFReSh/MurderUserDungeon) which is the game that got me started with Bevy.
@@ -14,13 +16,13 @@ This tutorial was inspired by the open source game [MurderUserDungeon](https://g
 
 To get started, we need to create a new project:
 
-```rust
+```sh
 cargo new bevy_simple_menu
 ```
 
 Now in the generated `Cargo.toml` file, we need to add our dependencies. Since this is fairly simple, we'll just need bevy:
 
-```
+```toml
 [dependencies]
 bevy = "0.5.0"
 ```

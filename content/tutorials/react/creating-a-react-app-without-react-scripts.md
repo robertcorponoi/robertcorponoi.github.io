@@ -23,16 +23,9 @@ We will also include some other, non-essential, tools for a better development e
 
 - [Creating the Application](#creating-the-application)
 - [Setting Up Core Dependencies](#setting-up-core-dependencies)
-    - [React & React DOM](#react-&-react-dom)
-    - [Redux](#redux)
-    - [TypeScript](#typescript)
-    - [Webpack & Babel](#webpack-&-babel)
 - [Setting Up Optional Dependencies](#setting-up-optional-dependencies)
-    - [ESLint](#eslint)
-    - [Prettier](#prettier)
-    - [PostCSS & TailwindCSS](#postcss-&-tailwindcss)
 - [Add Build Scripts](#add-build-scripts)
-- [Create the index.html File](#create-the-index.html-file)
+- [Create the index html File](#create-the-index-html-file)
 - [Render the React App](#render-the-react-app)
 - [Creating the App Component](#creating-the-app-component)
 - [Adding the Redux Store](#adding-the-redux-store)
@@ -42,8 +35,8 @@ We will also include some other, non-essential, tools for a better development e
 
 To start, navigate to the directory you want your React app to be in and initialize a new npm package like so:
 
-```sh
-npm init .
+```bash
+npm init
 ```
 
 ## Setting Up Core Dependencies
@@ -52,24 +45,24 @@ npm init .
 
 Since we're making a React app, `react` and `react-dom` are core dependencies that need to be installed:
 
-```sh
+```bash
 npm install react react-dom
 ```
 
 We also want their types saved as dev dependencies:
 
-```sh
+```bash
 npm install @types/react @types/react-dom --save-dev
 ```
 
 ### Redux
 
-Redux is used to manage the application state. While initially complicated, it's a very powerful library and you should invest time into learning how to use it. The sample application we build will have a basic example and can be used as a good starting point.
+[Redux](https://redux.js.org/) is used to manage the application state. While initially complicated, it's a very powerful library and you should invest time into learning how to use it. The sample application we build will have a basic example that can be used as a good starting point.
 
 To install Redux and Redux helpers, add the following dependencies.
 
-```sh
-npm install react-redux redux-thunk
+```bash
+npm install react-redux redux-thunk @reduxjs/toolkit
 ```
 
 ### TypeScript
@@ -78,7 +71,7 @@ To add [TypeScript](https://www.typescriptlang.org/) to our React app we need to
 
 1. Install TypeScript as a dev dependency to the React app:
 
-```sh
+```bash
 npm install typescript --save-dev
 ```
 
@@ -133,25 +126,25 @@ npm install typescript --save-dev
 
 Core Webpack dependencies:
 
-```sh
+```bash
 npm install webpack webpack-cli webpack-bundle-analyzer webpack-dev-server --save-dev
 ```
 
 Webpack loaders used to transform our JSX, TypeScript, and styles:
 
-```sh
+```bash
 npm install ts-loader style-loader postcss-loader css-loader babel-loader --save-dev
 ```
 
 Webpack plugins for fast-reload to make our dev environment easier to use:
 
-```sh
+```bash
 npm install react-refresh react-refresh-typescript @pmmmwh/react-refresh-webpack-plugin --save-dev
 ```
 
 Core Babel dependencies:
 
-```sh
+```bash
 npm install @babel/cli @babel/core @babel/preset-env @babel/preset-react @babel/preset-typescript --save-dev
 ```
 
@@ -281,11 +274,11 @@ These dependencies will help us have a better development experience (ESLint, Pr
 
 [ESLint](https://eslint.org/) is a configurable static code analysis tool that can help us find problems with our React app before we even compile. To get a good setup of ESLint and the packages that can help us, install the following dev dependencies.
 
-```sh
+```bash
 npm install eslint eslint-plugin-react @typescript-eslint/parser @typescript-eslint/eslint-plugin --dev-dev
 ```
 
-This are the basic dependencies needed to lint our React TypeScript app. There's some more useful ones such as packages that help ESLint check for hooks errors, accessibility issues, etc. I recommend you check out the ESLint ecosystem to see what can help you.
+This are the basic dependencies needed to lint our React TypeScript app. There's some more useful ones such as packages that help ESLint check for React hook errors, accessibility issues, etc. I recommend you check out the ESLint ecosystem to see what plugins can help you.
 
 To define the plugins and rules, we need to create a `.eslintrc.js` file. Below is an example of the minimal file with our installed dependencies:
 
@@ -316,13 +309,15 @@ module.exports = {
 
 You can check out more configuration options in the [ESLint configuration documentation](https://eslint.org/docs/user-guide/configuring/).
 
-You can also create a `eslintignore` file which can be used like a `.gitignore` to define the files that ESLint should ignore. The `node_modules` directory is automatically ignored but you can add any other files you wish for ESLint to ignore in this file. 
+You can also create a `eslintignore` file which can be used like a `.gitignore` to define the files that ESLint should ignore. The `node_modules` directory is automatically ignored but you can add any other files you wish for ESLint to ignore.
+
+**Note:** ESLint might show errors in some config files. These errors cannot be resolved so you can try adding them to the `.eslintignore` file or add a `/* eslint-disable */` comment at the top of these files.
 
 ## Prettier
 
 [Prettier](https://prettier.io/) is a code formatter can help us maintain a consistent style throughout our application. To install Prettier, we need to install it as a dev dependency.
 
-```sh
+```bash
 npm install prettier --save-dev
 ```
 
@@ -345,7 +340,7 @@ You should change this to suit your needs but these are pretty good initial sett
 
 To install TailwindCSS, add the following dev dependencies.
 
-```sh
+```bash
 npm install postcss tailwindcss autoprefixer
 ```
 
@@ -423,7 +418,7 @@ The scripts can be used in the form of npm run [script_name]:
 
 `analyze:prod` - Runs the Webpack bundle analyzer but in production mode which will minify scripts first and then provides you with a link that you can use to see what packages your Webpack bundle consists of.
 
-## Create the index.html File
+## Create the index html File
 
 We need to create the starting point of our application, the `index.html` file. This file will have a basic structure and it will contain the root div that React will render the application to. We'll also set the point where the Webpack bundle is inserted.
 
@@ -478,7 +473,7 @@ ReactDOM.render(
 
 ## Creating the App Component
 
-You'll see above that we're not rendering anything current. We need to create our first component, `App.tsx`. Here we'll just use a basic div and add more example content to it later. This is also a good place to import global CSS.
+You'll see above that we're not rendering anything currently. To render something, we need to create our first component, `App.tsx`. Here we'll just use a basic div and add more example content to it later. The `App.tsx` file is also a good place to import global CSS.
 
 First, create the `App.tsx` component at the same level as the `index.tsx` file. Also, at the same level, create an `App.css` file. This file should rarely be used if you're using TailwindCSS but it's good to have if needed. In the `App.tsx` file, add the following contents.
 
@@ -576,7 +571,7 @@ export const userSlice = createSlice({
          * @param {UserState} state The user state.
          * @param {PayloadAction<string>} action The new name for the user.
          */
-        setUserName: (state, action: PayloadAction<string>) => {
+        setUserName: (state: UserState, action: PayloadAction<string>) => {
             state.name = action.payload;
         },
     },
@@ -606,6 +601,38 @@ import type { RootState } from "../store";
  * @returns {string}
  */
 export const selectUserName = (state: RootState): string => state.user.name;
+```
+
+Next, we have to define our root store. Since the user is just a slice of the store, we need a place to combine all of our slices. Open up the `src/store/store.ts` file we created earlier and add the following content.
+
+```ts
+import thunk from "redux-thunk";
+import { configureStore } from "@reduxjs/toolkit";
+
+import userSlice from "./user/userSlice";
+
+/**
+ * An abstraction over the standard Redux `createStore` function that adds good
+ * defaults to the store setup for a better development experience.
+ */
+export const store = configureStore({
+    reducer: {
+        user: userSlice,
+    },
+    middleware: [
+        // Redux-thunk allows us to write action creators that return a function
+        // instead of an action. This can be used to delay the dispatch of an
+        // action or dispatch only if a certain condition is met.
+        // https://github.com/reduxjs/redux-thunk
+        thunk,
+    ],
+});
+
+// Infer the `RootState` and `AppDispatch` types from the store itself.
+export type RootState = ReturnType<typeof store.getState>;
+
+// Inferred type of: { state: State }
+export type AppDispatch = typeof store.dispatch;
 ```
 
 Now since the Redux store needs to be accessible throughout the application, we have to add the provider as the root component of the application. In the `src/index.tsx` file, wrap the `<App>` component in the Redux provider component.
@@ -722,7 +749,7 @@ const NameChange = () => {
 
     return (
         <div className="flex flex-col mt-4">
-            <p>Don't like the name {userName}? Change It!</p>
+            <p>Don&apos;t like the name {userName}? Change It!</p>
             <div className="flex items-center gap-x-2 mt-3">
                 <input
                     onChange={handleInputChange}
