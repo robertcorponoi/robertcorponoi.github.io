@@ -44,12 +44,10 @@ const Post = ({ title, created, description, tags, content, location }: PostProp
             script.setAttribute("crossorigin", "anonymous");
             script.setAttribute("async", "true");
 
-            console.log(script);
-
-            articleRef.current.appendChild(script);
+            articleRef.current?.appendChild(script);
 
             return () => {
-                articleRef.current.removeChild(script);
+                articleRef.current?.removeChild(script);
             };
         }
     }, [articleRef]);
