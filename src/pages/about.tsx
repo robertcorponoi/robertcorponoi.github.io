@@ -75,11 +75,6 @@ const Bio = () => {
                             brewery.
                         </p>
                     </div>
-                    <div className="flex flex-col gap-y-2 leading-7">
-                        <p className="text-xl font-bold text-gray-900 dark:text-gray-100">Contact Me</p>
-                        <p className="text-gray-800 dark:text-gray-200">If you want to contact me, feel free to <a href="mailto:robert.corponoi@gmail.com" className="text-blue-700 underline">email</a> me.</p>
-                        <p className="text-gray-800 dark:text-gray-200">Or you can add me on Discord Bob_#5417</p>
-                    </div>
                 </div>
             </div>
         </Layout>
