@@ -3,8 +3,7 @@ title: About
 ---
 
 I'm a full-stack developer by day and hobby game developer
-by night currently living in the Seattle area. I'm
-interested in user experience, system architecture,
+by night. I'm interested in user experience, system architecture,
 and scalable state management. I have experience
 working in large codebases and on performance
 critical collaborative applications.
