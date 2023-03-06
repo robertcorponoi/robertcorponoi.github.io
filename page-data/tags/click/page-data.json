@@ -1,5 +1,0 @@
-{
-    "componentChunkName": "component---src-templates-tags-tsx",
-    "path": "/tags/click/",
-    "result": {"data":{"allMarkdownRemark":{"totalCount":1,"edges":[{"node":{"excerpt":"Often times for some components, you’ll want to know when the user clicks away from the component. A couple examples of when this might be…","fields":{"slug":"/react/click-away-listener/"},"frontmatter":{"title":"Click Away Listener","date":"2021-11-02","description":"Often times for some components, you'll want to know when the user clicks away from the component. For this, a click away listener component can be handy.","tags":["react","click","events"]}}}]}},"pageContext":{"tag":"click"}},
-    "staticQueryHashes": ["1569735999","2841359383"]}
