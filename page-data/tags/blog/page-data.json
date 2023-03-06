@@ -1,5 +1,0 @@
-{
-    "componentChunkName": "component---src-templates-tags-tsx",
-    "path": "/tags/blog/",
-    "result": {"data":{"allMarkdownRemark":{"totalCount":1,"edges":[{"node":{"excerpt":"TailwindCSS has become one of my favorite\nframeworks to work with in the past couple of years. I’ve used it in every and\nall personal web…","fields":{"slug":"/why-use-tailwind/"},"frontmatter":{"title":"Why Use Tailwind?","date":"2021-10-28","description":null,"tags":["blog","react","javascript","tailwindcss"]}}}]}},"pageContext":{"tag":"blog"}},
-    "staticQueryHashes": ["1569735999","2841359383"]}

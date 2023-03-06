@@ -1,5 +1,0 @@
-{
-    "componentChunkName": "component---src-templates-tags-tsx",
-    "path": "/tags/bevy/",
-    "result": {"data":{"allMarkdownRemark":{"totalCount":1,"edges":[{"node":{"excerpt":"Note: This tutorial is for Bevy v0.5.0, It will be updated for v0.6.0 soon. Recently I’ve gotten into Bevy and it’s been a pretty fun…","fields":{"slug":"/bevy/creating-a-simple-menu/"},"frontmatter":{"title":"Creating a Simple Menu","date":"2021-10-25","description":"Learn how to build a simple menu with a few buttons.","tags":["bevy","game-development"]}}}]}},"pageContext":{"tag":"bevy"}},
-    "staticQueryHashes": ["1569735999","2841359383"]}
