@@ -17,7 +17,7 @@ type PostPreviewProps = {
 export const PostPreview = ({ post }: PostPreviewProps) => {
     return (
         <div className="flex flex-col overflow-hidden gap-y-1 py-8">
-            <Link href={`/posts/${post.id}`} className="flex flex-col gap-y-1">
+            <Link href={`/${post.id}`} className="flex flex-col gap-y-1">
                 <h2 className="text-xl text-indigo-900 font-semibold dark:text-cyan-200">
                     {post.title}
                 </h2>

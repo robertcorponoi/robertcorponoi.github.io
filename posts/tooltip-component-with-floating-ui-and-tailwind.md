@@ -1,10 +1,8 @@
 ---
 title: Creating a Tooltip React Component With Floating-UI and Tailwind
-date: "2022-01-28"
+date: "2023-03-07"
 description: Create a tooltip React component using just @floating-ui/dom and styled with tailwind.
 ---
-
-# Creating a Tooltip React Component With Floating-UI & Tailwind
 
 I recently picked up an old side project and came across a spot where I was
 using a tooltip. I needed to make some modifications so I looked at the source

@@ -35,7 +35,7 @@ const Home = ({
     return (
         <Layout>
             <Head>
-                <title>Robert Corponoi | </title>
+                <title>Robert Corponoi</title>
                 <meta
                     name="description"
                     content="Robert Corponoi website and blog."

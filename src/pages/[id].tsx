@@ -1,9 +1,9 @@
 import Head from "next/head";
 
-import { Date } from "../../components/Date";
-import { Layout } from "../../components/Layout";
+import { Date } from "../components/Date";
+import { Layout } from "../components/Layout";
 
-import { getAllPostIds, getPostData } from "../../lib/posts";
+import { getAllPostIds, getPostData } from "../lib/posts";
 
 /**
  * Returns the data about a post including the id, date, title, and content to
