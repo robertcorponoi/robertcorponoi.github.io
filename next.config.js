@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    basePath: "/robertcorponoi.github.io",
+    basePath: "/robertcorponoi.com",
     output: "export",
     images: {
         unoptimized: true,
