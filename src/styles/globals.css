@@ -38,7 +38,7 @@ section li {
 }
 
 ul {
-    @apply list-disc list-inside;
+    @apply list-disc;
 }
 
 ol {

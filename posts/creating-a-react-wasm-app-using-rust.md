@@ -22,7 +22,7 @@ The React client is going to import the Wasm modules and use them. There's a cou
 
 **Note:** You might also be able to accomplish the same thing without ejecting, but with [craco](https://github.com/gsoft-inc/craco). I haven't tested this though so I can't guarantee the results.
 
-2. My preferred method is to create the React client from scratch. I've written a [tutorial documenting the process](https://robertcorponoi.com/react/creating-a-react-app-without-react-scripts/) and have created a [template](https://github.com/robertcorponoi/react-template) that can be used.
+2. My preferred method is to create the React client from scratch. I've written a [tutorial documenting the process](/creating-a-react-app-without-react-scripts) and have created a [template](https://github.com/robertcorponoi/react-template) that can be used.
 
 ## The Rust Source
 
