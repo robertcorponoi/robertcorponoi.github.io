@@ -3,7 +3,7 @@
 #
 # The absolute URL to our published site.
 # https://gohugo.io/getting-started/configuration/#baseurl
-baseURL = 'https://example.org/'
+baseURL = 'https://robertcorponoi.github.io/'
 # A language tag as defined by RFC 5646. Used to populate the `lang` attribute 
 # on the `html` element.
 # https://gohugo.io/getting-started/configuration/#languagecode
