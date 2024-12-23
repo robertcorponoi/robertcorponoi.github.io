@@ -6,28 +6,28 @@
     <description>Recent content on Bob Corponoi</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 19 Dec 2024 15:23:25 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 22 Dec 2024 15:43:48 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>About</title>
+      <link>http://localhost:1313/about/</link>
+      <pubDate>Sun, 22 Dec 2024 15:43:48 +0800</pubDate>
+      <guid>http://localhost:1313/about/</guid>
+      <description>&lt;h2 id=&#34;me&#34;&gt;Me&lt;/h2&gt;&#xA;&lt;p&gt;I&amp;rsquo;m Bob Corponoi, a developer based out of the US. I like to tinker with weekend projects and sometimes I write about them.&lt;/p&gt;&#xA;&lt;h2 id=&#34;work&#34;&gt;Work&lt;/h2&gt;&#xA;&lt;p&gt;I&amp;rsquo;m a founding engineer at &lt;a href=&#34;https://cadchat.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;CADchat&lt;/a&gt;, a collaborative, real-time 2D &amp;amp; 3D CAD design review app. We transform design reviews for CAD teams by centralizing communication in one location that&amp;rsquo;s persisted as long as you need.&lt;/p&gt;&#xA;&lt;p&gt;Previously I&amp;rsquo;ve worked at an agency, working with the United Nations to transform education and before that I helped to modernize software used by truck drivers and dispatchers.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Posts</title>
       <link>http://localhost:1313/archive/</link>
-      <pubDate>Thu, 19 Dec 2024 15:23:25 +0800</pubDate>
+      <pubDate>Sun, 22 Dec 2024 15:23:25 +0800</pubDate>
       <guid>http://localhost:1313/archive/</guid>
       <description></description>
     </item>
     <item>
       <title>Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</title>
       <link>http://localhost:1313/posts/tldraw-rider/</link>
-      <pubDate>Thu, 19 Dec 2024 15:23:25 +0800</pubDate>
+      <pubDate>Sun, 22 Dec 2024 15:23:25 +0800</pubDate>
       <guid>http://localhost:1313/posts/tldraw-rider/</guid>
       <description>&lt;p&gt;I work with tldraw for my day job. One day, when I was tasked with a myriad of small bug fixes, I was looking at the tldraw canvas and I was reminded of a game I used to play back in school, &lt;a href=&#34;https://en.wikipedia.org/wiki/Line_Rider&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;Line Rider&lt;/a&gt;. The premise of the game is that there&amp;rsquo;s an entity on a sled and you have to draw lines for them to sled on. So I thought, &amp;ldquo;Hey, tldraw is perfect for this&amp;rdquo; which is how this became my weekend project this weekend.&lt;/p&gt;</description>
-    </item>
-    <item>
-      <title>About</title>
-      <link>http://localhost:1313/about/</link>
-      <pubDate>Wed, 18 Dec 2024 15:43:48 +0800</pubDate>
-      <guid>http://localhost:1313/about/</guid>
-      <description>&lt;h2 id=&#34;me&#34;&gt;Me&lt;/h2&gt;&#xA;&lt;p&gt;I&amp;rsquo;m Bob Corponoi, a developer based out of the US. I like to tinker with weekend projects and sometimes I write about them.&lt;/p&gt;&#xA;&lt;h2 id=&#34;work&#34;&gt;Work&lt;/h2&gt;&#xA;&lt;p&gt;I&amp;rsquo;m a founding engineer at &lt;a href=&#34;https://cadchat.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;CADchat&lt;/a&gt;, a collaborative, real-time 2D &amp;amp; 3D CAD design review app. We transform design reviews for CAD teams by centralizing communication in one location that&amp;rsquo;s persisted as long as you need.&lt;/p&gt;&#xA;&lt;p&gt;Previously I&amp;rsquo;ve worked at an agency, working with the United Nations to transform education and before that I helped to modernize software used by truck drivers and dispatchers.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
