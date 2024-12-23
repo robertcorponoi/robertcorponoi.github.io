@@ -1,0 +1,9 @@
+{{ define "title" }}
+{{ .Title }} &ndash; {{ .Site.Title }}
+{{ end }}
+{{ define "main" }}
+{{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+<div class="content">
+    {{ .Content }}
+</div>
+{{ end }}

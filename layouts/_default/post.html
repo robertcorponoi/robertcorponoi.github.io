@@ -1,0 +1,12 @@
+{{ define "title" }}
+{{ .Title }} &ndash; {{ .Site.Title }}
+{{ end }}
+{{ define "main" }}
+{{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+<div class="content">
+    <h1 class="post-title">{{ .Title }}</h1>
+    <p class="post-date">{{ .Params.date.Format .Site.Params.dateFormat }}</p>
+    <img src="{{ .Params.image }}" alt="{{ .Title }}">
+    {{ .Content }}
+</div>
+{{ end }}

@@ -1,0 +1,27 @@
+{{ define "main" }}
+<main aria-role="main">
+    <header>
+        {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
+        <h1>{{ .Title }}</h1>
+        {{ with .Params.subtitle }}
+        <span>{{ . }}</span>
+        {{ end }}
+    </header>
+    <div>
+        {{ .Content }}
+    </div>
+    <ul class="posts">
+        {{ range ( where .Site.RegularPages "Type" "posts" | first 3 ) }}
+        <li>
+            <a href="{{ .Permalink }}">
+                <div>
+                    <h2>{{ .Title }}</h2>
+                    <img src="{{ .Permalink}}/{{ .Params.image }}" alt="{{ .Title }}">
+                    {{ .Summary }}
+                </div>
+            </a>
+        </li>
+        {{end}}
+    </ul>
+</main>
+{{ end }}

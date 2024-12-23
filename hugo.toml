@@ -1,0 +1,35 @@
+# Hugo configuration file.
+# https://gohugo.io/getting-started/configuration/
+#
+# The absolute URL to our published site.
+# https://gohugo.io/getting-started/configuration/#baseurl
+baseURL = 'https://example.org/'
+# A language tag as defined by RFC 5646. Used to populate the `lang` attribute 
+# on the `html` element.
+# https://gohugo.io/getting-started/configuration/#languagecode
+# https://datatracker.ietf.org/doc/html/rfc5646
+languageCode = 'en-us'
+# Site title.
+# https://gohugo.io/getting-started/configuration/#title
+title = 'Bob Corponoi'
+# The entries for the main menu.
+# https://gohugo.io/content-management/menus/#define-in-site-configuration
+# https://gohugo.io/templates/menu/
+[menus]
+    [[menus.main]]
+        name = 'Home'
+        pageRef = '/'
+        weight = 10
+    [[menus.main]]
+        name = 'About'
+        pageRef = '/about'
+        weight = 20
+    [[menus.main]]
+        name = 'Archive'
+        pageRef = '/archive'
+        weight = 30
+# Custom parameters for the site.
+# https://gohugo.io/methods/site/params/
+[params]
+    # The way dates are formatted in the site.
+    dateFormat = "02 Jan 2006"

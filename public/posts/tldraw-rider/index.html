@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>
+Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
+
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/index.css" />
+</head>
+
+<body>
+    <div class="container">
+        
+
+<nav>
+    <ul class="menu">
+        <li>
+            <a href="/">
+                <div class="logo"></div>
+                <span>Bob Corponoi</span>
+            </a>
+        </li>
+<li>
+    <a href="/">Home</a>
+</li>
+<li>
+    <a href="/about/">About</a>
+</li>
+<li>
+    <a href="/archive/">Archive</a>
+</li>
+    </ul>
+</nav>
+<div class="content">
+    <h1 class="post-title">Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</h1>
+    <p class="post-date">19 Dec 2024</p>
+    <img src="./tldraw-rider.png" alt="Tldraw Rider - Sled the Slopes Of Your Infinite Canvas">
+    <p>I work with tldraw for my day job. One day, when I was tasked with a myriad of small bug fixes, I was looking at the tldraw canvas and I was reminded of a game I used to play back in school, <a href="https://en.wikipedia.org/wiki/Line_Rider"  target="_blank" rel="noopener" >Line Rider</a>. The premise of the game is that there&rsquo;s an entity on a sled and you have to draw lines for them to sled on. So I thought, &ldquo;Hey, tldraw is perfect for this&rdquo; which is how this became my weekend project this weekend.</p>
+<h2 id="scoping">Scoping</h2>
+<p>Since it&rsquo;s a weekend project, I had to scope it so that I wouldn&rsquo;t spend weeks on it trying to make it into a full fledged game, even though it was really an appealing thought. Maybe one day I&rsquo;ll come back to it and expand on it, or add more features to it as another weekend project.</p>
+<p>So the list of things I wanted:</p>
+<ul>
+<li>A custom sprite for the rider.</li>
+<li>Physics so that the rider slides across lines drawn with the &ldquo;draw&rdquo; and &ldquo;line&rdquo; tool.</li>
+<li>Ability to place the rider anywhere and sleds goes from there.</li>
+</ul>
+<h2 id="choosing-a-physics-engine">Choosing a Physics Engine</h2>
+<p>To have nice sledding physics, I wanted to use a physics engine. At first, I looked at <a href="https://brm.io/matter-js/"  target="_blank" rel="noopener" >matter.js</a>. It has comprehensive documentation and a good amount of examples to go off of. But as I was looking for alternatives, I came across <a href="https://rapier.rs/"  target="_blank" rel="noopener" >Rapier</a> and it immediately caught my attention because it&rsquo;s a WebAssembly module. The performance difference for a small project like this is basically non-existent but with the possibility of an unknown number of lines with an unknown number of points, I wanted to use the best tool for the job.</p>
+<p>Also, I liked that Rapier is fully deterministic. Although there&rsquo;s a low chance of me possibly clicking the exact same (x, y) coordinate on the tldraw canvas to drop the rider in the same spot every time, it makes it possible to create a replay feature in the future if I ever wanted to.</p>
+<p>We can add Rapier by installing the package from <a href="https://www.npmjs.com/package/@dimforge/rapier2d"  target="_blank" rel="noopener" >npm</a>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>npm install @dimforge/rapier2d
+</span></span></code></pre></div><p><strong>Note:</strong> That we installed <code>rapier2d</code> not <code>rapier3d</code>.</p>
+<h2 id="creating-the-sprite">Creating the Sprite</h2>
+<p>For the sprite, I wanted to go with a pixel art style. I&rsquo;ve always loved the style of pixel art but I&rsquo;ve never completed a piece of pixel art prior to this. This time I was determiend though, tldraw rider needed a pixel art character that you just might feel bad about when flipping them over or hitting a wall.</p>
+<p>I won&rsquo;t go too much into the details. I recently purchased Aseprite so I started with a 32x32 blank canvas (32x32 is the limit of my artistic abilities while still having a good amount of detail). I started with the sled, using the Line Rider sled as inspiration. Then, for the character, I thought I would get into the holiday spirit and I chose to make a santa character. In the end, it ended up looking like:</p>
+<p><img src="./santa-sled.svg" alt="image"></p>
+<p>A more ambitious vision was having a reindeer pulling the sled with a joint connecting the reindeer to santa but we&rsquo;ll keep it simple for now. I was pretty proud of myself for my first completed pixel art sprite. It&rsquo;s also something I really enjoyed making so I&rsquo;ll try more pixel art projects in the future.</p>
+<p><strong>Note:</strong> If you&rsquo;re reading this post around the time it was posted, <a href="https://www.tldraw.com/"  target="_blank" rel="noopener" >tldraw.com</a> got into the holiday spirit and there&rsquo;s snow over the canvas. I created the santa sprite before I noticed this but it&rsquo;s a happy surprise, it really ties in well together.</p>
+<h2 id="the-tldraw-rider-shape">The Tldraw Rider Shape</h2>
+<p>I wanted to be able to have a tool on the toolbar that would select the rider shape, and you could click anywhere on the canvas to place it. When the shape is placed, we create the colliders on the spot. If another shape is placed, the previous colliders and shape are destroyed and we create them again.</p>
+<p>Creating a custom shape in tldraw is fairly simple, especially for a temporary shape like this one where we don&rsquo;t have to worry about versioning and migrations.</p>
+<p>First, we have to define the type for our shape. There&rsquo;s nothing special about it so it&rsquo;s just going to be based off the base shape with a width and a height.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ITldrawRiderShape</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">TLBaseShape</span><span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;rider&#34;</span>,
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">w</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">h</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;</span>;
+</span></span></code></pre></div><p>While we&rsquo;re on the topic of dimensions, we have to decide how many pixels are in a physics unit. The shapes on the canvas are going to be very large, dozens to hundreds of pixels, and if we create colliders that large, our simulation is going to run in <a href="https://rapier.rs/docs/user_guides/javascript/common_mistakes#why-is-everything-moving-in-slow-motion"  target="_blank" rel="noopener" >slow motion</a>. To solve this, we need to define how many pixels to a physics unit. When going from tldraw space to physics space, we need to divide by this unit and when going from physics space to tldraw space we need to multiply by this unit. I like to keep it simple so let&rsquo;s just say that 1 physics unit is equal to 100 pixels. So if we had a shape that&rsquo;s 100x100 pixels, it would be defined as a collider with a size of 1x1.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>;
+</span></span></code></pre></div><p>Okay let&rsquo;s get back to our shape. We have to create a class for it and define some basic properties. I&rsquo;m not paste the full class since a lot of it is just boilerplate. The part to focus on is the <code>component</code>, which is what returns the the React component for our shape. Currently it&rsquo;s just return a div with our image in the center.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TldrawRiderShapeUtil</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">ShapeUtil</span>&lt;<span style="color:#f92672">ITldrawRiderShape</span>&gt; {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * Custom shape boilerplate here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * See https://tldraw.dev/examples/shapes/tools/custom-config for more details.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * The render method - the React component that will be rendered for the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * shape. It takes the shape as an argument. `HTMLContainer` is just a
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * `div` that&#39;s being used to wrap our shape. We can get the shape&#39;s
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * bounds usinig our own `getGeometry` method.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * The contents of this can be treated as a React component. Any hooks
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * can be used here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * @param {ITldrawRiderShape} shape The shape.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">component</span>(<span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">ITldrawRiderShape</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>			&lt;<span style="color:#f92672">HTMLContainer</span>
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">id</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>}
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">style</span><span style="color:#f92672">=</span>{{
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">display</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;flex&#34;</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">flexDirection</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;column&#34;</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">alignItems</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;center&#34;</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">justifyContent</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;center&#34;</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">pointerEvents</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;all&#34;</span>,
+</span></span><span style="display:flex;"><span>				}}
+</span></span><span style="display:flex;"><span>			&gt;
+</span></span><span style="display:flex;"><span>				&lt;<span style="color:#f92672">img</span> <span style="color:#a6e22e">src</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">spriteURL</span>} /&gt;
+</span></span><span style="display:flex;"><span>			&lt;/<span style="color:#f92672">HTMLContainer</span>&gt;
+</span></span><span style="display:flex;"><span>		);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>At this point if you create a tool for it and add it to the toolbar <a href="https://tldraw.dev/examples/shapes/tools/custom-config"  target="_blank" rel="noopener" >shown in the tldraw example for a custom shape and tool</a>, you can place our santa sprite on the tldraw canvas, exciting!</p>
+<h2 id="the-physics-world">The Physics World</h2>
+<p>Before we create any rigid bodies or colliders, let&rsquo;s set up our Rapier world that will process our physics simulations.</p>
+<p>Since Rapier is a WebAssembly module, it has to be <a href="https://rapier.rs/docs/user_guides/javascript/getting_started_js"  target="_blank" rel="noopener" >loaded asynchronously</a>. We can do this in a <code>useEffect</code> in our <code>component</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">useEffect</span>(() <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">import</span>(<span style="color:#e6db74">&#34;@dimforge/rapier2d&#34;</span>).<span style="color:#a6e22e">then</span>((<span style="color:#a6e22e">RAPIER</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// We have access to rapier here.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    });
+</span></span><span style="display:flex;"><span>}, [<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>]);
+</span></span></code></pre></div><p><strong>Note:</strong> I put <code>shape.id</code> in the dependencies list for the <code>useEffect</code> because we&rsquo;ll need to reference the rider shape often. It should only be run once since the shape id will not change after it is created.</p>
+<p>From this point forward, I will specify whether we are adding code to the physics context or outside of it.</p>
+<p>One of the first things we have to do inside the physics context is set up our world. The world contains everything we need to run the physics simulation. We just have to initialize it with a gravity like so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">gravity</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">0.0</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">9.81</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">world</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">World</span>(<span style="color:#a6e22e">gravity</span>);
+</span></span></code></pre></div><p><strong>Note:</strong> <code>gravity</code> is defined as <code>9.81</code> instead of <code>-9.81</code> because the y axis in tldraw increases as it goes down. If we had <code>y: -9.81</code> our rider would appear to be defying gravity, which is cool but not for this project.</p>
+<p>Before setting up the loop, let&rsquo;s get the full rider shape. Since we only added <code>shape.id</code> to the <code>useEffect</code>&rsquo;s dependencies, we need to get the shape by its id.</p>
+<p><strong>Note:</strong> We only added <code>shape.id</code> to the <code>useEffect</code>&rsquo;s dependencies so that we don&rsquo;t add the entire shape to the dependencies. The more simple we can keep the dependency array the better.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderShape</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getShape</span>(<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>) <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ITldrawRiderShape</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">riderShape</span>) <span style="color:#66d9ef">return</span>;
+</span></span></code></pre></div><p>We cheat a little with TypeScript using <code>as ITldrawRiderShape</code> but that&rsquo;s okay since we know exactly what this shape is.</p>
+<p>After this, we need to set up our game loop. In here, every frame we step through the physics simualation and we&rsquo;ll use the updated values to update the position of our rider in the canvas. For now let&rsquo;s just set up the basic game loop.</p>
+<p>Below where we created the world, we add:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">gameLoop</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">step</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">requestAnimationFrame</span>(<span style="color:#a6e22e">gameLoop</span>);
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">riderShape</span>) <span style="color:#a6e22e">gameLoop</span>();
+</span></span></code></pre></div><p>In the game loop we call <code>world.step()</code> to process another frame of the physics simulation. This will check collisions and recalculate transformations, rotations, etc. on the rigid body that we&rsquo;ll attach to the rider.</p>
+<p>We call <code>requestAnimationFrame</code> to run it in a loop and below we call <code>gameLoop</code> to kick start the loop.</p>
+<p><strong>Note:</strong> We check if a <code>riderShape</code> is present before starting the game loop because I&rsquo;ve noticed that if I create a tool for this custom shape, the game loop will run before the rider has been added to the canvas.</p>
+<h2 id="debug-lines">Debug Lines</h2>
+<p>While adding the rigid body to the rider and adding colliders, it&rsquo;s very helpful to see where they are positioned on the canvas, especially since we have to convert between tldraw space and physics space. For this, Rapier provides the ability to <a href="https://rapier.rs/docs/user_guides/javascript/getting_started_js#rendering-debug-shapes"  target="_blank" rel="noopener" >render debug shapes</a>.</p>
+<p>The example shown in the link above is for Pixi.js so we&rsquo;ll have to adapt it slightly to work for tldraw.</p>
+<p>First, while Pixi.js has a function to convert an array of normalized RGB values, <code>PIXI.utils.rgb2hex</code>, to a hex color value, we&rsquo;ll have to calculate that ourselves. This is just a standard equation that we can find so let&rsquo;s just define it as a utility function outside of our shape:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Takes in an array of normalized RGB values (0–1) and returns a hexadecimal
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * color string.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param {[number,number,number]} normalizedRgb The normalized RGB values.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @returns {string} The hexadecimal color string.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rgbToHex</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">normalizedRgb</span><span style="color:#f92672">:</span> [<span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">number</span>, <span style="color:#66d9ef">number</span>])<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Scale the normalized values to 0–255 and convert to integers.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">scaledRgb</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">normalizedRgb</span>.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">value</span>) <span style="color:#f92672">=&gt;</span> Math.<span style="color:#a6e22e">round</span>(<span style="color:#a6e22e">value</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">255</span>));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Format as a hexadecimal string.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">hexColor</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">`#</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">scaledRgb</span>
+</span></span><span style="display:flex;"><span>		.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">value</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">value</span>.<span style="color:#a6e22e">toString</span>(<span style="color:#ae81ff">16</span>).<span style="color:#a6e22e">padStart</span>(<span style="color:#ae81ff">2</span>, <span style="color:#e6db74">&#34;0&#34;</span>))
+</span></span><span style="display:flex;"><span>		.<span style="color:#a6e22e">join</span>(<span style="color:#e6db74">&#34;&#34;</span>)
+</span></span><span style="display:flex;"><span>		.<span style="color:#a6e22e">toUpperCase</span>()<span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">hexColor</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Also, while this returns a hex color value, tldraw expects colors to be one of the colors defined by them, like red, blue, etc. Through trial and error I found out the hex colors that Rapier uses for debug lines and I made an object to map the hex color value to the tldraw color value. I tried to match the hex color value as closely as possible but some colors were just too close together and there&rsquo;s not enough variance in tldraw&rsquo;s colors.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">HEX_TO_TLDRAW_COLOR</span><span style="color:#f92672">:</span> { [<span style="color:#a6e22e">hex</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span> } <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#800000&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;red&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#003300&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;green&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#990033&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;violet&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#CC6600&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;orange&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#1A0000&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;yellow&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#1F000A&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;grey&#34;</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;#000A00&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;black&#34;</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Before we get to writing the function, we need one last thing. Since debug lines are just vertices and colors, we don&rsquo;t know what lines to keep and throw away between steps of the game loop, which means that we have to run this function every iteration of our loop. This isn&rsquo;t performant (like at all) but it&rsquo;s for debugging so it&rsquo;s not a big deal. If we really wanted to optimize this we could do some clever tricks to memoize debug lines but maybe another time. Anyway, I say all this because we need a variable, defined outside of the shape and this debug function, to keep track of the shape ids of the debug lines. Every frame we&rsquo;re going to delete the lines in this array, clear the array, then redraw the lines and add them to the array.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">debugLineIds</span>: <span style="color:#66d9ef">TLShapeId</span>[] <span style="color:#f92672">=</span> [];
+</span></span></code></pre></div><p>Ok we&rsquo;re finally ready to create the function to draw the debug lines. I&rsquo;ll paste the entire function and we&rsquo;ll go through the parts.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createDebugLines</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">world</span>: <span style="color:#66d9ef">World</span>, <span style="color:#a6e22e">editor</span>: <span style="color:#66d9ef">Editor</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">debugLineIds</span>.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">lineId</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">deleteShape</span>(<span style="color:#a6e22e">lineId</span>));
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">debugLineIds</span> <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">vertices</span>, <span style="color:#a6e22e">colors</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">debugRender</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">vertices</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">4</span>; <span style="color:#a6e22e">i</span> <span style="color:#f92672">+=</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">rgbToHex</span>([
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">colors</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span>],
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">colors</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>],
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">colors</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">8</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>],
+</span></span><span style="display:flex;"><span>			]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shapeColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">HEX_TO_TLDRAW_COLOR</span>[<span style="color:#a6e22e">color</span>];
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">shapeColor</span>) <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> Error(<span style="color:#e6db74">`Unknown color: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">color</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">id</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createShapeId</span>();
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">createShape</span>({
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">id</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;line&#34;</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">props</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">color</span>: <span style="color:#66d9ef">shapeColor</span>,
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">points</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>						{
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">id</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`a</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">i</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`a</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">i</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">vertices</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span>] <span style="color:#f92672">*</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">vertices</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">*</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>						},
+</span></span><span style="display:flex;"><span>						{
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">id</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`a</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">i</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">index</span><span style="color:#f92672">:</span> <span style="color:#e6db74">`a</span><span style="color:#e6db74">${</span><span style="color:#a6e22e">i</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>,
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">vertices</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>] <span style="color:#f92672">*</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>							<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">vertices</span>[<span style="color:#a6e22e">i</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">4</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">3</span>] <span style="color:#f92672">*</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>						},
+</span></span><span style="display:flex;"><span>					],
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">meta</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">isDebugLine</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>				},
+</span></span><span style="display:flex;"><span>			});
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">debugLineIds</span> <span style="color:#f92672">=</span> [...<span style="color:#a6e22e">debugLineIds</span>, <span style="color:#a6e22e">id</span>];
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	} <span style="color:#66d9ef">catch</span> (<span style="color:#a6e22e">error</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">error</span>(<span style="color:#e6db74">`Error creating debug lines: </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">error</span><span style="color:#e6db74">}</span><span style="color:#e6db74">`</span>);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><ol>
+<li>As mentioned before, we want to delete all of the lines from the previous render and reset the debug line ids array to be empty:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">debugLineIds</span>.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">lineId</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">deleteShape</span>(<span style="color:#a6e22e">lineId</span>));
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">debugLineIds</span> <span style="color:#f92672">=</span> [];
+</span></span></code></pre></div><ol start="2">
+<li>Get the vertices and the colors to use for the lines from Rapier:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">vertices</span>, <span style="color:#a6e22e">colors</span> } <span style="color:#f92672">=</span> <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">debugRender</span>();
+</span></span></code></pre></div><ol start="3">
+<li>Next, we loop through each set of vertices (we divide the length 4 because each line consists of a start and end x and y).</li>
+</ol>
+<p>First, we get the get color to use for the line by converting the value to the hex color and then mapping it to our tldraw color.</p>
+<p>Then, we create an id, outside of <code>createShape</code> so we can add it to our debug line ids, and then create the shape using the vertices, mapped from physics space to tldraw space. We also add a <code>meta</code> property, <code>isDebugLine: true</code>. So that when we iterate through the shapes on the canvas, we know what&rsquo;s a Rapier debug line and what&rsquo;s a line drawn by the us.</p>
+<ol start="4">
+<li>Add the ids of the lines created for the debug lines to our array so that next iteration we can delete them from the canvas.</li>
+</ol>
+<p>Now, at the bottom of our <code>gameLoop</code> function, before the call to <code>requestAnimationFrame(gameLoop)</code>, add:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">createDebugLines</span>(<span style="color:#a6e22e">world</span>, <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>);
+</span></span></code></pre></div><h2 id="adding-physics-to-the-rider">Adding Physics to the Rider</h2>
+<p>Ok so now we have our rider shape, we have the physics world set up, and we can render debug lines so we can see our rigid body and colliders. Let&rsquo;s attach a rigid body and a collider to the rider.</p>
+<p>First, we have to create a dynamic rigid body, so that the rider is affected by physics, and move it to the position of where the shape is created:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderRigidBodyDesc</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">RigidBodyDesc</span>.<span style="color:#a6e22e">dynamic</span>().<span style="color:#a6e22e">setTranslation</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>
+</span></span><span style="display:flex;"><span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderRigidBody</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">createRigidBody</span>(<span style="color:#a6e22e">riderRigidBodyDesc</span>);
+</span></span></code></pre></div><p>For the translation of the rigid body, we just set it to the position of the rider shape, making sure to convert from tldraw space to physics space.</p>
+<!-- raw HTML omitted -->
+<p>Next is the collider for the rider. This one is a bit more hardcoded because we want a rounded collider just around the sled. You could argue that the collider should encompass santa but we want to avoid harm coming to our santa and also the collider is more rounded just around the sled.</p>
+<p>We&rsquo;re going to use a round cuboid collider so it&rsquo;ll be a rectangle around our sled with the corners rounded:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderColliderDesc</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">ColliderDesc</span>.<span style="color:#a6e22e">roundCuboid</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">12</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#ae81ff">0.05</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">setTranslation</span>(<span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0.1</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">setFriction</span>(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">setFrictionCombineRule</span>(<span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">CoefficientCombineRule</span>.<span style="color:#a6e22e">Min</span>)
+</span></span><span style="display:flex;"><span>    .<span style="color:#a6e22e">setRestitution</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderCollider</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">createCollider</span>(<span style="color:#a6e22e">riderColliderDesc</span>, <span style="color:#a6e22e">riderRigidBody</span>);
+</span></span></code></pre></div><p>I mentioned that the values here would not be pretty. I just fined tuned them using the debug lines until I saw a collider I liked. We also set friction to 0 so that it slides like a well oiled sled and the restitution to 0 so that it doesn&rsquo;t bounce off the lines.</p>
+<p>Speaking of debug lines, if you place the rider on the canvas now, you should see the debug lines for the collder appear.</p>
+<p>There&rsquo;s actually an issue here though, the collider is not aligned with the sprite. You&rsquo;ll notice that the center of the collider is aligned with the top left of the sprite. The pivot of Rapier and tldraw is off. To fix this, we just add half the dimensions of the sprite to the translation of the rigid body:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderRigidBodyDesc</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">RigidBodyDesc</span>.<span style="color:#a6e22e">dynamic</span>().<span style="color:#a6e22e">setTranslation</span>(
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>Now if you add the rider and look at the debug lines, it all lines up!</p>
+<h2 id="creating-colliders-for-lines">Creating Colliders For Lines</h2>
+<p>Next, we need to add colliders to lines drawn by the user so that our santa has something to sled on. We&rsquo;re going to support both drawn lines and lines created with the line tool. To make it easier to handle these types of lines, and any future lines, let&rsquo;s put this in a function outside of the shape. It&rsquo;ll take the Rapier instance and the shape to create the collider for. If the shape is one we support (draw, line) then we&rsquo;ll return the <code>ColliderDesc</code> for it. Otherwise, we&rsquo;ll return <code>undefined</code> to indicate it&rsquo;s not supported.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createColliderDescForShape</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">RAPIER</span>, <span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">TLShape</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">ColliderDesc</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">shape</span>.<span style="color:#66d9ef">type</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Let&rsquo;s trackle the draw shape type first. The draw shape consists of a series of points that makes up the line. Luckily, Rapier has a <code>polyline</code> collider type that we can use for this. We just pass it a series of points. If we were more concerned about performance, we might try to use the heightfield but it would be less of an accurate line since it would have sharp points instead of smooth hills.</p>
+<p>So the switch case for our draw shape looks like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">shape</span>.<span style="color:#66d9ef">type</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;draw&#34;</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">draw</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">shape</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">TLDrawShape</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">ColliderDesc</span>.<span style="color:#a6e22e">polyline</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Float32Array</span>(
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">draw</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">segments</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">points</span>.<span style="color:#a6e22e">flatMap</span>((<span style="color:#a6e22e">point</span>) <span style="color:#f92672">=&gt;</span> [
+</span></span><span style="display:flex;"><span>                    (<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">x</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>                    (<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">point</span>.<span style="color:#a6e22e">y</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>                ])
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">setFriction</span>(<span style="color:#ae81ff">0.5</span>)
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">setRestitution</span>(<span style="color:#ae81ff">1.0</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Note:</strong> With both of these shapes, we have to add the position of the point to the base position of the shape. The points on these lines start at (0, 0) at the position of the shape.</p>
+<p>First we cheat TypeScript a little bit again with <code>as TLDrawShape</code> since we know it&rsquo;s a draw shape. This gives us the typing for the shape&rsquo;s props which is nice to have with more complicated shapes.</p>
+<p>Then, we create the <code>polyline</code> collider. The <code>polyline</code> collider expects a <code>Float32Array</code> of x, y, x, y, etc. The draw shape has segments and search segment has x, y points. In the code above, I just always use <code>segment[0]</code>. I&rsquo;ve personally not come across a situation where I had multiple segments. But since each point in a segment is a <code>{ x: number; y: number }</code> object, and we just need a flat array, we use <code>flatMap</code> to just return the x and y number values. Then, we set friction to 0.5 so it acts like a ground terrain. You can tweak these friction and restitution values to change the speed and bounciness of the rider.</p>
+<p>For the line shape, it&rsquo;s even easier. We&rsquo;ll be using Rapier&rsquo;s segment collider which just takes a start and end point and creates a straight line, matching the line shape. It looks pretty similar to the draw shape from above but with just the start and end points:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">switch</span> (<span style="color:#a6e22e">shape</span>.<span style="color:#66d9ef">type</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;line&#34;</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">line</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">shape</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">TLLineShape</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">points</span> <span style="color:#f92672">=</span> Object.<span style="color:#a6e22e">keys</span>(<span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">points</span>).<span style="color:#a6e22e">map</span>(
+</span></span><span style="display:flex;"><span>            (<span style="color:#a6e22e">key</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">points</span>[<span style="color:#a6e22e">key</span>]
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">ColliderDesc</span>.<span style="color:#a6e22e">segment</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Vector2</span>(
+</span></span><span style="display:flex;"><span>                (<span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">x</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>                (<span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">y</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>
+</span></span><span style="display:flex;"><span>            ),
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Vector2</span>(
+</span></span><span style="display:flex;"><span>                (<span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">x</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>                (<span style="color:#a6e22e">line</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">points</span>[<span style="color:#ae81ff">1</span>].<span style="color:#a6e22e">y</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>
+</span></span><span style="display:flex;"><span>            )
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">setFriction</span>(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>            .<span style="color:#a6e22e">setRestitution</span>(<span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The points on the line are defined as keys on an object with key names that aren&rsquo;t directly related to their indices so we put them into an array to make it easier.  Again we add the points to the position of the shape and convert into physics space. For smooth lines like this, we set friction and restitution to 0 so it acts as ice.</p>
+<h2 id="adding-colliders-to-lines">Adding Colliders To Lines</h2>
+<p>Now that we can easily create colliders for shapes, we need to actually create them when the rider shape is placed on the screen. The following code is in the <code>useEffect</code> but outside of the game loop.</p>
+<p>First though, let&rsquo;s keep track of the handles of the colliders that we&rsquo;re going to add just like we did with the player collider. This makes it much easier to reference them in the future. Unlike the rider though, we don&rsquo;t know the exact shape id that the colliders are attached to so lets make it an object with the keys being shape ids and the values being the handles of the colliders.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">shapeColliderHandles</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>    [<span style="color:#a6e22e">shapeId</span>: <span style="color:#66d9ef">string</span>]<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>} <span style="color:#f92672">=</span> {};
+</span></span></code></pre></div><p>Now we can get all of the shapes that have been drawn to the page:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">currentPageShapes</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getCurrentPageShapes</span>();
+</span></span></code></pre></div><p><strong>Note:</strong> If I was optimizing this, I&rsquo;d filter out culled shapes. I haven&rsquo;t tried it but there&rsquo;s a function on the editor, <code>this.editor.getCulledShapes()</code> and we should be able to use the results of this to filter out the page shapes above.</p>
+<p>Next, we&rsquo;ll go through each shape and attempt to create a shape for it. One of our constraints though is that only one rider can be on the screen at one. This is more performant, easier to debug and manage, and there&rsquo;s only one santa in real life anyways. So while we&rsquo;re looping through the shapes to add colliders to them, we&rsquo;re also going to see if we need to delete any old riders or not.</p>
+<p>First, let&rsquo;s set up the loop:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">shapesToDelete</span>: <span style="color:#66d9ef">TLShapeId</span>[] <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">currentPageShapes</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">currentPageShape</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>We&rsquo;re going to add the shapes that should be deleted (which should just be old rider shapes) to the <code>shapesToDelete</code> array. Let&rsquo;s tackle that part first.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">currentPageShape</span>.<span style="color:#66d9ef">type</span> <span style="color:#f92672">===</span> <span style="color:#e6db74">&#34;rider&#34;</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">currentPageShape</span>.<span style="color:#a6e22e">id</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">shapesToDelete</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>            ...<span style="color:#a6e22e">shapesToDelete</span>,
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">currentPageShape</span>.<span style="color:#a6e22e">id</span>,
+</span></span><span style="display:flex;"><span>	    ];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The first condition <code>currentPageShape.id === shape.id</code> checks if the rider shape is the one that is newly created. If so, we don&rsquo;t want to do anything. Otherwise, if there&rsquo;s a rider shape with any other id, return it so it can be deleted.</p>
+<p>Next, we&rsquo;re going to check if the shape is a debug line or not. If so, we don&rsquo;t do anything. If we didn&rsquo;t have this check, we would create colliders for the debug lines, which is very much not performant.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">currentPageShape</span>.<span style="color:#a6e22e">meta</span>.<span style="color:#a6e22e">isDebugLine</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Ok now we&rsquo;re at the point where the shape is not a rider and is not a debug line so let&rsquo;s try to create a collider for it using the function we created in the previous section.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">currentPageShapeColliderDesc</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">createColliderDescForShape</span>(<span style="color:#a6e22e">RAPIER</span>, <span style="color:#a6e22e">currentPageShape</span>);
+</span></span></code></pre></div><p>Ok I&rsquo;ve been saying &ldquo;create a collider&rdquo; but really we&rsquo;re just creating the description of the collider. If you remember, this function either returns the <code>ColliderDesc</code> if it&rsquo;s a shape we support, or it returns <code>undefined</code> otherwise. So let&rsquo;s handle both cases.</p>
+<p>If it returns a <code>ColliderDesc</code>, then we want to actually create the collider and add it to the world, and our own object. Otherwise we&rsquo;ll just log a warning that the shape is not supported.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">currentPageShapeColliderDesc</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">currentPageShapeCollider</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">createCollider</span>(
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">currentPageShapeColliderDesc</span>
+</span></span><span style="display:flex;"><span>        );
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shapeColliderHandles</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        ...<span style="color:#a6e22e">shapeColliderHandles</span>,
+</span></span><span style="display:flex;"><span>        [<span style="color:#a6e22e">currentPageShape</span>.<span style="color:#a6e22e">id</span>]<span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">currentPageShapeCollider</span>.<span style="color:#a6e22e">handle</span>,
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>} <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">console</span>.<span style="color:#a6e22e">warn</span>(
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">`Shape type </span><span style="color:#e6db74">${</span><span style="color:#a6e22e">currentPageShape</span>.<span style="color:#66d9ef">type</span><span style="color:#e6db74">}</span><span style="color:#e6db74"> is not supported.`</span>
+</span></span><span style="display:flex;"><span>    );
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>To wrap up this section, let&rsquo;s delete our shapes that were returned from the loop.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">shapesToDelete</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">shapeId</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">deleteShape</span>(<span style="color:#a6e22e">shapeId</span>);
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>At this point you should be able to draw a line or use the line tool to create a line then add a rider to the canvas and you should see the debug lines for the terrain. If your frames start dropping, don&rsquo;t worry about it too much. We won&rsquo;t reliably be able to use these lines while actually playing the game since they can drastically reduce frames. Instead, we just want to use them to debug the positions of colliders on shapes and the rider but in limited context.</p>
+<h2 id="deleting-colliders-when-shapes-are-deleted">Deleting Colliders When Shapes Are Deleted</h2>
+<p>I&rsquo;ll keep this section short, this is just in case the rider or one of the terrain lines is deleted while the simulation is running. We remove any physics entites on the shapes so clean up.</p>
+<p>tldraw makes this easy with their side effects so we can create a side effect that runs after a shape is deleted and depending on the shape, we can remove the physics entities attached to it.</p>
+<p>I&rsquo;ll go ahead and paste the whole block. This goes after the loop we created above.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">sideEffects</span>.<span style="color:#a6e22e">registerAfterDeleteHandler</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;shape&#34;</span>,
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">deletedShape</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">deletedShape</span>.<span style="color:#a6e22e">id</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">removeCollider</span>(<span style="color:#a6e22e">riderCollider</span>, <span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">removeRigidBody</span>(<span style="color:#a6e22e">riderRigidBody</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">deletedShape</span>.<span style="color:#a6e22e">meta</span>.<span style="color:#a6e22e">isDebugLine</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">deletedShape</span>.<span style="color:#a6e22e">id</span> <span style="color:#66d9ef">in</span> <span style="color:#a6e22e">shapeColliderHandles</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shapeCollider</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">getCollider</span>(
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">shapeColliderHandles</span>[<span style="color:#a6e22e">deletedShape</span>.<span style="color:#a6e22e">id</span>]
+</span></span><span style="display:flex;"><span>            );
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">removeCollider</span>(<span style="color:#a6e22e">shapeCollider</span>, <span style="color:#66d9ef">false</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>Basically, if the deleted shape is the rider, we remove the collider and rigid body, which we set to variables earlier. If the shape is a debug line we do nothing since it&rsquo;s just a representation of a rigid body or collider and not one itself, and if it&rsquo;s anything else we get the collider handle from our shape -&gt; collider handle mapping and delete it.</p>
+<h2 id="moving-the-rider">Moving the Rider</h2>
+<p>Now that we&rsquo;ve set up our physics world, we can finally move the rider based on the physics simulation.</p>
+<p>In the game loop, after <code>world.step()</code>, we need to get our rider shape again so that we have access to its properties.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rider</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getShape</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>
+</span></span><span style="display:flex;"><span>) <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">ITldrawRiderShape</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">rider</span>) <span style="color:#66d9ef">return</span>;
+</span></span></code></pre></div><p>Then, get the rigid body&rsquo;s latest position after stepping the physics simulation forward one frame.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">position</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">riderRigidBody</span>.<span style="color:#a6e22e">translation</span>();
+</span></span></code></pre></div><p>Next, we calculate the next position of the rider shape from this. We calculate this by taking the new position of the rigid body, adjusting for the difference in anchor points, and again converting from physics space to tldraw space.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">nextPosition</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Vector2</span>(
+</span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">position</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>) <span style="color:#f92672">*</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
+</span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">position</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>) <span style="color:#f92672">*</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p><strong>Note:</strong> Since this position will be applied to our rider shape, <code>Vector2</code> is an import from tldraw.</p>
+<p>Let&rsquo;s apply this update to our shape.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">updateShape</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">shape.id</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rider&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">nextPosition.x</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">nextPosition.y</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Now we have basic physics working on the rider. If you create a line, and then place the rider above it, you should see the rider falling down due to gravity and then it skiing on the line. You&rsquo;ll notice though that the rider doesn&rsquo;t rotate to match the slope of the line, it just stays flat while skiing down. Let&rsquo;s fix this.</p>
+<h2 id="rotating-the-rider">Rotating the Rider</h2>
+<p>We can get the rotation of the rider&rsquo;s rigid body with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">newRotation</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">riderRigidBody</span>.<span style="color:#a6e22e">rotation</span>();
+</span></span></code></pre></div><p>Now, if you apply this to the <code>updateShape</code> we added above like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">updateShape</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">shape.id</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rider&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">nextPosition.x</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">nextPosition.y</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rotation</span>: <span style="color:#66d9ef">newRotation</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>and run the simulation, you might notice that it looks&hellip;bad. This is because if you rotate the shape like this, it rotates it based on the top left point of the shape, which is not what we expect. We want to rotate around the center point of the shape.</p>
+<p>We can&rsquo;&rsquo;t do this in <code>updateShape</code> so if you added the rotation above, remove it now. Instead, tldraw has a <code>editor.rotateShapesBy</code> method that can be used to rotate shapes around any center point, defaulting to the center point of the shapes passed to it. If we just pass in our rider shape, it&rsquo;ll rotate around the center point of the rider shape. As for parameters, it takes an array of shape ids to rotate (which we&rsquo;ll just pass in our rider shape by) and the amount to rotate by in radians.</p>
+<p><code>riderRigidBody.rotation();</code> returns us the current rotation, not the difference, but we can get the difference by subtracting the current rotation from it:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rotationDiff</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">newRotation</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">rotation</span>;
+</span></span></code></pre></div><p>Luckily, this is already in radians so we can just pass it to <code>rotateShapesBy</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">rotateShapesBy</span>([<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>], <span style="color:#a6e22e">rotationDiff</span>);
+</span></span></code></pre></div><p>If you look at the simulation now, it might almost seem correct. There&rsquo;s still one last rotation issue, the x and y position of the rider shape changes as it rotates because the position is based on the top left corner of the rider shape. This top left corner changes positions as it rotates. To really see the issue, set the gravity of the world to 0 and add a small torque impulse to the rigid body just outside of the game loop to make it rotate on the spot</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">riderRigidBody</span>.<span style="color:#a6e22e">applyTorqueImpulse</span>(<span style="color:#ae81ff">0.0001</span>, <span style="color:#66d9ef">true</span>);
+</span></span></code></pre></div><p>This will cause the rigid body to start spinning and with debug lines on you can see the rider shape getting out of sync with the collider. To fix this, we need another utility function that calculates the coordinates of the rotated top left corner of the shape around its center.</p>
+<p>As input, we&rsquo;ll need the center position of the shape, the dimensions of the shape, and the rotation of the shape in radians.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getRotatedTopLeftForRectangle</span> <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">cx</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">cy</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">width</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">height</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">angle</span>: <span style="color:#66d9ef">number</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">number</span>; <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">number</span> } <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>Note:</strong> As the name implies, this can be used for any rectangular shape.</p>
+<p>First, we get the half width and height based on the dimensions passed in and use it to determine the position of the top left point of the shape.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">halfWidth</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">width</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">halfHeight</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">height</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dx</span> <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">halfWidth</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dy</span> <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">halfHeight</span>;
+</span></span></code></pre></div><p>Next, we apply the rotation matrix to the offsets.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dxRot</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">dx</span> <span style="color:#f92672">*</span> Math.<span style="color:#a6e22e">cos</span>(<span style="color:#a6e22e">angle</span>) <span style="color:#f92672">-</span> <span style="color:#a6e22e">dy</span> <span style="color:#f92672">*</span> Math.<span style="color:#a6e22e">sin</span>(<span style="color:#a6e22e">angle</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dyRot</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">dx</span> <span style="color:#f92672">*</span> Math.<span style="color:#a6e22e">sin</span>(<span style="color:#a6e22e">angle</span>) <span style="color:#f92672">+</span> <span style="color:#a6e22e">dy</span> <span style="color:#f92672">*</span> Math.<span style="color:#a6e22e">cos</span>(<span style="color:#a6e22e">angle</span>);
+</span></span></code></pre></div><ul>
+<li>
+<p><code>dxRot</code> represents the x-coordinate offset after rotating.</p>
+</li>
+<li>
+<p><code>dx * Math.cos(angle)</code> projects the horizontal offset <code>dx</code> onto the rotated x-axis.</p>
+</li>
+<li>
+<p><code>-dy * Math.sin(angle)</code> projects the vertical offset <code>dy</code> onto the rotated x-axis, with the sign changed because the y-axis rotates counterclockwise.</p>
+</li>
+<li>
+<p><code>dyRot</code> represents the y-coordinate offset after rotating.</p>
+</li>
+<li>
+<p><code>dx * Math.sin(angle)</code> projects the horizontal offset <code>dx</code> onto the rotated y-axis.</p>
+</li>
+<li>
+<p><code>dy * Math.cos(angle)</code> projects the vertical offset <code>dy</code> onto the rotated y-axis.</p>
+</li>
+</ul>
+<p>This part just calculates how the top left corner of the shape shifts due to the rotation of the shape.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">cx</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">dxRot</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">cy</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">dyRot</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span> };
+</span></span></code></pre></div><p>Lastly, we add the rotated offsets to the center position of the shape to compute the new absolute position of the top left corner of the shape and return it.</p>
+<p>Now let&rsquo;s use this in our rotation.</p>
+<p>After calculating <code>nextPosition</code>, lets calculate the <code>rotatedTopLeftPosition</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rotatedTopLeftPosition</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getRotatedTopLeftForRectangle</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">nextPosition</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">nextPosition</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">rotation</span>
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>Now when updating the shape with <code>this.editor.updateShape</code>, for the x and y values, use <code>rotatedTopLeftPosition.x</code> and <code>rotatedTopLeftPosition.y</code> instead of <code>nextPosition.x</code> and <code>nextPosition.y</code> like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">updateShape</span>({
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">shape.id</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rider&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">rotatedTopLeftPosition.x</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">rotatedTopLeftPosition.y</span>,
+</span></span><span style="display:flex;"><span>});
+</span></span></code></pre></div><p>Now if you look at your spinning santa, the shape and collider should be in sync. If you add the gravity back in and remove the torque impulse, you should see your rider correctly rotating to match the slope of the line.</p>
+<h2 id="next-steps">Next Steps</h2>
+<p>If I wanted to continue with this, some other ideas I would pursue would be:</p>
+<ul>
+<li>Have the camera follow the rider.</li>
+<li>Don&rsquo;t create colliders for culled shapes. Create the colliders for shapes as they come into view.</li>
+<li>Create colliders for other tldraw shape types such as geo, arrows, etc. with different physics properties.</li>
+<li>A reindeer pulling the sled with a joint attached to the sled.</li>
+<li>Improve the collider for the rider. Currently the collider is just around the sled and not santa.</li>
+<li>Particle effects for fun.</li>
+<li>Add the ability to place checkpoints or a finish line.</li>
+</ul>
+
+</div>
+
+        
+        
+        <footer>Bob Corponoi © 2024</footer>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Bob Corponoi</title>
+    <link>http://localhost:1313/posts/</link>
+    <description>Recent content in Posts on Bob Corponoi</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 19 Dec 2024 15:23:25 +0800</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</title>
+      <link>http://localhost:1313/posts/tldraw-rider/</link>
+      <pubDate>Thu, 19 Dec 2024 15:23:25 +0800</pubDate>
+      <guid>http://localhost:1313/posts/tldraw-rider/</guid>
+      <description>&lt;p&gt;I work with tldraw for my day job. One day, when I was tasked with a myriad of small bug fixes, I was looking at the tldraw canvas and I was reminded of a game I used to play back in school, &lt;a href=&#34;https://en.wikipedia.org/wiki/Line_Rider&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;Line Rider&lt;/a&gt;. The premise of the game is that there&amp;rsquo;s an entity on a sled and you have to draw lines for them to sled on. So I thought, &amp;ldquo;Hey, tldraw is perfect for this&amp;rdquo; which is how this became my weekend project this weekend.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
