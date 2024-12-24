@@ -534,6 +534,12 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><p>Now if you look at your spinning santa, the shape and collider should be in sync. If you add the gravity back in and remove the torque impulse, you should see your rider correctly rotating to match the slope of the line.</p>
 <p><img src="./rider-rotation-correct.gif" alt="rider rotation correct"></p>
+<p>There&rsquo;s also currently an <a href="https://github.com/tldraw/tldraw/issues/5134"  target="_blank" rel="noopener" >open issue in the tldraw GitHub repo</a> where a selected shape that&rsquo;s continuously rotating causes a drop in frames per second. To remedy this, add this line outside of the game loop where we get the rider shape by its id.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">deselect</span>(<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>);
+</span></span></code></pre></div><h2 id="lets-test-it-out">Let&rsquo;s Test It Out</h2>
+<p>That&rsquo;s it for now, let&rsquo;s see what we&rsquo;ve come up with!</p>
+<p><img src="./rider-demo.gif" alt="rider demo"></p>
+<p>Wow that was a sick flip.</p>
 <h2 id="next-steps">Next Steps</h2>
 <p>If I wanted to continue with this, some other ideas I would pursue would be:</p>
 <ul>

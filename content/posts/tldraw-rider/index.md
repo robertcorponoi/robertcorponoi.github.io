@@ -738,6 +738,14 @@ There's also currently an [open issue in the tldraw GitHub repo](https://github.
 this.editor.deselect(shape.id);
 ```
 
+## Let's Test It Out
+
+That's it for now, let's see what we've come up with!
+
+![rider demo](./rider-demo.gif)
+
+Wow that was a sick flip.
+
 ## Next Steps
 
 If I wanted to continue with this, some other ideas I would pursue would be:
