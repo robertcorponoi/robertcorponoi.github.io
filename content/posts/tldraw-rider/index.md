@@ -7,6 +7,8 @@ image = './tldraw-rider.png'
 
 I work with tldraw for my day job. One day, when I was tasked with a myriad of small bug fixes, I was looking at the tldraw canvas and I was reminded of a game I used to play back in school, [Line Rider](https://en.wikipedia.org/wiki/Line_Rider). The premise of the game is that there's an entity on a sled and you have to draw lines for them to sled on. So I thought, "Hey, tldraw is perfect for this" which is how this became my weekend project this weekend.
 
+The most up to date code can be found on the [GitHub repo](https://github.com/robertcorponoi/tldraw-rider) for this project.
+
 ## Scoping
 
 Since it's a weekend project, I had to scope it so that I wouldn't spend weeks on it trying to make it into a full fledged game, even though it was really an appealing thought. Maybe one day I'll come back to it and expand on it, or add more features to it as another weekend project.
