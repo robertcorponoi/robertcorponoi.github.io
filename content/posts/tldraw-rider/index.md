@@ -732,6 +732,12 @@ Now if you look at your spinning santa, the shape and collider should be in sync
 
 ![rider rotation correct](./rider-rotation-correct.gif)
 
+There's also currently an [open issue in the tldraw GitHub repo](https://github.com/tldraw/tldraw/issues/5134) where a selected shape that's continuously rotating causes a drop in frames per second. To remedy this, add this line outside of the game loop where we get the rider shape by its id.
+
+```ts
+this.editor.deselect(shape.id);
+```
+
 ## Next Steps
 
 If I wanted to continue with this, some other ideas I would pursue would be:
