@@ -37,7 +37,7 @@ For the sprite, I wanted to go with a pixel art style. I've always loved the sty
 
 I won't go too much into the details. I recently purchased Aseprite so I started with a 32x32 blank canvas (32x32 is the limit of my artistic abilities while still having a good amount of detail). I started with the sled, using the Line Rider sled as inspiration. Then, for the character, I thought I would get into the holiday spirit and I chose to make a santa character. In the end, it ended up looking like:
 
-![image](./santa-sled.svg)
+![santa sled](./santa-sled.svg)
 
 A more ambitious vision was having a reindeer pulling the sled with a joint connecting the reindeer to santa but we'll keep it simple for now. I was pretty proud of myself for my first completed pixel art sprite. It's also something I really enjoyed making so I'll try more pixel art projects in the future. 
 
@@ -343,6 +343,8 @@ I mentioned that the values here would not be pretty. I just fined tuned them us
 
 Speaking of debug lines, if you place the rider on the canvas now, you should see the debug lines for the collder appear.
 
+![rider debug lines incorrect](./rider-debug-lines-incorrect.png)
+
 There's actually an issue here though, the collider is not aligned with the sprite. You'll notice that the center of the collider is aligned with the top left of the sprite. The pivot of Rapier and tldraw is off. To fix this, we just add half the dimensions of the sprite to the translation of the rigid body:
 
 ```ts
@@ -353,6 +355,8 @@ const riderRigidBodyDesc = RAPIER.RigidBodyDesc.dynamic().setTranslation(
 ```
 
 Now if you add the rider and look at the debug lines, it all lines up!
+
+![rider debug lines](./rider-debug-lines.png)
 
 ## Creating Colliders For Lines
 
@@ -520,6 +524,8 @@ shapesToDelete.forEach((shapeId) => {
 
 At this point you should be able to draw a line or use the line tool to create a line then add a rider to the canvas and you should see the debug lines for the terrain. If your frames start dropping, don't worry about it too much. We won't reliably be able to use these lines while actually playing the game since they can drastically reduce frames. Instead, we just want to use them to debug the positions of colliders on shapes and the rider but in limited context.
 
+![line debug lines](./line-debug-lines.png)
+
 ## Deleting Colliders When Shapes Are Deleted
 
 I'll keep this section short, this is just in case the rider or one of the terrain lines is deleted while the simulation is running. We remove any physics entites on the shapes so clean up.
@@ -620,6 +626,8 @@ this.editor.updateShape({
 
 and run the simulation, you might notice that it looks...bad. This is because if you rotate the shape like this, it rotates it based on the top left point of the shape, which is not what we expect. We want to rotate around the center point of the shape.
 
+![rider rotation incorrect](./rider-rotation-incorrect.gif)
+
 We can''t do this in `updateShape` so if you added the rotation above, remove it now. Instead, tldraw has a `editor.rotateShapesBy` method that can be used to rotate shapes around any center point, defaulting to the center point of the shapes passed to it. If we just pass in our rider shape, it'll rotate around the center point of the rider shape. As for parameters, it takes an array of shape ids to rotate (which we'll just pass in our rider shape by) and the amount to rotate by in radians.
 
 `riderRigidBody.rotation();` returns us the current rotation, not the difference, but we can get the difference by subtracting the current rotation from it:
@@ -634,7 +642,7 @@ Luckily, this is already in radians so we can just pass it to `rotateShapesBy`:
 this.editor.rotateShapesBy([shape.id], rotationDiff);
 ```
 
-If you look at the simulation now, it might almost seem correct. There's still one last rotation issue, the x and y position of the rider shape changes as it rotates because the position is based on the top left corner of the rider shape. This top left corner changes positions as it rotates. To really see the issue, set the gravity of the world to 0 and add a small torque impulse to the rigid body just outside of the game loop to make it rotate on the spot
+If you look at the simulation now, it might almost seem correct. There's still one last rotation issue, the x and y position of the rider shape changes as it rotates because the position is based on the top left corner of the rider shape. This top left corner changes positions as it rotates. To really see the issue, set the gravity of the world to 0 and add a small torque impulse to the rigid body just outside of the game loop to make it rotate on the spot.
 
 ```ts
 riderRigidBody.applyTorqueImpulse(0.0001, true);
@@ -719,6 +727,8 @@ this.editor.updateShape({
 ```
 
 Now if you look at your spinning santa, the shape and collider should be in sync. If you add the gravity back in and remove the torque impulse, you should see your rider correctly rotating to match the slope of the line.
+
+![rider rotation correct](./rider-rotation-correct.gif)
 
 ## Next Steps
 

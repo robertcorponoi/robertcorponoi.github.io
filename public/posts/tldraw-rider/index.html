@@ -1,8 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
     <meta charset="utf-8">
+    <meta name="description" content="Bob's blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>
 Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 
@@ -42,7 +45,7 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 <div class="content">
     <h1 class="post-title">Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</h1>
     <p class="post-date">22 Dec 2024</p>
-    <img src="./tldraw-rider.png" alt="Tldraw Rider - Sled the Slopes Of Your Infinite Canvas">
+    <img src="./tldraw-rider.png" alt="Tldraw Rider - Sled the Slopes Of Your Infinite Canvas" />
     <p>I work with tldraw for my day job. One day, when I was tasked with a myriad of small bug fixes, I was looking at the tldraw canvas and I was reminded of a game I used to play back in school, <a href="https://en.wikipedia.org/wiki/Line_Rider"  target="_blank" rel="noopener" >Line Rider</a>. The premise of the game is that there&rsquo;s an entity on a sled and you have to draw lines for them to sled on. So I thought, &ldquo;Hey, tldraw is perfect for this&rdquo; which is how this became my weekend project this weekend.</p>
 <h2 id="scoping">Scoping</h2>
 <p>Since it&rsquo;s a weekend project, I had to scope it so that I wouldn&rsquo;t spend weeks on it trying to make it into a full fledged game, even though it was really an appealing thought. Maybe one day I&rsquo;ll come back to it and expand on it, or add more features to it as another weekend project.</p>
@@ -61,7 +64,7 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 <h2 id="creating-the-sprite">Creating the Sprite</h2>
 <p>For the sprite, I wanted to go with a pixel art style. I&rsquo;ve always loved the style of pixel art but I&rsquo;ve never completed a piece of pixel art prior to this. This time I was determiend though, tldraw rider needed a pixel art character that you just might feel bad about when flipping them over or hitting a wall.</p>
 <p>I won&rsquo;t go too much into the details. I recently purchased Aseprite so I started with a 32x32 blank canvas (32x32 is the limit of my artistic abilities while still having a good amount of detail). I started with the sled, using the Line Rider sled as inspiration. Then, for the character, I thought I would get into the holiday spirit and I chose to make a santa character. In the end, it ended up looking like:</p>
-<p><img src="./santa-sled.svg" alt="image"></p>
+<p><img src="./santa-sled.svg" alt="santa sled"></p>
 <p>A more ambitious vision was having a reindeer pulling the sled with a joint connecting the reindeer to santa but we&rsquo;ll keep it simple for now. I was pretty proud of myself for my first completed pixel art sprite. It&rsquo;s also something I really enjoyed making so I&rsquo;ll try more pixel art projects in the future.</p>
 <p><strong>Note:</strong> If you&rsquo;re reading this post around the time it was posted, <a href="https://www.tldraw.com/"  target="_blank" rel="noopener" >tldraw.com</a> got into the holiday spirit and there&rsquo;s snow over the canvas. I created the santa sprite before I noticed this but it&rsquo;s a happy surprise, it really ties in well together.</p>
 <h2 id="the-tldraw-rider-shape">The Tldraw Rider Shape</h2>
@@ -278,12 +281,14 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderCollider</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">world</span>.<span style="color:#a6e22e">createCollider</span>(<span style="color:#a6e22e">riderColliderDesc</span>, <span style="color:#a6e22e">riderRigidBody</span>);
 </span></span></code></pre></div><p>I mentioned that the values here would not be pretty. I just fined tuned them using the debug lines until I saw a collider I liked. We also set friction to 0 so that it slides like a well oiled sled and the restitution to 0 so that it doesn&rsquo;t bounce off the lines.</p>
 <p>Speaking of debug lines, if you place the rider on the canvas now, you should see the debug lines for the collder appear.</p>
+<p><img src="./rider-debug-lines-incorrect.png" alt="rider debug lines incorrect"></p>
 <p>There&rsquo;s actually an issue here though, the collider is not aligned with the sprite. You&rsquo;ll notice that the center of the collider is aligned with the top left of the sprite. The pivot of Rapier and tldraw is off. To fix this, we just add half the dimensions of the sprite to the translation of the rigid body:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">riderRigidBodyDesc</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">RAPIER</span>.<span style="color:#a6e22e">RigidBodyDesc</span>.<span style="color:#a6e22e">dynamic</span>().<span style="color:#a6e22e">setTranslation</span>(
 </span></span><span style="display:flex;"><span>    (<span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>,
 </span></span><span style="display:flex;"><span>	(<span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">riderShape</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span> <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">PHYSICS_UNIT_TO_PX</span>
 </span></span><span style="display:flex;"><span>);
 </span></span></code></pre></div><p>Now if you add the rider and look at the debug lines, it all lines up!</p>
+<p><img src="./rider-debug-lines.png" alt="rider debug lines"></p>
 <h2 id="creating-colliders-for-lines">Creating Colliders For Lines</h2>
 <p>Next, we need to add colliders to lines drawn by the user so that our santa has something to sled on. We&rsquo;re going to support both drawn lines and lines created with the line tool. To make it easier to handle these types of lines, and any future lines, let&rsquo;s put this in a function outside of the shape. It&rsquo;ll take the Rapier instance and the shape to create the collider for. If the shape is one we support (draw, line) then we&rsquo;ll return the <code>ColliderDesc</code> for it. Otherwise, we&rsquo;ll return <code>undefined</code> to indicate it&rsquo;s not supported.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">createColliderDescForShape</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">RAPIER</span>, <span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">TLShape</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">ColliderDesc</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> <span style="color:#f92672">=&gt;</span> {
@@ -393,6 +398,7 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">deleteShape</span>(<span style="color:#a6e22e">shapeId</span>);
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><p>At this point you should be able to draw a line or use the line tool to create a line then add a rider to the canvas and you should see the debug lines for the terrain. If your frames start dropping, don&rsquo;t worry about it too much. We won&rsquo;t reliably be able to use these lines while actually playing the game since they can drastically reduce frames. Instead, we just want to use them to debug the positions of colliders on shapes and the rider but in limited context.</p>
+<p><img src="./line-debug-lines.png" alt="line debug lines"></p>
 <h2 id="deleting-colliders-when-shapes-are-deleted">Deleting Colliders When Shapes Are Deleted</h2>
 <p>I&rsquo;ll keep this section short, this is just in case the rider or one of the terrain lines is deleted while the simulation is running. We remove any physics entites on the shapes so clean up.</p>
 <p>tldraw makes this easy with their side effects so we can create a side effect that runs after a shape is deleted and depending on the shape, we can remove the physics entities attached to it.</p>
@@ -455,12 +461,13 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">rotation</span>: <span style="color:#66d9ef">newRotation</span>,
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><p>and run the simulation, you might notice that it looks&hellip;bad. This is because if you rotate the shape like this, it rotates it based on the top left point of the shape, which is not what we expect. We want to rotate around the center point of the shape.</p>
+<p><img src="./rider-rotation-incorrect.gif" alt="rider rotation incorrect"></p>
 <p>We can&rsquo;&rsquo;t do this in <code>updateShape</code> so if you added the rotation above, remove it now. Instead, tldraw has a <code>editor.rotateShapesBy</code> method that can be used to rotate shapes around any center point, defaulting to the center point of the shapes passed to it. If we just pass in our rider shape, it&rsquo;ll rotate around the center point of the rider shape. As for parameters, it takes an array of shape ids to rotate (which we&rsquo;ll just pass in our rider shape by) and the amount to rotate by in radians.</p>
 <p><code>riderRigidBody.rotation();</code> returns us the current rotation, not the difference, but we can get the difference by subtracting the current rotation from it:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rotationDiff</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">newRotation</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">rider</span>.<span style="color:#a6e22e">rotation</span>;
 </span></span></code></pre></div><p>Luckily, this is already in radians so we can just pass it to <code>rotateShapesBy</code>:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">rotateShapesBy</span>([<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>], <span style="color:#a6e22e">rotationDiff</span>);
-</span></span></code></pre></div><p>If you look at the simulation now, it might almost seem correct. There&rsquo;s still one last rotation issue, the x and y position of the rider shape changes as it rotates because the position is based on the top left corner of the rider shape. This top left corner changes positions as it rotates. To really see the issue, set the gravity of the world to 0 and add a small torque impulse to the rigid body just outside of the game loop to make it rotate on the spot</p>
+</span></span></code></pre></div><p>If you look at the simulation now, it might almost seem correct. There&rsquo;s still one last rotation issue, the x and y position of the rider shape changes as it rotates because the position is based on the top left corner of the rider shape. This top left corner changes positions as it rotates. To really see the issue, set the gravity of the world to 0 and add a small torque impulse to the rigid body just outside of the game loop to make it rotate on the spot.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">riderRigidBody</span>.<span style="color:#a6e22e">applyTorqueImpulse</span>(<span style="color:#ae81ff">0.0001</span>, <span style="color:#66d9ef">true</span>);
 </span></span></code></pre></div><p>This will cause the rigid body to start spinning and with debug lines on you can see the rider shape getting out of sync with the collider. To fix this, we need another utility function that calculates the coordinates of the rotated top left corner of the shape around its center.</p>
 <p>As input, we&rsquo;ll need the center position of the shape, the dimensions of the shape, and the rotation of the shape in radians.</p>
@@ -525,6 +532,7 @@ Tldraw Rider - Sled the Slopes Of Your Infinite Canvas &ndash; Bob Corponoi
 </span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">rotatedTopLeftPosition.y</span>,
 </span></span><span style="display:flex;"><span>});
 </span></span></code></pre></div><p>Now if you look at your spinning santa, the shape and collider should be in sync. If you add the gravity back in and remove the torque impulse, you should see your rider correctly rotating to match the slope of the line.</p>
+<p><img src="./rider-rotation-correct.gif" alt="rider rotation correct"></p>
 <h2 id="next-steps">Next Steps</h2>
 <p>If I wanted to continue with this, some other ideas I would pursue would be:</p>
 <ul>
