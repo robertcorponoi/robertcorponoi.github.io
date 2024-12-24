@@ -19,4 +19,4 @@ I have some open source projects on [GitHub](https://github.com/robertcorponoi) 
 
 ## Contact
 
-The best way to contact me is on [Bluesky](https://bsky.app/profile/bobcorponoi.bsky.social).
+The best way to contact me is on [Bluesky](https://bsky.app/profile/robertcorponoi.me).
