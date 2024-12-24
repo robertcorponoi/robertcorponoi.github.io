@@ -68,7 +68,7 @@ footer {
 	margin: 0;
 	padding: 0;
 }
-.posts a {
+.posts a:not([target="_blank"]) {
 	text-decoration: none;
 	color: #222;
 }

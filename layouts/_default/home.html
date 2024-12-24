@@ -1,5 +1,5 @@
 {{ define "main" }}
-<main aria-role="main">
+<main>
     <header>
         {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
         <h1>{{ .Title }}</h1>
@@ -13,10 +13,10 @@
     <ul class="posts">
         {{ range ( where .Site.RegularPages "Type" "posts" | first 3 ) }}
         <li>
-            <a href="{{ .Permalink }}">
+            <a href="{{ .Permalink }}" aria-label="Read more about {{ .Title }}">
                 <div>
                     <h2>{{ .Title }}</h2>
-                    <img src="{{ .Permalink}}/{{ .Params.image }}" alt="{{ .Title }}">
+                    <img src="{{ .Permalink}}/{{ .Params.image }}" alt="Post cover image" />
                     {{ .Summary }}
                 </div>
             </a>

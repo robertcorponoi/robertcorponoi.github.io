@@ -1,5 +1,5 @@
 {{ define "main" }}
-<main aria-role="main">
+<main>
     <header>
         {{ partial "menu.html" (dict "menuID" "main" "page" .) }}
         {{ with .Params.subtitle }}
@@ -11,7 +11,7 @@
             <a href="{{ .Permalink }}">
                 <div>
                     <h2>{{ .Title }}</h2>
-                    <img src="{{ .Permalink }}/{{ .Params.image }}" alt="{{ .Title }}">
+                    <img src="{{ .Permalink }}/{{ .Params.image }}" alt="Post cover image" />
                     {{ .Summary }}
                 </div>
             </a>
