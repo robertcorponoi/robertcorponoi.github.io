@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta name="description" content="Bob's blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>
+Tldraw - Can It Run Doom? &ndash; Bob Corponoi
+
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/index.css" />
+</head>
+
+<body>
+    <div class="container">
+        
+
+<nav>
+    <ul class="menu">
+        <li>
+            <a href="/">
+                <div class="logo"></div>
+                <span>Bob Corponoi</span>
+            </a>
+        </li>
+<li>
+    <a href="/">Home</a>
+</li>
+<li>
+    <a href="/about/">About</a>
+</li>
+<li>
+    <a href="/archive/">Archive</a>
+</li>
+    </ul>
+</nav>
+<div class="content">
+    <h1 class="post-title">Tldraw - Can It Run Doom?</h1>
+    <p class="post-date">30 Dec 2024</p>
+    <img src="./tldoom-playing-the-game.gif" alt="Tldraw - Can It Run Doom?" />
+    <p>Well yes, yes it can. I&rsquo;m not even sure why I explored this but I did so I might as well write about it.</p>
+<h2 id="the-doom-source-code">The Doom Source Code</h2>
+<p>After some brief research, it looked like compiling SDLDoom to WebAssembly was going to be the best way to approach this. If you&rsquo;re unfamiliar with <a href="https://www.libsdl.org/"  target="_blank" rel="noopener" >SDL</a>, like I was at the beginning, it&rsquo;s a library for low level access to audio, graphics, and input and it makes Doom easier to compile and run on modern operating systems.</p>
+<p>So from <a href="https://www.libsdl.org/projects/doom/"  target="_blank" rel="noopener" >libsdl&rsquo;s Doom project</a> I downloaded the original port and the <code>doom1.wad</code> file. I had never heard of a <code>wad</code> file before now but the best way I heard it explained is that <a href="https://www.doomworld.com/forum/post/2044324"  target="_blank" rel="noopener" >it&rsquo;s like a zip file for Doom&rsquo;s assets</a>.</p>
+<p>I put the <code>sdldoom-1.10</code> source at the top level in my source code, on the same level as the <code>package.json</code>. This isn&rsquo;t too important, you can place it where you like but we do reference the path in other parts later so if you don&rsquo;t place it in the same spot, you&rsquo;ll have to update other paths later.</p>
+<p>As far as the <code>doom1.wad</code> file, it needs to be accessible in the browser so where you place this depends on your application. For me, I&rsquo;m using <a href="https://github.com/vitejs/vite"  target="_blank" rel="noopener" >Vite</a> so I placed it in the <code>public</code> directory. The generated WebAssembly will also need to be placed somewhere it can be served so make sure you have the capability to serve static files.</p>
+<h2 id="emscripten">Emscripten</h2>
+<p>To compile to WebAssembly, we&rsquo;re going to use <a href="https://emscripten.org/"  target="_blank" rel="noopener" >emscripten</a>. It should be fairly simple to use it to compile sdldoom to WebAssembly but we have to make some modifications to the C source first.</p>
+<p>The first few changes are not really noteworthy, just includes that we need with emscripten so I&rsquo;ll just list them off.</p>
+<p><strong>w_wad.c</strong></p>
+<p>After the other includes, on line 44-ish, add:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#ifdef __EMSCRIPTEN__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;alloca.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p><strong>r_data.c</strong></p>
+<p>Before the <code>#include &quot;m_swap.h&quot;</code>, on line 38-ish, add:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#ifdef __EMSCRIPTEN__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;alloca.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p><strong>i_sound.c</strong></p>
+<p>After the <code>#include &quot;SDL_audio.h&quot;</code>, and <code>#include &quot;SDL_mutex.h&quot;</code>, it should look like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#ifdef __EMSCRIPTEN__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;SDL_endian.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;SDL_byteorder.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;SDL_version.h&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p><strong>i_net.c</strong></p>
+<p>First, remove the following line:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#error You should hack this file for your BSD sockets layer
+</span></span></span></code></pre></div><p>Then, after the three <code>#endif</code>s, we need to add a block for emscripten, on line 58-ish.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#ifdef __EMSCRIPTEN__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/socket.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;netinet/in.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;arpa/inet.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;unistd.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;netdb.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;sys/ioctl.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#ifndef IPPORT_USERRESERVED
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#define IPPORT_USERRESERVED	5000
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p><strong>d_main.c</strong></p>
+<p>This last one is a little more involved but first we have to add the emscripten header, on lilne 91-ish, after <code>#include &quot;d_main.h&quot;</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#ifdef __EMSCRIPTEN__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;emscripten.h&#34;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p>Now, since this is going to be running in the browser, we need to make an adjustment to the game loop so that it uses <code>requestAnimationFrame</code> when compiled by emscripten.</p>
+<p>First, we need to pull the update logic out of the loop and into a separate function because we&rsquo;ll need to run the logic in a couple places.</p>
+<p>The logic that we&rsquo;ll need in this function is going to be copied directly from the game loop of the <code>D_DoomLoop</code> function. So from that function, copy the lines within the <code>while(1)</code> block, starting from <code>I_StartFrame ();</code> and ending at <code>D_Display ();</code>.</p>
+<p>Then, above the <code>D_DoomLoop</code> function, create a new function, with the signature <code>void UpdateFrame (void)</code>, and paste the lines you copied as its body.</p>
+<p>Lastly, replace the entire <code>while  (1)</code> loop in the <code>D_DoomLoop</code> function with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#ifdef __EMSCRIPTEN__
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">emscripten_set_main_loop</span>(UpdateFrame, <span style="color:#ae81ff">0</span>, true);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#else
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">while</span> (<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">UpdateFrame</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#endif
+</span></span></span></code></pre></div><p>This will make sure that the loop works in the browser when compiled with emscripten.</p>
+<h2 id="build-script">Build Script</h2>
+<p>Ok, now that we have our source and the tools to be able to compile it, we need to create a build script. The build script is going to run the emscripten commands to build the C source and convert it to WebAssembly.</p>
+<p>Let&rsquo;s see what this is going to look like. We create a file at the root, on the same level as <code>package.json</code>, named <code>build.sh</code> and start off with</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span><span style="color:#75715e">#!/bin/sh
+</span></span></span></code></pre></div><p>to use the shell as an interpreter for the script.</p>
+<p>Next, we have to change to the sdldoom directory that contains the source code we want to build. If you remember from earlier, this is at the root of the source code, at the same level as the build script so we can use</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>cd sdldoom-1.10
+</span></span></code></pre></div><p>Next, we have to pass some flags to emscripten.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export EMCC_CFLAGS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-std=c89 -sUSE_SDL&#34;</span>
+</span></span></code></pre></div><p>We use the C89 standard during compilation but more importantly, we tell emscripten to use the SDL library since we&rsquo;re building sdldoom.</p>
+<p>Next, we run emscripten&rsquo;s versions of <code>configure</code> and <code>make</code> to compile the C source code.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>emconfigure ./configure
+</span></span><span style="display:flex;"><span>emmake make
+</span></span></code></pre></div><p>Now we&rsquo;re finally ready to compile it to WebAssembly.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>emcc -o index.js ./*.o --preload-file ../public/doom1.wad@./ -s ALLOW_MEMORY_GROWTH<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>The generated javascript is to be output to a file named <code>index.js</code>. We also have to pass in the path to the <code>doom1.wad</code> file, which is in our public directory that I mentioned earlier. Then, we use <code>ALLOW_MEMORY_GROWTH=1</code> to allow WebAssembly memory to dynamically grow during runtime.</p>
+<p><strong>Note:</strong> If the path passed to <code>--preload-file</code> is not in the same directory as the source we&rsquo;re compiling, we have to specify it as <code>src@dst</code>. So our source is in the <code>public</code> directory but we still want the output to be in the current directory since we move the generated files next.</p>
+<p>Lastly, we need to move the generated files to a place where they can be served and accessed in the browser, which for me is the <code>public</code> directory.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>mv index.* ../public
+</span></span></code></pre></div><p>The files generated are named:</p>
+<ul>
+<li>index.data</li>
+<li>index.js</li>
+<li>index.wasm</li>
+</ul>
+<p>These all need to be served as they contain data about the game assets, functionality, and how it interacts with the browser. If you have a chance, you should read over the <code>index.js</code> as it handles setting up event listeners and running the game loop.</p>
+<p>Now you should try running the script. You&rsquo;ll probably have to give it permission with <code>chmod 755 build.sh</code> but if you installed emscripten and its dependencies correctly, it should run and generate the files mentioned above.</p>
+<p>If you have issues with this, make sure you have the correct tools installed and the modifications we made to the source code required to work with emscripten.</p>
+<h2 id="the-tldoomshape">The TLDoomShape</h2>
+<p>At first, I had wanted to see if I could just create a custom style in the style panel that could be applied to any shape to turn it into Doom. From my research, I couldn&rsquo;t find a way to do this without also creating a custom shape that knows how to use that style so we&rsquo;ll just create a custom shape.</p>
+<h3 id="custom-shape-boilerplate">Custom Shape Boilerplate</h3>
+<p>First, we have to create a type definition for our shape. This is just going to be a minimal shape with a width and height, like so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">ITLDoomShape</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">TLBaseShape</span><span style="color:#f92672">&lt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#e6db74">&#34;doom&#34;</span>,
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">w</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">h</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&gt;</span>;
+</span></span></code></pre></div><p>Now let&rsquo;s create our shape with its basic properties.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TLDoomShapeUtil</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">ShapeUtil</span>&lt;<span style="color:#f92672">ITLDoomShape</span>&gt; {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">static</span> <span style="color:#a6e22e">override</span> <span style="color:#66d9ef">type</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;doom&#34;</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">const</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">override</span> <span style="color:#a6e22e">canResize</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">indicator</span>(<span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">ITLDoomShape</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">React</span>.<span style="color:#a6e22e">ReactElement</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> &lt;<span style="color:#f92672">rect</span> <span style="color:#a6e22e">width</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span>} <span style="color:#a6e22e">height</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span>} /&gt;;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getDefaultProps</span>()<span style="color:#f92672">:</span> <span style="color:#a6e22e">ITLDoomShape</span>[<span style="color:#e6db74">&#34;props&#34;</span>] {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">w</span>: <span style="color:#66d9ef">320</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">h</span>: <span style="color:#66d9ef">200</span>,
+</span></span><span style="display:flex;"><span>		};
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">getGeometry</span>(<span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">ITLDoomShape</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Geometry2d</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Rectangle2d</span>({
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">width</span>: <span style="color:#66d9ef">shape.props.w</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">height</span>: <span style="color:#66d9ef">shape.props.h</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">isFilled</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>		});
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">component</span>(<span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">ITLDoomShape</span>) {
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">HTMLContainer</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>}
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">style</span><span style="color:#f92672">=</span>{{
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">display</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;flex&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">flexDirection</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;column&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">alignItems</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;center&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">justifyContent</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;center&#34;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#a6e22e">pointerEvents</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;all&#34;</span>,
+</span></span><span style="display:flex;"><span>            }}
+</span></span><span style="display:flex;"><span>		&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">HTMLContainer</span>&gt;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>This is mostly just custom shape boilerplate but we&rsquo;ll go over each piece briefly.</p>
+<ul>
+<li>
+<p>The <code>type</code> property should match the name of the shape in the type definition, so in our case it&rsquo;s <code>&quot;doom&quot;</code>.</p>
+</li>
+<li>
+<p>The <code>canResize</code> override indicates that our shape is resizable. Resizing is an issue that we&rsquo;ll discuss later.</p>
+</li>
+<li>
+<p>Thhe <code>indicator</code> method just returns the svg box used when the shape is hovered over or selected.</p>
+</li>
+<li>
+<p><code>getDefaultProps</code> returns the initial width and height of the shape.</p>
+</li>
+<li>
+<p><code>getGeometry</code> returns the shape&rsquo;s geometry for hit-testing, binding, and doing other geometric calculations.</p>
+</li>
+<li>
+<p>The <code>component</code> is just like returning any other React functional component. We return a <code>HTMLContainer</code> which we&rsquo;ll add our game to later.</p>
+</li>
+</ul>
+<h3 id="game-canvas">Game Canvas</h3>
+<p>Next, we can add the <code>canvas</code> element that will render the game.</p>
+<p>First, we&rsquo;ll create a <code>ref</code> for it, which we&rsquo;ll use to pass to the generated JavaScript so it can attach event handlers and draw the game to it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">canvasRef</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useRef</span>&lt;<span style="color:#f92672">HTMLCanvasElement</span> <span style="color:#960050;background-color:#1e0010">|</span> <span style="color:#a6e22e">null</span>&gt;(<span style="color:#66d9ef">null</span>);
+</span></span></code></pre></div><p>Then, as a child of our <code>HTMLContainer</code>, add the canvas.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">canvas</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;canvas&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">ref</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">canvasRef</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">onContextMenu</span><span style="color:#f92672">=</span>{(<span style="color:#a6e22e">event</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">event</span>.<span style="color:#a6e22e">preventDefault</span>()}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">style</span><span style="color:#f92672">=</span>{{
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">backgroundColor</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;black&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">imageRendering</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;pixelated&#34;</span>,
+</span></span><span style="display:flex;"><span>    }}
+</span></span><span style="display:flex;"><span>/&gt;
+</span></span></code></pre></div><p>While we have a ref to it, we also want to pass an id, so that we can access it outside of the component context, as we&rsquo;ll see later.</p>
+<p>Lastly, we have to let the game know about our canvas. The generated <code>index.js</code> provides several globals on the <code>window</code> object but it also looks for an important one if defined, <code>window.Module</code>. This can be thought of as a configuration for the game. If it&rsquo;s not defined then it will be created by the script but even if we define it, more properties get added to it when the game is initialized. There&rsquo;s some <a href="https://emscripten.org/docs/api_reference/module.html#compilation-settings"  target="_blank" rel="noopener" >documentation</a> about the properties that can be passed to it but it doesn&rsquo;t seem like it has every option, or if the full documentation is in another spot. If you have time you should check out its properties when running the game to get more insight.</p>
+<p>So, just to make sure this is only defined once when the custom shape is added, we&rsquo;ll put it in a <code>useEffect</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#a6e22e">useEffect</span>(() <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    window.<span style="color:#a6e22e">Module</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">preRun</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>                window.<span style="color:#a6e22e">SDL</span>.<span style="color:#a6e22e">defaults</span>.<span style="color:#a6e22e">copyOnLock</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span>;
+</span></span><span style="display:flex;"><span>            },
+</span></span><span style="display:flex;"><span>        ],
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">canvas</span><span style="color:#f92672">:</span> (<span style="color:#66d9ef">function</span> () {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">canvasRef</span>.<span style="color:#a6e22e">current</span>;
+</span></span><span style="display:flex;"><span>        })(),
+</span></span><span style="display:flex;"><span>    };
+</span></span><span style="display:flex;"><span>}, []);
+</span></span></code></pre></div><p>Notice that it just returns the ref to our canvas. Also there&rsquo;s a <code>preRun</code> property we also define but I pulled that from another example, I&rsquo;m still not sure what it does yet.</p>
+<h3 id="adding-the-generated-script">Adding The Generated Script</h3>
+<p>The game is instantiated and runs from the <code>index.js</code> script that was generated by emscripten. However, this doesn&rsquo;t play well with React. Our options are to either add the script to the <code>index.html</code> that the React app is mounted to or to dynamically add it to the DOM. We don&rsquo;t really want option 1 because there is a chance the shape is never used so it would be a waste to always have it.</p>
+<p>We&rsquo;re going to use a hook, <code>useScript</code>, that adds the script to the DOM and removes it when the component unmounts. This hook is actually from <a href="https://usehooks.com/usescript"  target="_blank" rel="noopener" >useHooks</a> with the <a href="https://github.com/uidotdev/usehooks/blob/90fbbb4cc085e74e50c36a62a5759a40c62bb98e/index.js#L1097"  target="_blank" rel="noopener" >source here</a>.</p>
+<p>You can choose to add this package but I re-implemented it so it could be type safe. If you want to check out the Typescript version, it&rsquo;s on this post&rsquo;s <a href="https://github.com/robertcorponoi/tldoom/blob/main/src/useScript.ts"  target="_blank" rel="noopener" >GitHub repo</a>.</p>
+<p>Now, in our shape, below the <code>useEffect</code> that provides the <code>window.Module</code> options, add the generated <code>index.js</code> using this hook like so:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#a6e22e">useScript</span>(<span style="color:#e6db74">&#34;./index.js&#34;</span>, { <span style="color:#a6e22e">removeOnUnmount</span>: <span style="color:#66d9ef">true</span> });
+</span></span></code></pre></div><p><strong>Note:</strong> Make sure you change the path to the <code>index.js</code> to suit your build environment. Since I&rsquo;m using Vite, everything in the <code>public</code> directory is accessible at the root url so I can use <code>&quot;./index.js&quot;</code>.</p>
+<p>We pass the <code>removeOnUnmount</code> so that when the shape is deleted, the script is removed as well.</p>
+<h2 id="new-game">New Game</h2>
+<p>The <code>TLDoomShape</code> is complete and we&rsquo;re almost ready to see it in action. We just have to add it to the tldraw toolbar so it can be created.</p>
+<p>First, we have to define the tool which determines which shape it creates.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">export</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">TLDoomShapeTool</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">BaseBoxShapeTool</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">static</span> <span style="color:#a6e22e">override</span> <span style="color:#a6e22e">id</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;doom&#34;</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">static</span> <span style="color:#a6e22e">override</span> <span style="color:#a6e22e">initial</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;idle&#34;</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">override</span> <span style="color:#a6e22e">shapeType</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;doom&#34;</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>By default, the tool is not selected and when it is used, it creates a shape with an id of <code>&quot;doom&quot;</code>, which is our custom shape.</p>
+<p>Next, we have to add it to the tools, which contains the display definition of the tool and what it does when it is clicked on.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">uiOverrides</span>: <span style="color:#66d9ef">TLUiOverrides</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">tools</span>(<span style="color:#a6e22e">editor</span>, <span style="color:#a6e22e">tools</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">tools</span>.<span style="color:#a6e22e">doom</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">id</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;doom&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">icon</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;color&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">label</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;DOOM&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">kbd</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;d&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">onSelect</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">setCurrentTool</span>(<span style="color:#e6db74">&#34;doom&#34;</span>);
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">tools</span>;
+</span></span><span style="display:flex;"><span>	},
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Now to add it to the toolbar so it is displayed alongside the other tools. This is defined as a component override for the <code>Toolbar</code>. We create a menu item for it and then render the default toolbar items after it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">components</span>: <span style="color:#66d9ef">TLComponents</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">Toolbar</span><span style="color:#f92672">:</span> (<span style="color:#a6e22e">props</span>: <span style="color:#66d9ef">DefaultToolbarProps</span>) <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tools</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useTools</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">isDoomSelected</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useIsToolSelected</span>(<span style="color:#a6e22e">tools</span>[<span style="color:#e6db74">&#34;doom&#34;</span>]);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> (
+</span></span><span style="display:flex;"><span>			&lt;<span style="color:#f92672">DefaultToolbar</span> {<span style="color:#a6e22e">...props</span>}&gt;
+</span></span><span style="display:flex;"><span>				&lt;<span style="color:#f92672">TldrawUiMenuItem</span>
+</span></span><span style="display:flex;"><span>					{<span style="color:#a6e22e">...tools</span><span style="color:#960050;background-color:#1e0010">[&#34;</span><span style="color:#a6e22e">doom</span><span style="color:#960050;background-color:#1e0010">&#34;]</span>}
+</span></span><span style="display:flex;"><span>					<span style="color:#a6e22e">isSelected</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">isDoomSelected</span>}
+</span></span><span style="display:flex;"><span>				/&gt;
+</span></span><span style="display:flex;"><span>				&lt;<span style="color:#f92672">DefaultToolbarContent</span> /&gt;
+</span></span><span style="display:flex;"><span>			&lt;/<span style="color:#f92672">DefaultToolbar</span>&gt;
+</span></span><span style="display:flex;"><span>		);
+</span></span><span style="display:flex;"><span>	},
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Then, add the tool and custom shape to constants that will be passed to the <code>Tldraw</code> component.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">customShapeUtils</span> <span style="color:#f92672">=</span> [<span style="color:#a6e22e">TLDoomShapeUtil</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">customTools</span> <span style="color:#f92672">=</span> [<span style="color:#a6e22e">TLDoomShapeTool</span>];
+</span></span></code></pre></div><p>Finally, when we initialize tldraw, we pass our custom shape, tool, and components.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">Tldraw</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shapeUtils</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">customShapeUtils</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">tools</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">customTools</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">overrides</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">uiOverrides</span>}
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">components</span><span style="color:#f92672">=</span>{<span style="color:#a6e22e">components</span>}
+</span></span><span style="display:flex;"><span>/&gt;
+</span></span></code></pre></div><p>Now you should finally be able to click on the left most tool in the toolbar, and click on the canvas to create an instance of the game. Using the arrow keys, you can move around the menu (although if you don&rsquo;t click off the shape you&rsquo;ll move the shape as well. I&rsquo;ll touch on this later but briefly since I don&rsquo;t have a good answer for it yet).</p>
+<p><img src="./tldoom-playing-the-game.gif" alt="tldoom - playing the game"></p>
+<h2 id="resizing-the-game">Resizing The Game</h2>
+<p>One of the nice things about making it a custom shape is that we can resize it like any other shape and ideally, the game would re-render at the new resolution. I wasn&rsquo;t able to get that to work, but I think it can, I just don&rsquo;t know enough about either emscripten or SDL, whichever one is responsible for resizing. Below I&rsquo;ll go over what I tried.</p>
+<p>So we defined <code>canResize</code> as <code>true</code> earlier with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#a6e22e">override</span> <span style="color:#a6e22e">canResize</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="./tldoom-resize-no-onResize.gif" alt="tldoom - resize without onResize override"></p>
+<p>But this doesn&rsquo;t define what happens when it is resized so resizing currently doesn&rsquo;t do anything. We need to override another method, <code>onResize</code> to define this functionality.</p>
+<p>The most basic functionality within this function is calling <code>tldraw</code>&rsquo;s <code>resizeBox</code> and returning that.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#a6e22e">override</span> <span style="color:#a6e22e">onResize</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">ITLDoomShape</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">info</span>: <span style="color:#66d9ef">TLResizeInfo</span>&lt;<span style="color:#f92672">ITLDoomShape</span>&gt;
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">ITLDoomShape</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">resized</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">resizeBox</span>(<span style="color:#a6e22e">shape</span>, <span style="color:#a6e22e">info</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">resized</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>I also locked the aspect ratio with another override. You don&rsquo;t have to do this but I like keeping the aspect ratio locked, at least while develping.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#a6e22e">override</span> <span style="color:#a6e22e">isAspectRatioLocked</span>()<span style="color:#f92672">:</span> <span style="color:#66d9ef">boolean</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><img src="./tldoom-resize-with-onResize-no-canvas-scaling.gif" alt="tldraw - resizing with onResize override but no canvas scaling"></p>
+<p>But this still doesn&rsquo;t look like it&rsquo;s doing anything because we also need to resize the canvas. Also, from what I see in the <code>./index.js</code> file, I notice a function named <code>setCanvasSize</code> that will resize the canvas and I also see resize event listeners added to the canvas so my thought process is that resizing the canvas like this should update and re-draw the game at the new size.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-tsx" data-lang="tsx"><span style="display:flex;"><span><span style="color:#a6e22e">override</span> <span style="color:#a6e22e">onResize</span>(
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shape</span>: <span style="color:#66d9ef">ITLDoomShape</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">info</span>: <span style="color:#66d9ef">TLResizeInfo</span>&lt;<span style="color:#f92672">ITLDoomShape</span>&gt;
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">ITLDoomShape</span> <span style="color:#f92672">|</span> <span style="color:#66d9ef">undefined</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">canvas</span> <span style="color:#f92672">=</span> document.<span style="color:#a6e22e">getElementById</span>(<span style="color:#e6db74">&#34;canvas&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">canvas</span>) <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">const</span> <span style="color:#a6e22e">resized</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">resizeBox</span>(<span style="color:#a6e22e">shape</span>, <span style="color:#a6e22e">info</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    window.<span style="color:#a6e22e">Browser</span>.<span style="color:#a6e22e">setCanvasSize</span>(<span style="color:#a6e22e">resized</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">w</span>, <span style="color:#a6e22e">resized</span>.<span style="color:#a6e22e">props</span>.<span style="color:#a6e22e">h</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">resized</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Note:</strong> We have to use <code>document.getElementById</code> because this override is outside of the React component so we can&rsquo;t use that ref we created for it.</p>
+<p>If we try to resize now, you&rsquo;ll notice that the canvas resizes, but not the game itself. If anyone has any ideas on how to fix this, I&rsquo;d love to talk.</p>
+<p><img src="./tldoom-resize.gif" alt="tldoom - resize"></p>
+<h2 id="next-steps">Next Steps</h2>
+<p>If I wanted to continue with this, some other ideas I would pursue would be:</p>
+<ul>
+<li>Actually have resize work.</li>
+<li>Don&rsquo;t process click events for the custom shape when it&rsquo;s not selected. I initially tried this with <code>stopImmediatePropagation()</code> if the custom shape wasn&rsquo;t in the ids of the selected shapes but I had issues removing the event listeners when they were no longer needed.</li>
+<li>Multiplayer? It would be cool to have a single instance controlled by all users.</li>
+</ul>
+
+</div>
+
+        
+        
+        <footer>Bob Corponoi © 2025</footer>
+    </div>
+</body>
+
+</html>

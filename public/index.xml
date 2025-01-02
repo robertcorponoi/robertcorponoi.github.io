@@ -6,8 +6,15 @@
     <description>Recent content on Bob Corponoi</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 22 Dec 2024 15:43:48 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 30 Dec 2024 15:23:25 +0800</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tldraw - Can It Run Doom?</title>
+      <link>http://localhost:1313/posts/tldoom/</link>
+      <pubDate>Mon, 30 Dec 2024 15:23:25 +0800</pubDate>
+      <guid>http://localhost:1313/posts/tldoom/</guid>
+      <description>&lt;p&gt;Well yes, yes it can. I&amp;rsquo;m not even sure why I explored this but I did so I might as well write about it.&lt;/p&gt;&#xA;&lt;h2 id=&#34;the-doom-source-code&#34;&gt;The Doom Source Code&lt;/h2&gt;&#xA;&lt;p&gt;After some brief research, it looked like compiling SDLDoom to WebAssembly was going to be the best way to approach this. If you&amp;rsquo;re unfamiliar with &lt;a href=&#34;https://www.libsdl.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;SDL&lt;/a&gt;, like I was at the beginning, it&amp;rsquo;s a library for low level access to audio, graphics, and input and it makes Doom easier to compile and run on modern operating systems.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>About</title>
       <link>http://localhost:1313/about/</link>
