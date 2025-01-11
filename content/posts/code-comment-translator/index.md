@@ -81,6 +81,9 @@ instructions to set up the structure of the extension.
 proof of concept for an idea I had and I'll hack on it over time but if you want
 to use it in its current state, be mindful of this.
 
+The source code for this post can be found on
+[GitHub](https://github.com/robertcorponoi/VSCode-Code-Comment-Translator).
+
 ## Extension Activation Event
 
 VSCode Extensions work by listening to activation events. By default, a new
