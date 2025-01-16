@@ -551,6 +551,11 @@ see that it's entirely composed of shapes.
 
 ![tldoom shapes](./tldoom-shapes.gif)
 
+You can even change the geo shape to be a heart instead of a rectangle, although
+you can't really tell the difference without hovering over a shape.
+
+![tldoom shapes heart](./tldoom-shapes-heart.png)
+
 ## What's Next
 
 Aside from some of the same things mentioned in the first post,
