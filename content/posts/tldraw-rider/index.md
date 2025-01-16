@@ -1,5 +1,5 @@
 +++
-date = '2024-12-22T15:23:25+08:00'
+date = '2024-12-22T15:00:00+00:00'
 layout = 'post'
 title = 'Tldraw Rider - Sled the Slopes Of Your Infinite Canvas'
 image = './tldraw-rider.png'

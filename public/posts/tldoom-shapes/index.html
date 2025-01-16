@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Bob's blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>
+Tldraw - Can It Run Doom (Shapes)? &ndash; Bob Corponoi
+
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/index.css" />
+</head>
+
+<body>
+    <div class="container">
+        
+
+<nav>
+    <ul class="menu">
+        <li>
+            <a href="/">
+                <div class="logo"></div>
+                <span>Bob Corponoi</span>
+            </a>
+        </li>
+<li>
+    <a href="/">Home</a>
+</li>
+<li>
+    <a href="/about/">About</a>
+</li>
+<li>
+    <a href="/archive/">Archive</a>
+</li>
+    </ul>
+</nav>
+<div class="content">
+    <h1 class="post-title">Tldraw - Can It Run Doom (Shapes)?</h1>
+    <p class="post-date">12 Jan 2025</p>
+    <img src="./tldoom-shapes-short.gif" alt="Tldraw - Can It Run Doom (Shapes)?" />
+    <p>Ok so we did this before at <a href="./posts/tldoom" >Tldraw - Can It Run Doom?</a> but we
+cheated a bit, we just compiled for WebAssembly and placed the canvas Emscripten
+created on the tldraw canvas.</p>
+<p>But now let&rsquo;s do it for real. Can tldraw run Doom, but with tldraw shapes to
+render the game&rsquo;s pixels.</p>
+<p>So we&rsquo;re going to have the same setup as the last post. We&rsquo;re starting with the
+changes we made to SDL-Doom to get it to compile and Emscripten installed. I&rsquo;ll
+only be going over the things that are different between that post and this one.</p>
+<p>The source code for this post can be found on
+<a href="https://github.com/robertcorponoi/tldoom-shapes"  target="_blank" rel="noopener" >GitHub</a></p>
+<h2 id="getting-the-frame-buffer">Getting The Frame Buffer</h2>
+<p>So in order to know what to render to display the game, we need a way to be able
+to get the frame buffer. From there we can get an array of all of the RGB colors
+in the current frame of the game.</p>
+<p>We&rsquo;ll add this to <code>d_main.c</code> since it&rsquo;s the entry point of the game.</p>
+<p>The first thing we need is the color palette for the game, so that we can map
+the screen buffer to the RGB colors used in the game. To do this, we create a
+global variable to store the color palette used in the game. The palette is
+stored in the WAD, in a lump named &ldquo;PLAYPAL&rdquo;. So let&rsquo;s define this variable and
+populate it with the palette data.</p>
+<p>First, we have to include the <code>w_wad.h</code> header, since that is where the game
+data is:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&#34;w_wad.h&#34;</span><span style="color:#75715e">
+</span></span></span></code></pre></div><p>Then, define our palette as a global variable and define the function that
+retrieves it from the game assets.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>EMSCRIPTEN_KEEPALIVE
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">uint8_t</span><span style="color:#f92672">*</span> palette;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>EMSCRIPTEN_KEEPALIVE
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">InitPalette</span>() {
+</span></span><span style="display:flex;"><span>    palette <span style="color:#f92672">=</span> <span style="color:#a6e22e">W_CacheLumpName</span>(<span style="color:#e6db74">&#34;PLAYPAL&#34;</span>, PU_CACHE);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Next, in <code>D_DoomLoop</code>, we call <code>InitPalette()</code> to populate the data:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#a6e22e">InitPalette</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">I_InitGraphics</span> ();
+</span></span></code></pre></div><p><strong>Note:</strong> <code>EMSCRIPTEN_KEEPALIVE</code> tells the compiler and linker to preserve and
+export our code.</p>
+<p>Now we can create the global variable to hold our RGB buffer data nd the
+function that maps the screen buffer to the palette.</p>
+<p>For each pixel in the game, we&rsquo;ll get it&rsquo;s index in the screen buffer, and use
+that index to match it to the palette.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span>EMSCRIPTEN_KEEPALIVE
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">uint8_t</span><span style="color:#f92672">*</span> <span style="color:#a6e22e">getFrameBuffer</span>(<span style="color:#66d9ef">void</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">size_t</span> bufferSize <span style="color:#f92672">=</span> SCREENWIDTH <span style="color:#f92672">*</span> SCREENHEIGHT <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> y <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; y <span style="color:#f92672">&lt;</span> SCREENHEIGHT; y<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; x <span style="color:#f92672">&lt;</span> SCREENWIDTH; x<span style="color:#f92672">++</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> index <span style="color:#f92672">=</span> y <span style="color:#f92672">*</span> SCREENWIDTH <span style="color:#f92672">+</span> x;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">uint8_t</span> paletteIndex <span style="color:#f92672">=</span> screens[<span style="color:#ae81ff">0</span>][index];
+</span></span><span style="display:flex;"><span>            rgbBuffer[index <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> palette[paletteIndex <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>            rgbBuffer[index <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> palette[paletteIndex <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>            rgbBuffer[index <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> palette[paletteIndex <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> rgbBuffer;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>bufferSize</code> is the size of the game, but times 3 because there&rsquo;s 3 values
+for each RGB color.</p>
+<p>Since we&rsquo;re looping through the width and height, we use
+<code>int index = y * SCREENWIDTH + x</code> to map the 2D coordinate into a 1D index,
+since <code>screens[0]</code> has a flat structure.</p>
+<p>That&rsquo;s all the changes we need to make to the source code.</p>
+<p>Before we can use it in the frontend though, we need to modify our build script
+to export this function. In our <code>build.sh</code> script, modify the line containing
+the flags to pass to Emscripten.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sh" data-lang="sh"><span style="display:flex;"><span>export EMCC_CFLAGS<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;-std=c99 -sUSE_SDL -sEXPORTED_FUNCTIONS=_main,_getFrameBuffer -sEXPORTED_RUNTIME_METHODS=ccall,cwrap&#34;</span>
+</span></span></code></pre></div><p>Here we declare our <code>_getFrameBuffer</code> as an exported function (along with
+<code>_main</code>, I&rsquo;m not sure why we need it but the compiler complains if we don&rsquo;t also
+export it). We also export the runtime method <code>cwrap</code>, which lets us call the
+function from our frontend.</p>
+<p>Run this script and let&rsquo;s move on to the next part.</p>
+<h2 id="typescript-updates">Typescript Updates</h2>
+<p>We have to make a couple changes to our <code>globals.d.ts</code> for new additions to the
+<code>Module</code> object. If you don&rsquo;t care about Typescript, feel free to skip this
+part.</p>
+<p>After <code>preRun</code>, in <code>globals.d.ts</code>, add the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// preRun...
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">onRuntimeInitialized</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">void</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">HEAPU8?</span>: <span style="color:#66d9ef">Uint8Array</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cwrap</span><span style="color:#f92672">?:</span> (
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">fnName</span>: <span style="color:#66d9ef">string</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">returnType</span>: <span style="color:#66d9ef">string</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">paramTypes</span>: <span style="color:#66d9ef">unknown</span>[]
+</span></span><span style="display:flex;"><span>    ) <span style="color:#f92672">=&gt;</span> (...<span style="color:#a6e22e">args</span>: <span style="color:#66d9ef">unknown</span>[]) <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">unknown</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The <code>onRunTimeInitialized</code> is called when the game is ready to run. We need to
+know when this happens because we can&rsquo;t get the frame buffer before then.</p>
+<p><code>HEAPU8</code> is a reference to the entire WASM memory. We&rsquo;ll be getting our RGB
+buffer from here.</p>
+<p><code>cwrap</code> is the function provided by Emscripten that is used to get a pointer to
+our <code>getFrameBuffer</code> function.</p>
+<p>Now we can get into the frontend part!</p>
+<h2 id="removing-resizing">Removing Resizing</h2>
+<p>So we&rsquo;re going to reuse the <code>TLDoom</code> shape from the last post.</p>
+<p>Outside of the shape definition, we&rsquo;re going to define a couple constants.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">GAME_WIDTH</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">320</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">GAME_HEIGHT</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">200</span>;
+</span></span></code></pre></div><p>We&rsquo;ll need to reference this multiple times so we&rsquo;ll define them here and set
+them to the base size of the game.</p>
+<p>I&rsquo;m not going to try resizing in this post. In fact, I&rsquo;ve removed resizing
+utilities from the last one. I return <code>false</code> from <code>canResize</code>, removed the
+<code>onResize</code> override, and removed the <code>isAspectRatioLocked</code> override.</p>
+<h2 id="updating-module">Updating Module</h2>
+<p>Let&rsquo;s start in our <code>useEffect</code> where we set up <code>window.Module</code>. We keep the
+<code>preRun</code>, but we&rsquo;re going to change the <code>canvas</code>. We don&rsquo;t need the canvas
+anymore but I can&rsquo;t figure out how to not have it. If we don&rsquo;t pass something,
+the generated JS fails because it needs to be able to attach event listeners to
+the canvas.</p>
+<p>But let&rsquo;s try to trick this. In the <code>component</code>, outside of the <code>useEffect</code>, add
+a ref for an <code>OffscreenCanvas</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">offscreenCanvasRef</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">useRef</span>&lt;<span style="color:#f92672">OffscreenCanvas</span>&gt;(
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">OffscreenCanvas</span>(<span style="color:#a6e22e">GAME_WIDTH</span>, <span style="color:#a6e22e">GAME_HEIGHT</span>)
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>Then, in <code>window.Module.canvas</code>, we return:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">canvas</span><span style="color:#f92672">:</span> (() <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">offscreenCanvasRef</span>.<span style="color:#a6e22e">current</span> <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">unknown</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">HTMLCanvasElement</span>;
+</span></span><span style="display:flex;"><span>})(),
+</span></span></code></pre></div><p>At this point you can also remove the ref to the old canvas and the canvas
+element itself from the JSX.</p>
+<p>and it seems to work. The script runs and no canvas is rendered to the screen.</p>
+<p>Next, we need to define <code>onRuntimeInitialized</code>. This is where we know that the
+RGB buffer is ready to be read.</p>
+<p>You could add the tldraw code here, but I like to keep my <code>useEffect</code>s smaller
+if possible so I added a state for <code>isReady</code>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> [<span style="color:#a6e22e">isReady</span>, <span style="color:#a6e22e">setIsReady</span>] <span style="color:#f92672">=</span> <span style="color:#a6e22e">useState</span>&lt;<span style="color:#f92672">boolean</span>&gt;(<span style="color:#66d9ef">false</span>);
+</span></span></code></pre></div><p>and then for <code>window.Module.onRuntimeInitialized</code>, I simply have:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">onRuntimeInitialized</span><span style="color:#f92672">:</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">setIsReady</span>(<span style="color:#66d9ef">true</span>);
+</span></span><span style="display:flex;"><span>},
+</span></span></code></pre></div><h2 id="setting-up-the-useeffect">Setting Up The UseEffect</h2>
+<p>At this point, we&rsquo;re ready to create the <code>useEffect</code> that draws the game to the
+tldraw canvas.</p>
+<p>The base of this <code>useEffect</code> looks like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">useEffect</span>(() <span style="color:#f92672">=&gt;</span> {}, [<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>, <span style="color:#a6e22e">isReady</span>]);
+</span></span></code></pre></div><p>We need <code>shape.id</code> so we can get our custom shape for it&rsquo;s position and
+<code>isReady</code> will be the first check we make within it.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">isReady</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Simply put if we&rsquo;re not ready to get the buffer, return early.</p>
+<p>Next, let&rsquo;s get our custom shape that was created since we&rsquo;ll need its position
+to determine the position of our pixels.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">doomShape</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getShape</span>(<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">doomShape</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="target-pixel-count">Target Pixel Count</h2>
+<p>Before we go further, we need to talk about something I learned in retrospect. I
+was going to cover this after this implementation failed but it&rsquo;s a pretty big
+aspect of it so I&rsquo;ll get into it now.</p>
+<p>Our goal for this is to render pixels as shapes. If we created a shape for each
+pixel, this would be 64,000 shapes, which just kills my browser tab.</p>
+<p>But of course we&rsquo;re not giving up here. What we&rsquo;ll do instead is target a lower
+pixel count. This is configurable and for this post, we&rsquo;ll aim for 8,000 pixels
+which manages to render and be playable for me. What this means though, is that
+we&rsquo;ll lose a lot of detail. We&rsquo;re going to have to group pixels together and
+display them as one. I think this is acceptable though, as long as we get the
+game to actually run.</p>
+<p>Let&rsquo;s define our target as 8,000, which I found was good enough to kind of play
+and could run.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">targetPixels</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">8000</span>;
+</span></span></code></pre></div><p>Using this value, let&rsquo;s calculate the number of blocks per row and column and
+the size of blocks.</p>
+<p>We divide <code>GAME_WIDTH / GAME_HEIGHT</code> to make sure we maintain the aspect ratio
+of the game.</p>
+<p>We then take the square root to make sure we evenly distribute the blocks across
+the width.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">blocksPerRow</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">sqrt</span>(<span style="color:#a6e22e">targetPixels</span> <span style="color:#f92672">*</span> (<span style="color:#a6e22e">GAME_WIDTH</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">GAME_HEIGHT</span>));
+</span></span></code></pre></div><p>Then, for blocks per column, we divide the target pixels by blocks per row:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">blocksPerColumn</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">targetPixels</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">blocksPerRow</span>;
+</span></span></code></pre></div><p>Now if we do this for 8,000 pixels, it will look like:</p>
+<ul>
+<li>Blocks per row = sqrt(8000 * (320 / 200)) = ~113</li>
+<li>Blocks per column = 8000 / 113 = ~71</li>
+</ul>
+<p>Multiplying these together gives us 8023, which is more than 8000 but close
+enough.</p>
+<p>For the block width and height, we just divide the game width or height by
+blocks per row or blocks per column, respectively.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">blockWidth</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">ceil</span>(<span style="color:#a6e22e">GAME_WIDTH</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">blocksPerRow</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">blockHeight</span> <span style="color:#f92672">=</span> Math.<span style="color:#a6e22e">ceil</span>(<span style="color:#a6e22e">GAME_HEIGHT</span> <span style="color:#f92672">/</span> <span style="color:#a6e22e">blocksPerColumn</span>);
+</span></span></code></pre></div><p>Also, by default tldraw has a cap of 4,000 shapes per page so we need to update
+that. In <code>App.tsx</code> where we initialize the <code>Tldraw</code> component, update the
+options:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">options</span><span style="color:#f92672">=</span>{{
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">maxShapesPerPage</span>: <span style="color:#66d9ef">65000</span>,
+</span></span><span style="display:flex;"><span>}}
+</span></span></code></pre></div><h2 id="the-color-palette">The Color Palette</h2>
+<p>We have have another issue, the color palette. We can only create shapes with
+colors that are in the tldraw color palette. These colors are black, grey,
+light-violet, voilet, blue, light-blue, yellow, orange, green, light-green,
+light-red, and red. We can customize the colors behind these values but we have
+to provide one of these values.</p>
+<p>The problem is that the Doom color palette, isn&rsquo;t going to match the tldraw
+color palette. To get around this problem, we&rsquo;re going to need to map RGB colors
+from the Doom color palette to the nearest tldraw color.</p>
+<p>I&rsquo;m sure there&rsquo;s a better way to do this but I inspected all of the RGB values
+in tldraw&rsquo;s color palette and created an array of the RGB values and color names
+that we can reference.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">tldrawColorPalette</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">29</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">29</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">29</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;black&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">159</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">168</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">178</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;grey&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">224</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">133</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">244</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;light-violet&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">174</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">62</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">201</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;violet&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">68</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">101</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">233</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;blue&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">75</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">161</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">241</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;light-blue&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">241</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">172</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">75</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;yellow&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">225</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">105</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">25</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;orange&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">9</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">146</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">104</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;green&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">76</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">176</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">94</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;light-green&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">248</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">119</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">119</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;light-red&#34;</span> },
+</span></span><span style="display:flex;"><span>	{ <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">224</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">49</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">49</span>, <span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;red&#34;</span> },
+</span></span><span style="display:flex;"><span>];
+</span></span></code></pre></div><p>Next, we need a function that, given a RGB color, returns the closest tldraw
+color to it.</p>
+<p>This function is going to go through each color in the tldraw palette and
+calculate the Euclidean distance between the RGB color and the tldraw color. The
+closest distance is chosen as the color.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">findClosestTldrawPaletteColor</span> <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">number</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">TLDefaultColorStyle</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">closestColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">tldrawColorPalette</span>[<span style="color:#ae81ff">0</span>].<span style="color:#a6e22e">color</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">minDistance</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">Infinity</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> { <span style="color:#a6e22e">r</span>: <span style="color:#66d9ef">pr</span>, <span style="color:#a6e22e">g</span>: <span style="color:#66d9ef">pg</span>, <span style="color:#a6e22e">b</span>: <span style="color:#66d9ef">pb</span>, <span style="color:#a6e22e">color</span> } <span style="color:#66d9ef">of</span> <span style="color:#a6e22e">tldrawColorPalette</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">distance</span> <span style="color:#f92672">=</span>
+</span></span><span style="display:flex;"><span>			Math.<span style="color:#a6e22e">pow</span>(<span style="color:#a6e22e">r</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">pr</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> Math.<span style="color:#a6e22e">pow</span>(<span style="color:#a6e22e">g</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">pg</span>, <span style="color:#ae81ff">2</span>) <span style="color:#f92672">+</span> Math.<span style="color:#a6e22e">pow</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">pb</span>, <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">distance</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">minDistance</span>) {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">minDistance</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">distance</span>;
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">closestColor</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">color</span>;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">closestColor</span> <span style="color:#66d9ef">as</span> <span style="color:#a6e22e">TLDefaultColorStyle</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p><strong>Note:</strong> We don&rsquo;t need the full Euclidean distance, the square root, because
+we&rsquo;re only comparing distances and not the actual distance.</p>
+<h2 id="creating-the-pixel-shapes">Creating The Pixel Shapes</h2>
+<p>At this point, we can create our initial pixel shapes. We&rsquo;re going to loop
+through the blocks of pixels to create, define the shapes, and add them to an
+array that we&rsquo;ll then call <code>editor.createShapes</code> on to batch create them.</p>
+<p>We don&rsquo;t need to calculate colors here, we&rsquo;ll do that in our game loop.</p>
+<p>First, let&rsquo;s create the array that will hold our shapes. As mentioned before we
+add them all here so we can batch create them.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pixels</span>: <span style="color:#66d9ef">TLShape</span>[] <span style="color:#f92672">=</span> [];
+</span></span></code></pre></div><p>Now, for each block, we define the partial for it and add it to the <code>pixels</code>
+array. We define its position as the position of our custom shape plus the
+offset of the block with the width and height of the block size.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">by</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">by</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">GAME_HEIGHT</span>; <span style="color:#a6e22e">by</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">blockHeight</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">bx</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">bx</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">GAME_WIDTH</span>; <span style="color:#a6e22e">bx</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">blockWidth</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pixel</span>: <span style="color:#66d9ef">Partial</span>&lt;<span style="color:#f92672">TLGeoShape</span>&gt; <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;geo&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">createShapeId</span>(),
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">doomShape.x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">bx</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">doomShape.y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">by</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">props</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">geo</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;rectangle&#34;</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">size</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;m&#34;</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">color</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;black&#34;</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">dash</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;solid&#34;</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">w</span>: <span style="color:#66d9ef">blockWidth</span>,
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">h</span>: <span style="color:#66d9ef">blockHeight</span>,
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">pixels</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">pixel</span>);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Now that we&rsquo;ve populated the array with all of the pixel shapes to create,
+create them all at once.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">createShapes</span>(<span style="color:#a6e22e">pixels</span>);
+</span></span></code></pre></div><p>We&rsquo;re almost there, we just need the game loop to update the colors of the pixel
+shapes each frame.</p>
+<h2 id="updating-the-pixel-shapes">Updating The Pixel Shapes</h2>
+<p>Here is where we&rsquo;ll define our game loop.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">gameLoop</span> <span style="color:#f92672">=</span> () <span style="color:#f92672">=&gt;</span> {};
+</span></span></code></pre></div><p>Here is where we&rsquo;ll use <code>window.Module.cwrap</code> to get our <code>getFrameBuffer</code>
+function:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">getFrameBuffer</span> <span style="color:#f92672">=</span> window.<span style="color:#a6e22e">Module</span>.<span style="color:#a6e22e">cwrap</span><span style="color:#f92672">!</span>(<span style="color:#e6db74">&#34;getFrameBuffer&#34;</span>, <span style="color:#e6db74">&#34;number&#34;</span>, []);
+</span></span></code></pre></div><p>The first parameter is the name of the function, the second parameter is what it
+returns (<code>number</code> for the pointer to the frame buffer), and the third parameter
+is any arguments to pass to it, which we have none.</p>
+<p>Now we can call it to the the location of our frame buffer in the WASM memory.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">frameBufferPointer</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getFrameBuffer</span>() <span style="color:#66d9ef">as</span> <span style="color:#66d9ef">number</span>;
+</span></span></code></pre></div><p>Now we can get the actual RGB buffer from this. <code>frameBufferPointer</code> is the
+pointer to where in the WASM memory (<code>HEAPU8</code>) our RGB buffer is.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rgbBuffer</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">Uint8Array</span>(
+</span></span><span style="display:flex;"><span>	window.<span style="color:#a6e22e">Module</span>.<span style="color:#a6e22e">HEAPU8</span><span style="color:#f92672">!</span>.<span style="color:#a6e22e">buffer</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">frameBufferPointer</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">GAME_WIDTH</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">GAME_HEIGHT</span> <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span>
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>The last parameter is the size of the buffer, which is the number of pixels in
+the game times 3 for RGB.</p>
+<p>Just like when we created the shapes, we&rsquo;ll want to batch update them so we
+define an array to push the updates to:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">toUpdate</span> <span style="color:#f92672">=</span> [];
+</span></span></code></pre></div><p>We also need to define an index outside of the loop to keep track of which
+tldraw shape we are updating. We can&rsquo;t use the loop variable because it doesn&rsquo;t
+increment by 1 each loop.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">index</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span></code></pre></div><p>Now for the update. For each block, we find where the color for it is in the RGB
+buffer, get the RGB values, find the nearest tldraw color for this RGB value,
+and then update the color of the shape to that nearest tldraw color.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">by</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">by</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">GAME_HEIGHT</span>; <span style="color:#a6e22e">by</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">blockHeight</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">let</span> <span style="color:#a6e22e">bx</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">bx</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">GAME_WIDTH</span>; <span style="color:#a6e22e">bx</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">blockWidth</span>) {
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">pixelIndex</span> <span style="color:#f92672">=</span> (Math.<span style="color:#a6e22e">floor</span>(<span style="color:#a6e22e">by</span>) <span style="color:#f92672">*</span> <span style="color:#a6e22e">GAME_WIDTH</span> <span style="color:#f92672">+</span> Math.<span style="color:#a6e22e">floor</span>(<span style="color:#a6e22e">bx</span>)) <span style="color:#f92672">*</span> <span style="color:#ae81ff">3</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">pixelIndex</span> <span style="color:#f92672">&gt;=</span> <span style="color:#a6e22e">rgbBuffer</span>.<span style="color:#a6e22e">length</span>) <span style="color:#66d9ef">break</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">rgbBuffer</span>[<span style="color:#a6e22e">pixelIndex</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">rgbBuffer</span>[<span style="color:#a6e22e">pixelIndex</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">rgbBuffer</span>[<span style="color:#a6e22e">pixelIndex</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">color</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">findClosestTldrawPaletteColor</span>(<span style="color:#a6e22e">r</span>, <span style="color:#a6e22e">g</span>, <span style="color:#a6e22e">b</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">const</span> <span style="color:#a6e22e">update</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">pixels</span>[<span style="color:#a6e22e">index</span>].<span style="color:#a6e22e">id</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">type</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;geo&#34;</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">props</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>				<span style="color:#a6e22e">color</span>: <span style="color:#66d9ef">color</span>,
+</span></span><span style="display:flex;"><span>			},
+</span></span><span style="display:flex;"><span>		};
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">toUpdate</span>.<span style="color:#a6e22e">push</span>(<span style="color:#a6e22e">update</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">index</span><span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>Note:</strong> Colors should probably be cached.</p>
+<p>Now that we&rsquo;ve queued our updates, let&rsquo;s run a batch update.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">updateShapes</span>(<span style="color:#a6e22e">toUpdate</span>);
+</span></span></code></pre></div><p>Finally, request another frame to keep the loop going.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">requestAnimationFrame</span>(<span style="color:#a6e22e">gameLoop</span>);
+</span></span></code></pre></div><p>Outside of this function, we want to call it to begin the game loop.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">gameLoop</span>();
+</span></span></code></pre></div><p>To finish things up, let&rsquo;s clean up our <code>useEffect</code> by deleting all shapes when
+the component is unmounted.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> () <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">deleteShapes</span>(<span style="color:#a6e22e">pixels</span>.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">pixel</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">pixel</span>.<span style="color:#a6e22e">id</span>));
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>If you run the app and place the custom shape, you should (after some loading
+time) be able to play the game! There&rsquo;s limited pixels so you&rsquo;ll need to know
+what you&rsquo;re doing in the menu but it&rsquo;s playable. You can hover over the game and
+see that it&rsquo;s entirely composed of shapes.</p>
+<p><img src="./tldoom-shapes.gif" alt="tldoom shapes"></p>
+<h2 id="whats-next">What&rsquo;s Next</h2>
+<p>Aside from some of the same things mentioned in the first post,</p>
+<ul>
+<li>Improve performance.</li>
+<li>Moving the custom shape doesn&rsquo;t move the game.</li>
+<li>Be able to resize the game.</li>
+<li>Change tldraw colors to be more closely in line with the Doom color palette.</li>
+<li>Cache RGB colors to tldraw colors.</li>
+</ul>
+
+</div>
+
+        
+        
+        <footer>Bob Corponoi © 2025</footer>
+    </div>
+</body>
+
+</html>

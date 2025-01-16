@@ -6,8 +6,15 @@
     <description>Recent content on Bob Corponoi</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 11 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 12 Jan 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Tldraw - Can It Run Doom (Shapes)?</title>
+      <link>http://localhost:1313/posts/tldoom-shapes/</link>
+      <pubDate>Sun, 12 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/tldoom-shapes/</guid>
+      <description>&lt;p&gt;Ok so we did this before at &lt;a href=&#34;./posts/tldoom&#34; &gt;Tldraw - Can It Run Doom?&lt;/a&gt; but we&#xA;cheated a bit, we just compiled for WebAssembly and placed the canvas Emscripten&#xA;created on the tldraw canvas.&lt;/p&gt;&#xA;&lt;p&gt;But now let&amp;rsquo;s do it for real. Can tldraw run Doom, but with tldraw shapes to&#xA;render the game&amp;rsquo;s pixels.&lt;/p&gt;&#xA;&lt;p&gt;So we&amp;rsquo;re going to have the same setup as the last post. We&amp;rsquo;re starting with the&#xA;changes we made to SDL-Doom to get it to compile and Emscripten installed. I&amp;rsquo;ll&#xA;only be going over the things that are different between that post and this one.&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Learning Language Through Code Comments</title>
       <link>http://localhost:1313/posts/code-comment-translator/</link>
@@ -16,11 +23,18 @@
       <description>&lt;p&gt;I&amp;rsquo;ve been trying, mostly unsuccessfully, to learn another language. I tried&#xA;&lt;a href=&#34;https://www.duolingo.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;Duolingo&lt;/a&gt;, even with a subscription, and felt it was&#xA;too gamified. I didn&amp;rsquo;t feel like I retained much of anything. In reality, I&amp;rsquo;m&#xA;sure I probably retained more than I realize but I can&amp;rsquo;t really recall any&#xA;particular lesson. I didn&amp;rsquo;t feel like much of the information stuck with me,&#xA;other than a few basic words. Near the end I would only log in to get on the&#xA;leaderboard.&lt;/p&gt;</description>
     </item>
     <item>
-      <title>Tldraw - Can It Run Doom?</title>
-      <link>http://localhost:1313/posts/tldoom/</link>
-      <pubDate>Mon, 30 Dec 2024 15:23:25 +0800</pubDate>
-      <guid>http://localhost:1313/posts/tldoom/</guid>
-      <description>&lt;p&gt;Well yes, yes it can. I&amp;rsquo;m not even sure why I explored this but I did so I might&#xA;as well write about it.&lt;/p&gt;&#xA;&lt;p&gt;After some brief research, it looked like compiling SDLDoom to WebAssembly was&#xA;going to be the best way to approach this. If you&amp;rsquo;re unfamiliar with&#xA;&lt;a href=&#34;https://www.libsdl.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;SDL&lt;/a&gt;, like I was at the beginning, it&amp;rsquo;s a library for&#xA;low level access to audio, graphics, and input and it makes Doom easier to&#xA;compile and run on modern operating systems.&lt;/p&gt;</description>
+      <title>Tldraw - Can It Run Doom (Canvas)?</title>
+      <link>http://localhost:1313/posts/tldoom-canvas/</link>
+      <pubDate>Mon, 30 Dec 2024 15:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/tldoom-canvas/</guid>
+      <description>&lt;p&gt;Well yes, yes it can. I&amp;rsquo;m not even sure why I explored this but I did so I might&#xA;as well write about it.&lt;/p&gt;&#xA;&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Check out the next post,&#xA;&lt;a href=&#34;../tldoom-shapes&#34; &gt;running tldoom with shapes instead of a canvas&lt;/a&gt;&lt;/p&gt;&#xA;&lt;p&gt;After some brief research, it looked like compiling SDLDoom to WebAssembly was&#xA;going to be the best way to approach this. If you&amp;rsquo;re unfamiliar with&#xA;&lt;a href=&#34;https://www.libsdl.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;SDL&lt;/a&gt;, like I was at the beginning, it&amp;rsquo;s a library for&#xA;low level access to audio, graphics, and input and it makes Doom easier to&#xA;compile and run on modern operating systems.&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</title>
+      <link>http://localhost:1313/posts/tldraw-rider/</link>
+      <pubDate>Sun, 22 Dec 2024 15:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/posts/tldraw-rider/</guid>
+      <description>&lt;p&gt;I work with tldraw for my day job. One day, when I was tasked with a myriad of&#xA;small bug fixes, I was looking at the tldraw canvas and I was reminded of a game&#xA;I used to play back in school,&#xA;&lt;a href=&#34;https://en.wikipedia.org/wiki/Line_Rider&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;Line Rider&lt;/a&gt;. The premise of the game&#xA;is that there&amp;rsquo;s an entity on a sled and you have to draw lines for them to sled&#xA;on. So I thought, &amp;ldquo;Hey, tldraw is perfect for this&amp;rdquo; which is how this became my&#xA;weekend project this weekend.&lt;/p&gt;</description>
     </item>
     <item>
       <title>About</title>
@@ -35,13 +49,6 @@
       <pubDate>Sun, 22 Dec 2024 15:23:25 +0800</pubDate>
       <guid>http://localhost:1313/archive/</guid>
       <description></description>
-    </item>
-    <item>
-      <title>Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</title>
-      <link>http://localhost:1313/posts/tldraw-rider/</link>
-      <pubDate>Sun, 22 Dec 2024 15:23:25 +0800</pubDate>
-      <guid>http://localhost:1313/posts/tldraw-rider/</guid>
-      <description>&lt;p&gt;I work with tldraw for my day job. One day, when I was tasked with a myriad of&#xA;small bug fixes, I was looking at the tldraw canvas and I was reminded of a game&#xA;I used to play back in school,&#xA;&lt;a href=&#34;https://en.wikipedia.org/wiki/Line_Rider&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34; &gt;Line Rider&lt;/a&gt;. The premise of the game&#xA;is that there&amp;rsquo;s an entity on a sled and you have to draw lines for them to sled&#xA;on. So I thought, &amp;ldquo;Hey, tldraw is perfect for this&amp;rdquo; which is how this became my&#xA;weekend project this weekend.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>

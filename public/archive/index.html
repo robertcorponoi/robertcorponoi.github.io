@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+<head>
     <meta charset="utf-8">
     <meta name="description" content="Bob's blog">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -40,13 +40,30 @@
     <a href="/about/">About</a>
 </li>
 <li>
-    <a href="/archive/">Archive</a>
+    <a aria-current="page" class="active" href="/archive/">Archive</a>
 </li>
     </ul>
 </nav>
         
     </header>
     <ul class="posts">
+        
+        <li>
+            <a href="http://localhost:1313/posts/tldoom-shapes/">
+                <div>
+                    <h2>Tldraw - Can It Run Doom (Shapes)?</h2>
+                    <img src="http://localhost:1313/posts/tldoom-shapes//./tldoom-shapes-short.gif" alt="Post cover image" />
+                    <p>Ok so we did this before at <a href="./posts/tldoom" >Tldraw - Can It Run Doom?</a> but we
+cheated a bit, we just compiled for WebAssembly and placed the canvas Emscripten
+created on the tldraw canvas.</p>
+<p>But now let&rsquo;s do it for real. Can tldraw run Doom, but with tldraw shapes to
+render the game&rsquo;s pixels.</p>
+<p>So we&rsquo;re going to have the same setup as the last post. We&rsquo;re starting with the
+changes we made to SDL-Doom to get it to compile and Emscripten installed. I&rsquo;ll
+only be going over the things that are different between that post and this one.</p>
+                </div>
+            </a>
+        </li>
         
         <li>
             <a href="http://localhost:1313/posts/code-comment-translator/">
@@ -65,12 +82,14 @@ leaderboard.</p>
         </li>
         
         <li>
-            <a href="http://localhost:1313/posts/tldoom/">
+            <a href="http://localhost:1313/posts/tldoom-canvas/">
                 <div>
-                    <h2>Tldraw - Can It Run Doom?</h2>
-                    <img src="http://localhost:1313/posts/tldoom//./tldoom-playing-the-game.gif" alt="Post cover image" />
+                    <h2>Tldraw - Can It Run Doom (Canvas)?</h2>
+                    <img src="http://localhost:1313/posts/tldoom-canvas//./tldoom-canvas-playing-the-game.gif" alt="Post cover image" />
                     <p>Well yes, yes it can. I&rsquo;m not even sure why I explored this but I did so I might
 as well write about it.</p>
+<p><strong>Note:</strong> Check out the next post,
+<a href="../tldoom-shapes" >running tldoom with shapes instead of a canvas</a></p>
 <p>After some brief research, it looked like compiling SDLDoom to WebAssembly was
 going to be the best way to approach this. If you&rsquo;re unfamiliar with
 <a href="https://www.libsdl.org/"  target="_blank" rel="noopener" >SDL</a>, like I was at the beginning, it&rsquo;s a library for

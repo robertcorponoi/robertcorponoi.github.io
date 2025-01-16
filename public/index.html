@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-	<meta name="generator" content="Hugo 0.140.2"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<meta name="generator" content="Hugo 0.140.2">
     <meta charset="utf-8">
     <meta name="description" content="Bob's blog">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,7 +35,7 @@
             </a>
         </li>
 <li>
-    <a href="/">Home</a>
+    <a aria-current="page" class="active" href="/">Home</a>
 </li>
 <li>
     <a href="/about/">About</a>
@@ -54,6 +54,23 @@
     <ul class="posts">
         
         <li>
+            <a href="http://localhost:1313/posts/tldoom-shapes/" aria-label="Read more about Tldraw - Can It Run Doom (Shapes)?">
+                <div>
+                    <h2>Tldraw - Can It Run Doom (Shapes)?</h2>
+                    <img src="http://localhost:1313/posts/tldoom-shapes//./tldoom-shapes-short.gif" alt="Post cover image" />
+                    <p>Ok so we did this before at <a href="./posts/tldoom" >Tldraw - Can It Run Doom?</a> but we
+cheated a bit, we just compiled for WebAssembly and placed the canvas Emscripten
+created on the tldraw canvas.</p>
+<p>But now let&rsquo;s do it for real. Can tldraw run Doom, but with tldraw shapes to
+render the game&rsquo;s pixels.</p>
+<p>So we&rsquo;re going to have the same setup as the last post. We&rsquo;re starting with the
+changes we made to SDL-Doom to get it to compile and Emscripten installed. I&rsquo;ll
+only be going over the things that are different between that post and this one.</p>
+                </div>
+            </a>
+        </li>
+        
+        <li>
             <a href="http://localhost:1313/posts/code-comment-translator/" aria-label="Read more about Learning Language Through Code Comments">
                 <div>
                     <h2>Learning Language Through Code Comments</h2>
@@ -70,33 +87,19 @@ leaderboard.</p>
         </li>
         
         <li>
-            <a href="http://localhost:1313/posts/tldoom/" aria-label="Read more about Tldraw - Can It Run Doom?">
+            <a href="http://localhost:1313/posts/tldoom-canvas/" aria-label="Read more about Tldraw - Can It Run Doom (Canvas)?">
                 <div>
-                    <h2>Tldraw - Can It Run Doom?</h2>
-                    <img src="http://localhost:1313/posts/tldoom//./tldoom-playing-the-game.gif" alt="Post cover image" />
+                    <h2>Tldraw - Can It Run Doom (Canvas)?</h2>
+                    <img src="http://localhost:1313/posts/tldoom-canvas//./tldoom-canvas-playing-the-game.gif" alt="Post cover image" />
                     <p>Well yes, yes it can. I&rsquo;m not even sure why I explored this but I did so I might
 as well write about it.</p>
+<p><strong>Note:</strong> Check out the next post,
+<a href="../tldoom-shapes" >running tldoom with shapes instead of a canvas</a></p>
 <p>After some brief research, it looked like compiling SDLDoom to WebAssembly was
 going to be the best way to approach this. If you&rsquo;re unfamiliar with
 <a href="https://www.libsdl.org/"  target="_blank" rel="noopener" >SDL</a>, like I was at the beginning, it&rsquo;s a library for
 low level access to audio, graphics, and input and it makes Doom easier to
 compile and run on modern operating systems.</p>
-                </div>
-            </a>
-        </li>
-        
-        <li>
-            <a href="http://localhost:1313/posts/tldraw-rider/" aria-label="Read more about Tldraw Rider - Sled the Slopes Of Your Infinite Canvas">
-                <div>
-                    <h2>Tldraw Rider - Sled the Slopes Of Your Infinite Canvas</h2>
-                    <img src="http://localhost:1313/posts/tldraw-rider//./tldraw-rider.png" alt="Post cover image" />
-                    <p>I work with tldraw for my day job. One day, when I was tasked with a myriad of
-small bug fixes, I was looking at the tldraw canvas and I was reminded of a game
-I used to play back in school,
-<a href="https://en.wikipedia.org/wiki/Line_Rider"  target="_blank" rel="noopener" >Line Rider</a>. The premise of the game
-is that there&rsquo;s an entity on a sled and you have to draw lines for them to sled
-on. So I thought, &ldquo;Hey, tldraw is perfect for this&rdquo; which is how this became my
-weekend project this weekend.</p>
                 </div>
             </a>
         </li>
