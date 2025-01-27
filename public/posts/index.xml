@@ -9,7 +9,7 @@
     <lastBuildDate>Sun, 19 Jan 2025 15:00:00 +0000</lastBuildDate>
     <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>Raycasting In tldraw</title>
+      <title>Raycast In tldraw</title>
       <link>http://localhost:1313/posts/raycast-in-tldraw/</link>
       <pubDate>Sun, 19 Jan 2025 15:00:00 +0000</pubDate>
       <guid>http://localhost:1313/posts/raycast-in-tldraw/</guid>

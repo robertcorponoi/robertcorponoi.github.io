@@ -1,7 +1,7 @@
 +++
 date = '2025-01-19T15:00:00+00:00'
 layout = 'post'
-title = 'Raycasting In tldraw'
+title = 'Raycast In tldraw'
 image = './tldraw-ray-step.gif'
 +++
 
