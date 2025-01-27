@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Bob's blog">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>
+Raycasting In tldraw &ndash; Bob Corponoi
+
+    </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/index.css" />
+</head>
+
+<body>
+    <div class="container">
+        
+
+<nav>
+    <ul class="menu">
+        <li>
+            <a href="/">
+                <div class="logo"></div>
+                <span>Bob Corponoi</span>
+            </a>
+        </li>
+<li>
+    <a href="/">Home</a>
+</li>
+<li>
+    <a href="/about/">About</a>
+</li>
+<li>
+    <a href="/archive/">Archive</a>
+</li>
+    </ul>
+</nav>
+<div class="content">
+    <h1 class="post-title">Raycasting In tldraw</h1>
+    <p class="post-date">19 Jan 2025</p>
+    <img src="./tldraw-ray-step.gif" alt="Raycasting In tldraw" />
+    <p>For one of my tldraw projects I&rsquo;ve been working on, I need to be able to know if
+something is under a shape. As someone who dabbles in game development,
+naturally I wanted to reach for a raycast so I could send out a ray and see if
+any shapes intersected with it. I looked in the tldraw docs and it doesn&rsquo;t seem
+like functionality that exists in the base API, which makes sense because tldraw
+is not a game engine. So I figure I create it myself, how hard could it be?
+Let&rsquo;s find out.</p>
+<h2 id="attempt-1-stepping-with-a-ray">Attempt 1: Stepping With a Ray</h2>
+<p>My first idea was to use an old fashioned raycast. We start with a ray origin,
+direction, and an amount that represents how far the ray should check for hits.</p>
+<p>Since we&rsquo;re using Typescript, let&rsquo;s create a couple types first to help us out.
+The ray origin and direction is a vector so let&rsquo;s define the
+five-hundredth-million vector type ever created.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Vec2</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Then, when we do get an a hit with the raycast, we want to return an
+intersection in the form of the id of the shape that was hit and the point that
+the shape was hit at.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Intersection</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">point</span>: <span style="color:#66d9ef">Vec2</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Okay, now we can start. Let&rsquo;s create a reusable function for this. I&rsquo;ll put the
+function definition and then we can go over the parameters.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">raycastStep</span> <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">editor</span>: <span style="color:#66d9ef">Editor</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rayOrigin</span>: <span style="color:#66d9ef">Vec2</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rayDir</span>: <span style="color:#66d9ef">Vec2</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rayLength</span>: <span style="color:#66d9ef">number</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">step</span>: <span style="color:#66d9ef">number</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Intersection</span>[] <span style="color:#f92672">=&gt;</span> {};
+</span></span></code></pre></div><ul>
+<li>
+<p><code>editor</code> - Is a reference to the tldraw editor instance. We need this to get
+the shapes on the page and to check if there&rsquo;s hits with the ray.</p>
+</li>
+<li>
+<p><code>rayOrigin</code> - The (x, y) position of where the ray starts on the canvas.</p>
+</li>
+<li>
+<p><code>rayDir</code> - The direction that the ray should go in. For example, a direction
+of (-1, 1) will mean that the ray goes in the negative x direction (left)
+and positive in the y direction (which is down in tldraw since y increases
+going down).</p>
+</li>
+<li>
+<p><code>rayLength</code> - The amount that the ray should extend to before stopping.</p>
+</li>
+<li>
+<p><code>step</code> - The amount to move in between iterations. Every iteration the ray
+will extend by this amount. A lower value will give more precise results
+since there&rsquo;s more checks at the cost of performance and time. A higher
+value will be faster but the ray might step over a shape and not count the
+intersection. This works very well if you have consistent spacing between
+shapes but that&rsquo;s rarely the case with a typical usage of tldraw.</p>
+</li>
+</ul>
+<p>Ok let&rsquo;s get into writing the function. Since we want the hits that occur when
+we send the ray, we get the current shapes on the page. We could do this every
+step of the ray but then the shapes might have changed between steps which could
+be what you want but we won&rsquo;t cover that here.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shapes</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getCurrentPageShapes</span>();
+</span></span></code></pre></div><p>Next, we need to keep track of the current position of the ray. As the ray
+steps, we update this position and use it to check for hits with shapes at that
+position. At the beginning, the current position is the same as the origin.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayCurrentPos</span>: <span style="color:#66d9ef">Vec2</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">rayOrigin.x</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">rayOrigin.y</span> };
+</span></span></code></pre></div><p>Now we need to know how much to step in each direction. We have the overall step
+amount but since x and y are separate, we have to multiply the direction by the
+step.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">stepCalc</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">rayDir.x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">step</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">rayDir.y</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">step</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>We also have to keep track of the current length of the ray so that we know when
+we have reached the ray length and we should stop checking for hits.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">rayLengthCurrent</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span></code></pre></div><p>The last thing before we get to the stepping loop is to keep track of the shapes
+we&rsquo;ve intersected with the ray.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">intersections</span>: <span style="color:#66d9ef">Intersection</span>[] <span style="color:#f92672">=</span> [];
+</span></span></code></pre></div><p>Ok now onto the loop. In the loop, we&rsquo;ll:</p>
+<ul>
+<li>
+<p>Update the ray&rsquo;s current position (<code>rayCurrentPos</code>) by the amount to step in
+each direction (<code>stepCalc</code>).</p>
+</li>
+<li>
+<p>Check for intersections at the ray&rsquo;s current position and update the
+<code>intersections</code> if any were found.</p>
+</li>
+<li>
+<p>Update the current length of the ray for the next iteration&rsquo;s check.</p>
+</li>
+</ul>
+<p>We want to keep stepping while the current length of the ray
+(<code>rayLengthCurrent</code>) is smaller than the length of the ray passed in the
+parameters (<code>rayLength</code>).</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> (<span style="color:#a6e22e">rayLengthCurrent</span> <span style="color:#f92672">&lt;</span> <span style="color:#a6e22e">rayLength</span>) {}
+</span></span></code></pre></div><p>Inside of this loop, let&rsquo;s do the first step, updating the ray&rsquo;s current
+position by the step amount. This is simply just adding the step in each
+direction to the corresponding direction of the ray&rsquo;s current position.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">rayCurrentPos</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">stepCalc</span>.<span style="color:#a6e22e">x</span>;
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">rayCurrentPos</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">stepCalc</span>.<span style="color:#a6e22e">y</span>;
+</span></span></code></pre></div><p>Now to check for intersections. tldraw has a really handy utility function for
+this, <code>getShapesAtPoint</code>. This function takes an (x, y) point and optional
+parameters for whether we want to check for hits inside of a shape and a margin
+to have some give or take to the calculation.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shapesAtPoint</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">editor</span>
+</span></span><span style="display:flex;"><span>	.<span style="color:#a6e22e">getShapesAtPoint</span>(
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">rayCurrentPos.x</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">rayCurrentPos.y</span>,
+</span></span><span style="display:flex;"><span>		},
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">hitInside</span>: <span style="color:#66d9ef">true</span>,
+</span></span><span style="display:flex;"><span>			<span style="color:#a6e22e">margin</span>: <span style="color:#66d9ef">10</span>,
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	)
+</span></span><span style="display:flex;"><span>	.<span style="color:#a6e22e">filter</span>((<span style="color:#a6e22e">shape</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">intersections</span>.<span style="color:#a6e22e">every</span>((<span style="color:#a6e22e">i</span>) <span style="color:#f92672">=&gt;</span> <span style="color:#a6e22e">i</span>.<span style="color:#a6e22e">id</span> <span style="color:#f92672">!==</span> <span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>));
+</span></span></code></pre></div><p>Here we check for shapes at the current point of the ray. We set <code>hitInside</code> to
+<code>true</code> because if the ray is inside of a shape we want to count that as a hit.
+We also provide a <code>margin</code> because stepping can be so inaccurate, especially
+with shapes like drawn lines and arrows. This will give some false results so in
+a real scenario you would probably have a smaller amount for the <code>margin</code>.</p>
+<p>We also need to filter out the shapes with ids that have already been added to
+the <code>intersections</code> array because while the ray is near or in a shape, it will
+keep returning that shape at that point.</p>
+<p>Next, update the <code>intersections</code> array with the new ones we found, if any.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">intersections</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>	...<span style="color:#a6e22e">intersections</span>,
+</span></span><span style="display:flex;"><span>	...<span style="color:#a6e22e">shapesAtPoint</span>.<span style="color:#a6e22e">map</span>((<span style="color:#a6e22e">shape</span>) <span style="color:#f92672">=&gt;</span> ({
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">shape.id</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">point</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">rayCurrentPos.x</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">rayCurrentPos.y</span> },
+</span></span><span style="display:flex;"><span>	})),
+</span></span><span style="display:flex;"><span>];
+</span></span></code></pre></div><p><code>shapesAtPoint</code> returns the shapes but we don&rsquo;t need all that data, just the id
+of the shape so we just save that along with the point of intersection, which is
+the current position of the ray.</p>
+<p>At the end of the loop we want to update the current length of the ray so that
+the next iteration can know whether it has to keep going or end due to the ray
+reaching its maximum length. We can calculate this by getting the ray&rsquo;s
+magnitude with <code>length = sqrt(x^2 + y^2)</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">rayLengthCurrent</span> <span style="color:#f92672">+=</span> Math.<span style="color:#a6e22e">sqrt</span>(<span style="color:#a6e22e">stepCalc</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">stepCalc</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">**</span> <span style="color:#ae81ff">2</span>);
+</span></span></code></pre></div><p>At the end of the function, outside the <code>while</code> loop, we can return any
+intersections that were found.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> <span style="color:#a6e22e">intersections</span>;
+</span></span></code></pre></div><p>Let&rsquo;s use this!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayOrigin</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">20</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">10</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayDir</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">1</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayLength</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">intersections</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">raycastStep</span>(<span style="color:#a6e22e">editor</span>, <span style="color:#a6e22e">rayOrigin</span>, <span style="color:#a6e22e">rayDir</span>, <span style="color:#a6e22e">rayLength</span>, <span style="color:#ae81ff">10</span>);
+</span></span></code></pre></div><p>Here we create a ray starting at (20, 10) and going in a downward-left direction
+on the canvas until it reaches a length of 300, checking for hits every 10
+pixels. Remember that we also passed a margin of 10 in <code>getShapesAtPoint</code> so
+hopefully this should get most intersections.</p>
+<p>Here is an example of it working, showing how the ray steps as an array shape.</p>
+<p><img src="./tldraw-ray-step.gif" alt="tldraw-ray-step"></p>
+<p>This method is cool, and fun to watch in debug mode, but it&rsquo;s not very
+efficient. We have to step, which could miss some shapes, and we have to wait
+for the ray to finish stepping, when we really already know the positions of
+every shape on the page and we should be able to do an instant check. This
+brings us to the second method, a parametric ray-segment intersection check
+where we check the edge of every shape against the path of the ray to see where
+we have hits. This can give us more accurate results, especially for line based
+shapes.</p>
+<h2 id="attempt-2-ray-segment-intersection">Attempt 2: Ray-Segment Intersection</h2>
+<p>This function is going to have the same function signature as the stepping
+version, however, it&rsquo;s going to have a different return value. In addition to
+the id of the shape and the point of intersection, we&rsquo;ll also be able to
+determine how far along the ray that the intersection occured and how far along
+the edge that the intersection is. You might not need the data but it&rsquo;s still
+fun to have.</p>
+<p>Let&rsquo;s define the type for this return value.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">IntersectionRaySegment</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">string</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">point</span>: <span style="color:#66d9ef">Vec2</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * How far along the ray (0 at the origin or x units away) the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * intersection is.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">t</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * How far along the segment (0 at the start, 1 at the end) the
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 * intersection is.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	 */</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">u</span>: <span style="color:#66d9ef">number</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>So our function signature looks like this.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">raycastRaySegment</span> <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">editor</span>: <span style="color:#66d9ef">Editor</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rayOrigin</span>: <span style="color:#66d9ef">Vec2</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rayDir</span>: <span style="color:#66d9ef">Vec2</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">rayLength</span>: <span style="color:#66d9ef">number</span>
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">IntersectionRaySegment</span>[] <span style="color:#f92672">=&gt;</span> {};
+</span></span></code></pre></div><p>Just like before, let&rsquo;s first get all of the shapes on the page.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">shapes</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getCurrentPageShapes</span>();
+</span></span></code></pre></div><p>Also again we need to keep track of the intersections that we found.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">let</span> <span style="color:#a6e22e">intersections</span>: <span style="color:#66d9ef">IntersectionRaySegment</span>[] <span style="color:#f92672">=</span> [];
+</span></span></code></pre></div><p>Since we&rsquo;re not stepping and just performing a single check, we don&rsquo;t need to
+keep track of current position or ray length. We&rsquo;ll be checking along the entire
+length of the ray in one calculation.</p>
+<p>Next, since we&rsquo;re working on edges, we need to loop through each shape.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">shapes</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">shape</span>) <span style="color:#f92672">=&gt;</span> {});
+</span></span></code></pre></div><p><strong>Note:</strong> We go through the edges so that we can have more accurate results,
+like where exactly we hit on a geo shape, but also consider a drawn line that
+starts from behind the ray and moves in front of it. To accurately get an
+intersection on this type of line, we have to split it up so that we know what
+parts are in front of the ray.</p>
+<p>Ok so inside of this <code>forEach</code> loop, we need to create the edges that we&rsquo;re
+going to check the ray against.</p>
+<p>tldraw has a very handy function to help with this called <code>getShapeGeometry</code>.
+This returns useful data about a shape like it&rsquo;s bounding box but also it&rsquo;s
+vertices, which are the points that make up the shape.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">geometry</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">editor</span>.<span style="color:#a6e22e">getShapeGeometry</span>(<span style="color:#a6e22e">shape</span>.<span style="color:#a6e22e">id</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">geometry</span>) <span style="color:#66d9ef">return</span>;
+</span></span></code></pre></div><p><strong>Note:</strong> <code>getShapeGeometry</code>&rsquo;s return doesn&rsquo;t include <code>undefined</code> but I ran into
+an issue where I got <code>cannot read properties of undefined</code> when trying to read
+the vertices so I added the check for <code>undefined</code> in.</p>
+<p>Now, we have the vertices under <code>geometry.vertices</code>. Again we&rsquo;ll loop through
+these to create the edges to check against.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">geometry</span>.<span style="color:#a6e22e">vertices</span>.<span style="color:#a6e22e">forEach</span>((<span style="color:#a6e22e">vertex</span>, <span style="color:#a6e22e">i</span>) <span style="color:#f92672">=&gt;</span> {});
+</span></span></code></pre></div><p>Before we create an edge, we have to make a check first. If we&rsquo;re on the last
+vertex for this shape, and the shape is not a closed shape, then we want to
+return early. A closed shape is a shape like a rectangle or circle while a not
+closed shape is a drawn line, arrow, etc. If the shape is closed, then we want
+to connect the last vertex to the first one to form the last edge. In a drawn
+line, we don&rsquo;t want to connect the last vertex to the first one because it would
+close the line.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">geometry</span>.<span style="color:#a6e22e">isClosed</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">===</span> <span style="color:#a6e22e">geometry</span>.<span style="color:#a6e22e">vertices</span>.<span style="color:#a6e22e">length</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Now that we know we have another edge to create still, let&rsquo;s get the end point
+of the edge. This is the next vertex, or the first vertex if we&rsquo;re at the end of
+the vertices for a closed shape.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">nextVertex</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">geometry</span>.<span style="color:#a6e22e">vertices</span>[(<span style="color:#a6e22e">i</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">%</span> <span style="color:#a6e22e">geometry</span>.<span style="color:#a6e22e">vertices</span>.<span style="color:#a6e22e">length</span>];
+</span></span></code></pre></div><p>Now we can make our edge, which spans from the current vertex to the next
+vertex. Let&rsquo;s define a type for the edge next to our other types and then back
+in the loop, we create the edge.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Edge</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">start</span>: <span style="color:#66d9ef">Vec2</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">end</span>: <span style="color:#66d9ef">Vec2</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">edge</span>: <span style="color:#66d9ef">Edge</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">start</span><span style="color:#f92672">:</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">shape.x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">vertex</span>.<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">shape.y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">vertex</span>.<span style="color:#a6e22e">y</span> },
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">end</span><span style="color:#f92672">:</span> {
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">shape.x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">nextVertex</span>.<span style="color:#a6e22e">x</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">shape.y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">nextVertex</span>.<span style="color:#a6e22e">y</span>,
+</span></span><span style="display:flex;"><span>	},
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Now that we have the edge to check the ray against, we should filter out edges
+that aren&rsquo;t in the direction of the ray. There&rsquo;s likely to be a lot of these
+since most shapes will be outside the bounds of the ray so we want to avoid
+these intersection checks that we know will fail. To do this, we can use dot
+product culling.</p>
+<p>To do this, we need to substract the start and end vectors from the origin of
+the ray which gives us the direction from the start of the ray to the edge
+start/end and then we take the dot product to determine whether that direction
+is in front of or behind the direction of the ray.</p>
+<p>Let&rsquo;s define the functions to functions to subtract two vectors and to take the
+dot product of a vector.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">sub</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">vec1</span>: <span style="color:#66d9ef">Vec2</span>, <span style="color:#a6e22e">vec2</span>: <span style="color:#66d9ef">Vec2</span>)<span style="color:#f92672">:</span> <span style="color:#a6e22e">Vec2</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">vec1.x</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">vec2</span>.<span style="color:#a6e22e">x</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">vec1.y</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">vec2</span>.<span style="color:#a6e22e">y</span> };
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dot</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">vec1</span>: <span style="color:#66d9ef">Vec2</span>, <span style="color:#a6e22e">vec2</span>: <span style="color:#66d9ef">Vec2</span>)<span style="color:#f92672">:</span> <span style="color:#66d9ef">number</span> <span style="color:#f92672">=&gt;</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#a6e22e">vec1</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">vec2</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">vec1</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">vec1</span>.<span style="color:#a6e22e">y</span>;
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Now we can use these to get the start and end dot products.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dotStart</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">dot</span>(<span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">edge</span>.<span style="color:#a6e22e">start</span>, <span style="color:#a6e22e">rayOrigin</span>), <span style="color:#a6e22e">rayDir</span>);
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">dotEnd</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">dot</span>(<span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">edge</span>.<span style="color:#a6e22e">end</span>, <span style="color:#a6e22e">rayOrigin</span>), <span style="color:#a6e22e">rayDir</span>);
+</span></span></code></pre></div><p>If the dot product of either the start or end of the edge is lower than 0, then
+it means that the edge is behind the ray and we don&rsquo;t need to check it so we can
+return early.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">dotStart</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#a6e22e">dotEnd</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>At this point, we know we need to check this edge because it&rsquo;s in the general
+vicinity of the ray. Let&rsquo;s create the segment to check against by getting the
+direction of the edge. This tells us how we move from the start of the edge to
+the end.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">segment</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">edge</span>.<span style="color:#a6e22e">end</span>, <span style="color:#a6e22e">edge</span>.<span style="color:#a6e22e">start</span>);
+</span></span></code></pre></div><p>Next, we need to get the delta vector, which is how we move from the start of
+the edge to the ray&rsquo;s origin.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">delta</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">sub</span>(<span style="color:#a6e22e">rayOrigin</span>, <span style="color:#a6e22e">edge</span>.<span style="color:#a6e22e">start</span>);
+</span></span></code></pre></div><p>Next, we have another check to eliminate whether we should keep checking this
+segment or not. We want to know if the segment is parallel to the ray or not. To
+do this, we have to calculate the determinant. The formula for the determinant
+is <code>det = a.x * b.y - a.y * b.x</code> so to use it, with our inverse y, we have.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">det</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">segment</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">*</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">rayDir</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">segment</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">*</span> <span style="color:#f92672">-</span><span style="color:#a6e22e">rayDir</span>.<span style="color:#a6e22e">x</span>;
+</span></span></code></pre></div><p>Checking for a parallel line can be a bit tricky because we can consider it
+parallel if it&rsquo;s very close to zero instead of exactly zero. To do this check,
+we take the absolute value of the determinant and check if it&rsquo;s smaller than a
+number very close to zero. This number is arbitrary and any small number can
+work but a popular one is <code>1e-12</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (Math.<span style="color:#a6e22e">abs</span>(<span style="color:#a6e22e">det</span>) <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">1</span><span style="color:#a6e22e">e</span><span style="color:#f92672">-</span><span style="color:#ae81ff">12</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Now we know that the lines are not parallel so we can continue checking. Here we
+can solve for <code>u</code> and <code>t</code> in our intersection return value.</p>
+<ul>
+<li>
+<p><code>u</code> - Tells us where along the segment <code>edge.start</code> -&gt; <code>edge.end</code> the ray
+intersects. This is a percentage of the point along the line. For example,
+if we intersect the middle of the segment, the <code>u</code> value will be 0.5.</p>
+</li>
+<li>
+<p><code>t</code> - Tells us where along the ray <code>rayOrigin</code> -&gt; <code>rayOrigin + rayDirection</code>
+we intersect. Or at what point along the ray it intersects the shape.</p>
+</li>
+</ul>
+<p>This formula comes from rearranging
+<code>rayOrigin + t * rayDir = edge.start + u * segment</code> which is a linear equation
+used to solve the intersection of a ray and a segment. This is a known equation
+so we won&rsquo;t go into the details here but there&rsquo;s plenty of resources online that
+explain this much better than I could.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">u</span> <span style="color:#f92672">=</span> (<span style="color:#f92672">-</span><span style="color:#a6e22e">delta</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">rayDir</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">delta</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">rayDir</span>.<span style="color:#a6e22e">x</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">det</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">=</span> (<span style="color:#a6e22e">segment</span>.<span style="color:#a6e22e">x</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">delta</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">-</span> <span style="color:#a6e22e">segment</span>.<span style="color:#a6e22e">y</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">delta</span>.<span style="color:#a6e22e">x</span>) <span style="color:#f92672">/</span> <span style="color:#a6e22e">det</span>;
+</span></span></code></pre></div><p>A couple more checks here. First, since the line segment is from the start to
+the end, <code>u</code> needs to be a value between 0 and 1. If it&rsquo;s outside of these
+values, then it means the intersection point is not actually on the segment so
+we can return early.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">u</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">u</span> <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Next, we only consider intersections in front of teh ray and within the length
+of the ray. Now since we did the dot product culling earlier all intersections
+should be in front of the ray but we might as well check anyways since we have
+the exact value now.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">if</span> (<span style="color:#a6e22e">t</span> <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> <span style="color:#a6e22e">t</span> <span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">rayLength</span>) {
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>If both of these checks pass, we have an intersection! The point of intersection
+is the start of the edge, plus the amount along the edge that the intersection
+occurs at multiplied by the segment, which scales the length of the segment by
+the percentage point where the intersection occured.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">intersect</span>: <span style="color:#66d9ef">Vec2</span> <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">edge.start.x</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">u</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">segment</span>.<span style="color:#a6e22e">x</span>,
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">edge.start.y</span> <span style="color:#f92672">+</span> <span style="color:#a6e22e">u</span> <span style="color:#f92672">*</span> <span style="color:#a6e22e">segment</span>.<span style="color:#a6e22e">y</span>,
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>Then we save it to the intersections to return.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#a6e22e">intersections</span> <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>	...<span style="color:#a6e22e">intersections</span>,
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">id</span>: <span style="color:#66d9ef">shape.id</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">point</span>: <span style="color:#66d9ef">intersect</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">t</span>,
+</span></span><span style="display:flex;"><span>		<span style="color:#a6e22e">u</span>,
+</span></span><span style="display:flex;"><span>	},
+</span></span><span style="display:flex;"><span>];
+</span></span></code></pre></div><p>Lastly, like the other function, outside of the loop we return the
+intersections.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">return</span> <span style="color:#a6e22e">intersections</span>;
+</span></span></code></pre></div><p>Let&rsquo;s use this with the same ray as last time.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ts" data-lang="ts"><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayOrigin</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span>: <span style="color:#66d9ef">20</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">10</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayDir</span> <span style="color:#f92672">=</span> { <span style="color:#a6e22e">x</span><span style="color:#f92672">:</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>, <span style="color:#a6e22e">y</span>: <span style="color:#66d9ef">1</span> };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">rayLength</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">300</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">const</span> <span style="color:#a6e22e">intersections</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">raycastRaySegment</span>(<span style="color:#a6e22e">editor</span>, <span style="color:#a6e22e">rayOrigin</span>, <span style="color:#a6e22e">rayDir</span>, <span style="color:#a6e22e">rayLength</span>);
+</span></span></code></pre></div><p>This looks like:</p>
+<p><img src="./tldraw-ray-segment.png" alt="tldraw ray segment"></p>
+<p>You&rsquo;ll notice that we get multiple intersections for the same shape. You can
+filter these out like before but with the precise intersection information
+returned, it could be useful so I keep it around and just filter it out myself
+when I use the results.</p>
+<p>In the end, this is probably the better solution but there&rsquo;s still
+inefficiencies to checking every shape and its vertices. There&rsquo;s still some
+optimizations to be made that we can maybe explore in a future post.</p>
+<p>The source code for this post can be found on
+<a href="https://github.com/robertcorponoi/tldraw-raycast"  target="_blank" rel="noopener" >GitHub</a>.</p>
+
+</div>
+
+        
+        
+        <footer>Bob Corponoi © 2025</footer>
+    </div>
+</body>
+
+</html>
